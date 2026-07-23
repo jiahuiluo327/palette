@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>指标管理平台 - 派生指标管理</title>
+    <!--
+        派生指标管理系统原型 v2.0
+
+        主要功能：
+        1. 日均/月均派生指标配置
+        2. 动态时间粒度过滤
+        3. 交互式图表展示
+        4. 粒度限制提示
+
+        更新说明：
+        - 时间粒度根据配置动态过滤选项
+        - 指标详情页面简化为只显示图表标签页
+        - 添加粒度选择限制的交互提示
+    -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 3px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        .step-indicator {
+            position: relative;
+        }
+
+        .step-indicator::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 100%;
+            width: 100%;
+            height: 2px;
+            background: #e2e8f0;
+            transform: translateY(-50%);
+            z-index: 0;
+        }
+
+        .step-indicator.completed::after {
+            background: #3b82f6;
+        }
+
+        .step-indicator:last-child::after {
+            display: none;
+        }
+
+        .radio-type-selector:checked + label {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-up {
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .tooltip {
+            position: relative;
+        }
+
+        .tooltip:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 8px 12px;
+            background: #1e293b;
+            color: white;
+            font-size: 12px;
+            border-radius: 6px;
+            white-space: nowrap;
+            z-index: 1000;
+            margin-bottom: 8px;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .dropdown-item:hover {
+            background: #f8fafc;
+        }
+
+        .dropdown-item.selected {
+            background: #eff6ff;
+            color: #3b82f6;
+        }
+
+        .switch {
+            position: relative;
+            width: 48px;
+            height: 24px;
+            background: #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .switch.active {
+            background: #3b82f6;
+        }
+
+        .switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .switch.active::after {
+            left: calc(100% - 22px);
+        }
+
+        .info-banner {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-left: 4px solid #3b82f6;
+        }
+
+        .warning-banner {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left: 4px solid #f59e0b;
+        }
+
+        .success-banner {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-left: 4px solid #22c55e;
+        }
+
+        .tab-active {
+            border-bottom: 2px solid #3b82f6;
+            color: #3b82f6;
+        }
+
+        .dimension-tree {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .dimension-item {
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .dimension-item:hover {
+            background: #f8fafc;
+        }
+
+        .dimension-item.selected {
+            background: #eff6ff;
+            color: #3b82f6;
+        }
+
+        #trendChart {
+            transition: opacity 0.3s ease;
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        select:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen">
+    <div class="flex h-screen">
+        <!-- 左侧导航 -->
+        <aside class="w-64 bg-white border-r border-slate-200 flex flex-col">
+            <div class="p-6 border-b border-slate-200">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+                        <i data-lucide="bar-chart-3" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-semibold text-slate-900">指标管理平台</h1>
+                        <p class="text-xs text-slate-500">Enterprise Metrics</p>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="flex-1 p-4 space-y-1">
+                <a href="#" onclick="showPage('list')" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors">
+                    <i data-lucide="layout-grid" class="w-5 h-5"></i>
+                    <span>指标列表</span>
+                </a>
+                <a href="#" onclick="showPage('create')" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-blue-50 text-blue-600 font-medium">
+                    <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                    <span>新建指标</span>
+                </a>
+                <a href="#" onclick="showPage('detail')" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors">
+                    <i data-lucide="file-text" class="w-5 h-5"></i>
+                    <span>指标详情</span>
+                </a>
+                <div class="pt-4 mt-4 border-t border-slate-200">
+                    <p class="px-4 text-xs text-slate-400 mb-2">数据管理</p>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors">
+                        <i data-lucide="database" class="w-5 h-5"></i>
+                        <span>语义模型</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors">
+                        <i data-lucide="users" class="w-5 h-5"></i>
+                        <span>用户管理</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="p-4 border-t border-slate-200">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-slate-200 rounded-full flex items-center justify-center">
+                        <i data-lucide="user" class="w-5 h-5 text-slate-500"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-slate-900">管理员</p>
+                        <p class="text-xs text-slate-500">admin@company.com</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="flex-1 overflow-auto">
+            <!-- 创建指标页面 -->
+            <div id="createPage" class="page-content">
+                <div class="bg-white border-b border-slate-200 px-8 py-4 sticky top-0 z-10">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <button onclick="showPage('list')" class="p-2 hover:bg-slate-100 rounded-lg transition-colors">
+                                <i data-lucide="arrow-left" class="w-5 h-5 text-slate-600"></i>
+                            </button>
+                            <div>
+                                <h2 class="text-xl font-semibold text-slate-900">创建派生指标</h2>
+                                <p class="text-sm text-slate-500">配置新的派生指标，支持日均、月均等高级派生类型</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button class="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+                                取消
+                            </button>
+                            <button id="saveBtn" onclick="saveIndicator()" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+                                <i data-lucide="save" class="w-4 h-4"></i>
+                                保存
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 步骤指示器 -->
+                    <div class="flex items-center justify-center mt-8 gap-4">
+                        <div class="step-indicator completed flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
+                                <i data-lucide="check" class="w-4 h-4"></i>
+                            </div>
+                            <span class="text-sm font-medium text-blue-600">指标定义</span>
+                        </div>
+                        <div class="step-indicator active flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-medium">2</div>
+                            <span class="text-sm font-medium text-blue-600">指标加工</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-8 max-w-6xl mx-auto">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <!-- 主表单区 -->
+                        <div class="lg:col-span-2 space-y-6">
+                            <!-- 指标类型选择 -->
+                            <div class="bg-white rounded-2xl border border-slate-200 p-6">
+                                <h3 class="text-lg font-semibold text-slate-900 mb-4">选择指标类型</h3>
+                                <div class="grid grid-cols-3 gap-4">
+                                    <div class="relative">
+                                        <input type="radio" name="indicatorType" id="type-atomic" class="radio-type-selector sr-only">
+                                        <label for="type-atomic" class="block p-4 border-2 border-slate-200 rounded-xl cursor-pointer hover:border-slate-300 transition-colors">
+                                            <div class="text-center">
+                                                <i data-lucide="layers" class="w-8 h-8 mx-auto mb-2 text-slate-400"></i>
+                                                <p class="font-medium text-slate-900">原子指标</p>
+                                                <p class="text-xs text-slate-500 mt-1">基于度量字段聚合</p>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    <div class="relative">
+                                        <input type="radio" name="indicatorType" id="type-derived" class="radio-type-selector sr-only" checked>
+                                        <label for="type-derived" class="block p-4 border-2 border-blue-500 rounded-xl cursor-pointer bg-blue-50">
+                                            <div class="text-center">
+                                                <i data-lucide="git-branch" class="w-8 h-8 mx-auto mb-2 text-blue-500"></i>
+                                                <p class="font-medium text-blue-600">派生指标</p>
+                                                <p class="text-xs text-slate-500 mt-1">基于依赖指标计算</p>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    <div class="relative">
+                                        <input type="radio" name="indicatorType" id="type-compound" class="radio-type-selector sr-only">
+                                        <label for="type-compound" class="block p-4 border-2 border-slate-200 rounded-xl cursor-pointer hover:border-slate-300 transition-colors">
+                                            <div class="text-center">
+                                                <i data-lucide="function-square" class="w-8 h-8 mx-auto mb-2 text-slate-400"></i>
+                                                <p class="font-medium text-slate-900">复合指标</p>
+                                                <p class="text-xs text-slate-500 mt-1">多指标表达式</p>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 派生指标配置 -->
+                            <div class="bg-white rounded-2xl border border-slate-200 p-6">
+                                <h3 class="text-lg font-semibold text-slate-900 mb-6">派生指标配置</h3>
+
+                                <!-- 依赖指标 -->
+                                <div class="mb-6">
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">
+                                        依赖指标 <span class="text-red-500">*</span>
+                                        <i data-lucide="help-circle" class="w-4 h-4 inline ml-1 text-slate-400 tooltip" data-tooltip="选择基础的原子指标或派生指标"></i>
+                                    </label>
+                                    <div class="relative">
+                                        <div class="flex items-center gap-2 p-3 border border-slate-200 rounded-lg cursor-pointer hover:border-blue-300 transition-colors" onclick="toggleDropdown('dependencyDropdown')">
+                                            <div id="selectedDependency" class="flex items-center gap-2 flex-1">
+                                                <span class="text-slate-400">请选择依赖指标</span>
+                                            </div>
+                                            <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400"></i>
+                                        </div>
+                                        <div id="dependencyDropdown" class="dropdown-menu mt-2">
+                                            <div class="p-2 border-b border-slate-100">
+                                                <input type="text" placeholder="搜索指标..." class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+                                            </div>
+                                            <div class="py-1">
+                                                <div class="dropdown-item" onclick="selectDependency('融资余额', 'metric_loan_balance', '原子指标')">
+                                                    <div class="flex items-center gap-3">
+                                                        <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                                        <div>
+                                                            <p class="font-medium text-slate-900">融资余额</p>
+                                                            <p class="text-xs text-slate-500">metric_loan_balance · 原子指标</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="dropdown-item" onclick="selectDependency('合同金额', 'metric_contract_amount', '原子指标')">
+                                                    <div class="flex items-center gap-3">
+                                                        <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                                        <div>
+                                                            <p class="font-medium text-slate-900">合同金额</p>
+                                                            <p class="text-xs text-slate-500">metric_contract_amount · 原子指标</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="dropdown-item" onclick="selectDependency('贷款余额', 'metric_loan_balance_monthly', '派生指标')">
+                                                    <div class="flex items-center gap-3">
+                                                        <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
+                                                        <div>
+                                                            <p class="font-medium text-slate-900">贷款余额</p>
+                                                            <p class="text-xs text-slate-500">metric_loan_balance_monthly · 派生指标</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="dropdown-item disabled" onclick="showAggregateWarning()">
+                                                    <div class="flex items-center gap-3 opacity-50">
+                                                        <span class="w-2 h-2 bg-red-500 rounded-full"></span>
+                                                        <div>
+                                                            <p class="font-medium text-slate-900">客户数量</p>
+                                                            <p class="text-xs text-slate-500">metric_customer_count · 聚合方式不支持</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 筛选条件 -->
+                                <div class="mb-6">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <label class="block text-sm font-medium text-slate-700">
+                                            数据筛选
+                                        </label>
+                                        <div class="switch" onclick="toggleFilter()" id="filterSwitch"></div>
+                                    </div>
+                                    <p class="text-xs text-slate-500 mb-3">包含或排除特定数据</p>
+                                    <div id="filterContent" class="hidden">
+                                        <div class="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                                            <div class="flex items-center justify-between mb-3">
+                                                <span class="text-sm text-slate-600">筛选条件</span>
+                                                <button class="text-blue-600 text-sm hover:underline">添加条件</button>
+                                            </div>
+                                            <div class="text-sm text-slate-400 text-center py-4">
+                                                暂无筛选条件
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 高级派生 -->
+                                <div class="mb-6">
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">
+                                        高级派生 <span class="text-red-500">*</span>
+                                    </label>
+
+                                    <!-- 派生类型 -->
+                                    <div class="mb-4">
+                                        <label class="block text-sm text-slate-600 mb-2">派生类型</label>
+                                        <div class="relative">
+                                            <div class="flex items-center gap-2 p-3 border border-slate-200 rounded-lg cursor-pointer hover:border-blue-300 transition-colors" onclick="toggleDropdown('derivedTypeDropdown')">
+                                                <span id="selectedDerivedType" class="text-slate-400">请选择派生类型</span>
+                                                <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 ml-auto"></i>
+                                            </div>
+                                            <div id="derivedTypeDropdown" class="dropdown-menu mt-2">
+                                                <div class="dropdown-item" onclick="selectDerivedType('期间累计', 'period_cumulative')">
+                                                    <div class="flex items-center gap-3">
+                                                        <i data-lucide="trending-up" class="w-4 h-4 text-slate-400"></i>
+                                                        <div>
+                                                            <p class="font-medium text-slate-900">期间累计</p>
+                                                            <p class="text-xs text-slate-500">按时间周期累计计算</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="dropdown-item" onclick="selectDerivedType('同比', 'yoy')">
+                                                    <div class="flex items-center gap-3">
+                                                        <i data-lucide="refresh-cw" class="w-4 h-4 text-slate-400"></i>
+                                                        <div>
+                                                            <p class="font-medium text-slate-900">同比</p>
+                                                            <p class="text-xs text-slate-500">与去年同期对比</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="dropdown-item" onclick="selectDerivedType('环比', 'mom')">
+                                                    <div class="flex items-center gap-3">
+                                                        <i data-lucide="rotate-cw" class="w-4 h-4 text-slate-400"></i>
+                                                        <div>
+                                                            <p class="font-medium text-slate-900">环比</p>
+                                                            <p class="text-xs text-slate-500">与上一周期对比</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="dropdown-item" onclick="selectDerivedType('总体占比', 'overall_ratio')">
+                                                    <div class="flex items-center gap-3">
+                                                        <i data-lucide="pie-chart" class="w-4 h-4 text-slate-400"></i>
+                                                        <div>
+                                                            <p class="font-medium text-slate-900">总体占比</p>
+                                                            <p class="text-xs text-slate-500">占总体的比例</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="dropdown-item new-type" onclick="selectDerivedType('日均', 'daily_avg')">
+                                                    <div class="flex items-center gap-3">
+                                                        <i data-lucide="calendar-days" class="w-4 h-4 text-blue-500"></i>
+                                                        <div>
+                                                            <p class="font-medium text-blue-600">日均</p>
+                                                            <p class="text-xs text-slate-500">按日期计算平均值 · 新功能</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="dropdown-item new-type" onclick="selectDerivedType('月均', 'monthly_avg')">
+                                                    <div class="flex items-center gap-3">
+                                                        <i data-lucide="calendar" class="w-4 h-4 text-blue-500"></i>
+                                                        <div>
+                                                            <p class="font-medium text-blue-600">月均</p>
+                                                            <p class="text-xs text-slate-500">按月份计算平均值 · 新功能</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 日均/月均专属配置 -->
+                                    <div id="avgConfig" class="hidden fade-in">
+                                        <!-- 平均区间 -->
+                                        <div class="mb-4">
+                                            <label class="block text-sm text-slate-600 mb-2">
+                                                平均区间 <span class="text-red-500">*</span>
+                                                <i data-lucide="help-circle" class="w-4 h-4 inline ml-1 text-slate-400 tooltip" data-tooltip="日均：日/月/季/年；月均：月/季/年"></i>
+                                            </label>
+                                            <div class="flex gap-2" id="avgPeriodOptions">
+                                                <!-- 动态生成 -->
+                                            </div>
+                                        </div>
+
+                                        <!-- 统计空值 -->
+                                        <div class="mb-4">
+                                            <label class="block text-sm text-slate-600 mb-2">
+                                                统计空值 <span class="text-red-500">*</span>
+                                                <i data-lucide="help-circle" class="w-4 h-4 inline ml-1 text-slate-400 tooltip" data-tooltip="控制空值是否参与平均值计算"></i>
+                                            </label>
+                                            <div class="flex gap-2">
+                                                <label class="flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-lg cursor-pointer hover:border-blue-300 transition-colors">
+                                                    <input type="radio" name="nullHandling" value="valid" checked class="text-blue-600">
+                                                    <span class="text-sm text-slate-700">否</span>
+                                                    <span class="text-xs text-slate-500">有效周期</span>
+                                                </label>
+                                                <label class="flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-lg cursor-pointer hover:border-blue-300 transition-colors">
+                                                    <input type="radio" name="nullHandling" value="natural" class="text-blue-600">
+                                                    <span class="text-sm text-slate-700">是</span>
+                                                    <span class="text-xs text-slate-500">自然周期</span>
+                                                </label>
+                                            </div>
+                                            <div id="nullHandlingInfo" class="mt-2 text-xs text-slate-500">
+                                                <p>• 统计空值=否：有效周期（有数据的日期参与计算）</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 时间配置 -->
+                                <div class="grid grid-cols-2 gap-4 mb-6">
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700 mb-2">
+                                            默认时间 <span class="text-red-500">*</span>
+                                        </label>
+                                        <div class="relative">
+                                            <div class="flex items-center gap-2 p-3 border border-slate-200 rounded-lg cursor-pointer hover:border-blue-300 transition-colors" onclick="toggleDropdown('timeDimensionDropdown')">
+                                                <i data-lucide="calendar" class="w-4 h-4 text-slate-400"></i>
+                                                <span id="selectedTimeDimension" class="text-slate-400">请选择时间维度</span>
+                                                <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 ml-auto"></i>
+                                            </div>
+                                            <div id="timeDimensionDropdown" class="dropdown-menu mt-2">
+                                                <div class="dropdown-item" onclick="selectTimeDimension('发放日期')">
+                                                    <div class="flex items-center gap-3">
+                                                        <i data-lucide="calendar" class="w-4 h-4 text-slate-400"></i>
+                                                        <span>发放日期</span>
+                                                    </div>
+                                                </div>
+                                                <div class="dropdown-item" onclick="selectTimeDimension('创建日期')">
+                                                    <div class="flex items-center gap-3">
+                                                        <i data-lucide="calendar" class="w-4 h-4 text-slate-400"></i>
+                                                        <span>创建日期</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700 mb-2">
+                                            默认时间粒度 <span class="text-red-500">*</span>
+                                        </label>
+                                        <div class="relative">
+                                            <div class="flex items-center gap-2 p-3 border border-slate-200 rounded-lg cursor-pointer hover:border-blue-300 transition-colors" onclick="toggleDropdown('timeGranularityDropdown')">
+                                                <i data-lucide="clock" class="w-4 h-4 text-slate-400"></i>
+                                                <span id="selectedTimeGranularity" class="text-slate-400">请选择时间粒度</span>
+                                                <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 ml-auto"></i>
+                                            </div>
+                                            <div id="timeGranularityDropdown" class="dropdown-menu mt-2">
+                                                <div class="dropdown-item" onclick="selectTimeGranularity('日')">
+                                                    <span>日</span>
+                                                </div>
+                                                <div class="dropdown-item" onclick="selectTimeGranularity('周')">
+                                                    <span>周</span>
+                                                </div>
+                                                <div class="dropdown-item" onclick="selectTimeGranularity('月')">
+                                                    <span>月</span>
+                                                </div>
+                                                <div class="dropdown-item" onclick="selectTimeGranularity('季')">
+                                                    <span>季</span>
+                                                </div>
+                                                <div class="dropdown-item" onclick="selectTimeGranularity('年')">
+                                                    <span>年</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p id="granularityHint" class="text-xs text-slate-500 mt-1 hidden"></p>
+                                    </div>
+                                </div>
+
+                                <!-- 格式配置 -->
+                                <div class="mb-6">
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">
+                                        数值格式 <span class="text-red-500">*</span>
+                                    </label>
+                                    <div class="flex gap-2">
+                                        <label class="flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-lg cursor-pointer hover:border-blue-300 transition-colors">
+                                            <input type="radio" name="numberFormat" value="currency" checked class="text-blue-600">
+                                            <span class="text-sm text-slate-700">货币型</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-lg cursor-pointer hover:border-blue-300 transition-colors">
+                                            <input type="radio" name="numberFormat" value="percentage" class="text-blue-600">
+                                            <span class="text-sm text-slate-700">百分比</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-lg cursor-pointer hover:border-blue-300 transition-colors">
+                                            <input type="radio" name="numberFormat" value="number" class="text-blue-600">
+                                            <span class="text-sm text-slate-700">数值型</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-lg cursor-pointer hover:border-blue-300 transition-colors">
+                                            <input type="radio" name="numberFormat" value="integer" class="text-blue-600">
+                                            <span class="text-sm text-slate-700">整数型</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 维度选择 -->
+                            <div class="bg-white rounded-2xl border border-slate-200 p-6">
+                                <h3 class="text-lg font-semibold text-slate-900 mb-4">可用维度</h3>
+                                <div class="dimension-tree space-y-2">
+                                    <div class="text-xs text-slate-500 mb-3">a贷款台账</div>
+                                    <div class="dimension-item" onclick="toggleDimension(this)">
+                                        <div class="flex items-center gap-2">
+                                            <i data-lucide="file-text" class="w-4 h-4 text-slate-400"></i>
+                                            <span class="text-sm text-slate-700">贷款类型</span>
+                                        </div>
+                                    </div>
+                                    <div class="dimension-item" onclick="toggleDimension(this)">
+                                        <div class="flex items-center gap-2">
+                                            <i data-lucide="file-text" class="w-4 h-4 text-slate-400"></i>
+                                            <span class="text-sm text-slate-700">还款方式</span>
+                                        </div>
+                                    </div>
+                                    <div class="dimension-item" onclick="toggleDimension(this)">
+                                        <div class="flex items-center gap-2">
+                                            <i data-lucide="file-text" class="w-4 h-4 text-slate-400"></i>
+                                            <span class="text-sm text-slate-700">客户类型</span>
+                                        </div>
+                                    </div>
+                                    <div class="dimension-item" onclick="toggleDimension(this)">
+                                        <div class="flex items-center gap-2">
+                                            <i data-lucide="calendar" class="w-4 h-4 text-slate-400"></i>
+                                            <span class="text-sm text-slate-700">发放日期</span>
+                                            <span class="ml-auto text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded">推荐</span>
+                                        </div>
+                                    </div>
+                                    <div class="dimension-item" onclick="toggleDimension(this)">
+                                        <div class="flex items-center gap-2">
+                                            <i data-lucide="calendar" class="w-4 h-4 text-slate-400"></i>
+                                            <span class="text-sm text-slate-700">发放日期(天)</span>
+                                        </div>
+                                    </div>
+                                    <div class="dimension-item" onclick="toggleDimension(this)">
+                                        <div class="flex items-center gap-2">
+                                            <i data-lucide="calendar" class="w-4 h-4 text-slate-400"></i>
+                                            <span class="text-sm text-slate-700">发放日期(月)</span>
+                                            <span class="ml-auto text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded">可选</span>
+                                        </div>
+                                    </div>
+                                    <div class="dimension-item" onclick="toggleDimension(this)">
+                                        <div class="flex items-center gap-2">
+                                            <i data-lucide="calendar" class="w-4 h-4 text-slate-400"></i>
+                                            <span class="text-sm text-slate-700">发放日期(季)</span>
+                                            <span class="ml-auto text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded">可选</span>
+                                        </div>
+                                    </div>
+                                    <div class="dimension-item" onclick="toggleDimension(this)">
+                                        <div class="flex items-center gap-2">
+                                            <i data-lucide="calendar" class="w-4 h-4 text-slate-400"></i>
+                                            <span class="text-sm text-slate-700">发放日期(年)</span>
+                                            <span class="ml-auto text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded">可选</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-xs text-slate-500 mb-3 mt-4">a客户维表</div>
+                                    <div class="dimension-item" onclick="toggleDimension(this)">
+                                        <div class="flex items-center gap-2">
+                                            <i data-lucide="file-text" class="w-4 h-4 text-slate-400"></i>
+                                            <span class="text-sm text-slate-700">行业分类编码</span>
+                                        </div>
+                                    </div>
+                                    <div class="dimension-item" onclick="toggleDimension(this)">
+                                        <div class="flex items-center gap-2">
+                                            <i data-lucide="file-text" class="w-4 h-4 text-slate-400"></i>
+                                            <span class="text-sm text-slate-700">客户信用评级</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 右侧信息面板 -->
+                        <div class="space-y-6">
+                            <!-- 配置预览 -->
+                            <div class="bg-white rounded-2xl border border-slate-200 p-6">
+                                <h3 class="text-lg font-semibold text-slate-900 mb-4">配置预览</h3>
+                                <div id="configPreview" class="space-y-3">
+                                    <div class="text-sm text-slate-400 text-center py-8">
+                                        <i data-lucide="eye" class="w-8 h-8 mx-auto mb-2 opacity-50"></i>
+                                        <p>开始配置后预览将显示在这里</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 提示信息 -->
+                            <div class="info-banner rounded-xl p-4">
+                                <div class="flex items-start gap-3">
+                                    <i data-lucide="info" class="w-5 h-5 text-blue-600 mt-0.5"></i>
+                                    <div>
+                                        <p class="font-medium text-blue-900 text-sm">配置提示</p>
+                                        <p class="text-xs text-blue-700 mt-1">日均/月均指标需要选择合适的平均区间，时间粒度将自动过滤可选范围。</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 警告信息 -->
+                            <div id="warningBanner" class="warning-banner rounded-xl p-4 hidden">
+                                <div class="flex items-start gap-3">
+                                    <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-600 mt-0.5"></i>
+                                    <div>
+                                        <p class="font-medium text-amber-900 text-sm">配置警告</p>
+                                        <p class="text-xs text-amber-700 mt-1" id="warningMessage"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 指标详情页面 -->
+            <div id="detailPage" class="page-content hidden">
+                <div class="bg-white border-b border-slate-200 px-8 py-4 sticky top-0 z-10">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <button onclick="showPage('list')" class="p-2 hover:bg-slate-100 rounded-lg transition-colors">
+                                <i data-lucide="arrow-left" class="w-5 h-5 text-slate-600"></i>
+                            </button>
+                            <div>
+                                <h2 class="text-xl font-semibold text-slate-900">融资余额月日均</h2>
+                                <p class="text-sm text-slate-500">metric_loan_balance_monthly_daily_avg</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button class="p-2 hover:bg-slate-100 rounded-lg transition-colors">
+                                <i data-lucide="star" class="w-5 h-5 text-slate-400"></i>
+                            </button>
+                            <button class="p-2 hover:bg-slate-100 rounded-lg transition-colors">
+                                <i data-lucide="arrow-down-to-line" class="w-5 h-5 text-slate-600"></i>
+                            </button>
+                            <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+                                <i data-lucide="edit" class="w-4 h-4"></i>
+                                编辑
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 标签页导航 -->
+                    <div class="flex items-center gap-8 mt-6">
+                        <button class="px-1 py-2 text-sm font-medium tab-active text-blue-600 border-b-2 border-blue-600">图表</button>
+                    </div>
+                </div>
+
+                <div class="p-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <!-- 主内容区 -->
+                        <div class="lg:col-span-2">
+                            <!-- 图表标签页 -->
+                            <div id="chartTab" class="tab-content">
+                                <div class="bg-white rounded-2xl border border-slate-200 p-6">
+                                    <!-- 查询条件 -->
+                                    <div class="flex items-center gap-4 mb-4">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-sm text-slate-700">维度</span>
+                                            <select id="dimensionSelect" class="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500 min-w-[150px]">
+                                                <option value="发放日期(月)">发放日期(月)</option>
+                                                <option value="发放日期(季)">发放日期(季)</option>
+                                                <option value="发放日期(年)">发放日期(年)</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-sm text-slate-700">限制行数</span>
+                                            <select class="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500 w-[80px]">
+                                                <option>100</option>
+                                                <option>50</option>
+                                                <option>20</option>
+                                                <option>10</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-sm text-slate-700">图表类型</span>
+                                            <select class="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500 w-[100px]">
+                                                <option>折线图</option>
+                                                <option>柱状图</option>
+                                                <option>饼图</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-sm text-slate-700">维度筛选</span>
+                                            <button class="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500 flex items-center gap-2 hover:bg-slate-50">
+                                                <i data-lucide="filter" class="w-4 h-4"></i>
+                                                已设置1个筛选
+                                            </button>
+                                        </div>
+
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-sm text-slate-700">指标筛选</span>
+                                            <button class="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500 flex items-center gap-2 hover:bg-slate-50">
+                                                <i data-lucide="filter" class="w-4 h-4"></i>
+                                                未设置筛选
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- 操作按钮 -->
+                                    <div class="flex items-center gap-2 mb-4">
+                                        <button onclick="refreshChart()" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition-colors flex items-center gap-2">
+                                            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                                            刷 新
+                                        </button>
+                                        <button class="p-2 hover:bg-slate-100 rounded-lg transition-colors" title="交换">
+                                            <i data-lucide="swap" class="w-4 h-4 text-slate-600"></i>
+                                        </button>
+                                        <button class="p-2 hover:bg-slate-100 rounded-lg transition-colors" title="告警">
+                                            <i data-lucide="alert-triangle" class="w-4 h-4 text-slate-600"></i>
+                                        </button>
+                                        <button class="p-2 hover:bg-slate-100 rounded-lg transition-colors" title="导出">
+                                            <i data-lucide="download" class="w-4 h-4 text-slate-600"></i>
+                                        </button>
+                                    </div>
+
+                                    <!-- 图表区域 -->
+                                    <div class="mb-4">
+                                        <!-- 视图切换 -->
+                                        <div class="flex items-center gap-1 mb-4 bg-slate-100 rounded-lg p-1 w-fit">
+                                            <button class="px-3 py-1.5 bg-white rounded shadow-sm text-sm font-medium flex items-center gap-2">
+                                                <i data-lucide="table" class="w-4 h-4"></i>
+                                                表格
+                                            </button>
+                                            <button class="px-3 py-1.5 text-slate-600 text-sm flex items-center gap-2 hover:bg-slate-200 rounded transition-colors">
+                                                <i data-lucide="code" class="w-4 h-4"></i>
+                                                SQL
+                                            </button>
+                                            <button class="px-3 py-1.5 text-slate-600 text-sm flex items-center gap-2 hover:bg-slate-200 rounded transition-colors">
+                                                <i data-lucide="chart-bar" class="w-4 h-4"></i>
+                                                图表
+                                            </button>
+                                        </div>
+
+                                        <canvas id="trendChart" height="300"></canvas>
+                                    </div>
+
+                                    <!-- 数据表格 -->
+                                    <div class="border border-slate-200 rounded-lg overflow-hidden">
+                                        <table class="w-full">
+                                            <thead class="bg-slate-50">
+                                                <tr>
+                                                    <th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">发放日期</th>
+                                                    <th class="px-4 py-3 text-right text-xs font-medium text-slate-500 uppercase">月日均金额</th>
+                                                    <th class="px-4 py-3 text-right text-xs font-medium text-slate-500 uppercase">有效天数</th>
+                                                    <th class="px-4 py-3 text-right text-xs font-medium text-slate-500 uppercase">自然天数</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-slate-200">
+                                                <tr>
+                                                    <td class="px-4 py-3 text-sm text-slate-900">2025-01</td>
+                                                    <td class="px-4 py-3 text-sm text-right text-slate-900">1,234,567.89</td>
+                                                    <td class="px-4 py-3 text-sm text-right text-slate-500">22</td>
+                                                    <td class="px-4 py-3 text-sm text-right text-slate-500">31</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="px-4 py-3 text-sm text-slate-900">2025-02</td>
+                                                    <td class="px-4 py-3 text-sm text-right text-slate-900">1,345,678.90</td>
+                                                    <td class="px-4 py-3 text-sm text-right text-slate-500">20</td>
+                                                    <td class="px-4 py-3 text-sm text-right text-slate-500">28</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="px-4 py-3 text-sm text-slate-900">2025-03</td>
+                                                    <td class="px-4 py-3 text-sm text-right text-slate-900">1,456,789.01</td>
+                                                    <td class="px-4 py-3 text-sm text-right text-slate-500">22</td>
+                                                    <td class="px-4 py-3 text-sm text-right text-slate-500">31</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="px-4 py-3 text-sm text-slate-900">2025-04</td>
+                                                    <td class="px-4 py-3 text-sm text-right text-slate-900">1,567,890.12</td>
+                                                    <td class="px-4 py-3 text-sm text-right text-slate-500">21</td>
+                                                    <td class="px-4 py-3 text-sm text-right text-slate-500">30</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="px-4 py-3 text-sm text-slate-900">2025-05</td>
+                                                    <td class="px-4 py-3 text-sm text-right text-slate-900">1,678,901.23</td>
+                                                    <td class="px-4 py-3 text-sm text-right text-slate-500">22</td>
+                                                    <td class="px-4 py-3 text-sm text-right text-slate-500">31</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- 右侧信息面板 -->
+                        <div class="space-y-6">
+                            <!-- 基本信息 -->
+                            <div class="bg-white rounded-2xl border border-slate-200 p-6">
+                                <h3 class="text-lg font-semibold text-slate-900 mb-4">基本信息</h3>
+                                <div class="space-y-4">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm text-slate-500">发布状态</span>
+                                        <span class="px-2 py-1 bg-green-100 text-green-600 rounded text-xs font-medium">已发布</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm text-slate-500">关联需求单</span>
+                                        <span class="text-sm text-slate-900">-</span>
+                                    </div>
+                                    <div class="border-t border-slate-100 pt-4">
+                                        <div class="space-y-3">
+                                            <div>
+                                                <p class="text-xs text-slate-500 mb-1">指标名称</p>
+                                                <p class="text-sm text-slate-900">融资余额月日均</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-slate-500 mb-1">英文名</p>
+                                                <p class="text-sm text-slate-900">loan_balance_monthly_daily_avg</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-slate-500 mb-1">指标代码</p>
+                                                <p class="text-sm text-slate-900 font-mono">metric_loan_bal_monthly_daily_avg</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-slate-500 mb-1">指标管理类型</p>
+                                                <p class="text-sm text-slate-900">内部指标</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-slate-500 mb-1">指标类型</p>
+                                                <p class="text-sm text-slate-900">派生指标</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-slate-500 mb-1">指标描述</p>
+                                                <p class="text-sm text-slate-900">-</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="border-t border-slate-100 pt-4">
+                                        <div class="space-y-2">
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-xs text-slate-500">修改人</span>
+                                                <span class="text-xs text-slate-900">admin</span>
+                                            </div>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-xs text-slate-500">修改时间</span>
+                                                <span class="text-xs text-slate-900">2026-07-16 10:30:00</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 相似指标推荐 -->
+                            <div class="bg-white rounded-2xl border border-slate-200 p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-lg font-semibold text-slate-900">相似指标推荐</h3>
+                                    <a href="#" class="text-blue-600 text-sm hover:underline flex items-center gap-1">
+                                        查看相似分析
+                                        <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                                    </a>
+                                </div>
+                                <div class="space-y-3">
+                                    <div class="p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer">
+                                        <p class="text-sm text-slate-900">投资活动产生的现金流量_月累计</p>
+                                    </div>
+                                    <div class="p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer">
+                                        <p class="text-sm text-slate-900">其他资产处置净损失_日度数据</p>
+                                    </div>
+                                    <div class="p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer">
+                                        <p class="text-sm text-slate-900">入炉油折标煤价_日度数据</p>
+                                    </div>
+                                    <div class="p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer">
+                                        <p class="text-sm text-slate-900">入炉气折标煤价_月预算值</p>
+                                    </div>
+                                    <div class="p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer">
+                                        <p class="text-sm text-slate-900">主营业务税金及附加_月预算值</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 指标列表页面 -->
+            <div id="listPage" class="page-content hidden">
+                <div class="bg-white border-b border-slate-200 px-8 py-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <h2 class="text-xl font-semibold text-slate-900">指标列表</h2>
+                        </div>
+                        <button onclick="showPage('create')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                            新增指标
+                        </button>
+                    </div>
+
+                    <!-- 筛选条件 -->
+                    <div class="flex items-center gap-4 mt-4">
+                        <div class="flex-1 max-w-md">
+                            <input type="text" placeholder="搜索指标名称、代码或别名..." class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500">
+                        </div>
+                        <select class="px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500">
+                            <option>指标类型：全部</option>
+                            <option>原子指标</option>
+                            <option>派生指标</option>
+                            <option>复合指标</option>
+                        </select>
+                        <select class="px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500">
+                            <option>发布状态：全部</option>
+                            <option>已发布</option>
+                            <option>未发布</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="p-8">
+                    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                        <table class="w-full">
+                            <thead class="bg-slate-50">
+                                <tr>
+                                    <th class="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase">指标名称</th>
+                                    <th class="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase">指标类型</th>
+                                    <th class="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase">指标代码</th>
+                                    <th class="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase">语义模型</th>
+                                    <th class="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase">发布状态</th>
+                                    <th class="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase">更新人</th>
+                                    <th class="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase">更新时间</th>
+                                    <th class="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200">
+                                <tr class="hover:bg-slate-50">
+                                    <td class="px-6 py-4">
+                                        <a href="#" onclick="showPage('detail')" class="text-blue-600 hover:underline font-medium">融资余额月日均</a>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2 py-1 bg-blue-100 text-blue-600 rounded text-xs">派生指标</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-slate-900 font-mono">metric_loan_bal_monthly_daily_avg</td>
+                                    <td class="px-6 py-4 text-sm text-slate-600">a贷款台账</td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2 py-1 bg-green-100 text-green-600 rounded text-xs">已发布</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-slate-600">admin</td>
+                                    <td class="px-6 py-4 text-sm text-slate-600">2026-07-16 10:30:00</td>
+                                    <td class="px-6 py-4">
+                                        <button class="text-blue-600 hover:underline text-sm">详情</button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-slate-50">
+                                    <td class="px-6 py-4">
+                                        <a href="#" onclick="showPage('detail')" class="text-blue-600 hover:underline font-medium">融资余额季日均</a>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2 py-1 bg-blue-100 text-blue-600 rounded text-xs">派生指标</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-slate-900 font-mono">metric_loan_bal_quarterly_daily_avg</td>
+                                    <td class="px-6 py-4 text-sm text-slate-600">a贷款台账</td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2 py-1 bg-green-100 text-green-600 rounded text-xs">已发布</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-slate-600">admin</td>
+                                    <td class="px-6 py-4 text-sm text-slate-600">2026-07-16 09:15:00</td>
+                                    <td class="px-6 py-4">
+                                        <button class="text-blue-600 hover:underline text-sm">详情</button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-slate-50">
+                                    <td class="px-6 py-4">
+                                        <a href="#" class="text-blue-600 hover:underline font-medium">融资余额</a>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2 py-1 bg-green-100 text-green-600 rounded text-xs">原子指标</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-slate-900 font-mono">metric_loan_balance</td>
+                                    <td class="px-6 py-4 text-sm text-slate-600">a贷款台账</td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2 py-1 bg-green-100 text-green-600 rounded text-xs">已发布</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-slate-600">admin</td>
+                                    <td class="px-6 py-4 text-sm text-slate-600">2026-07-15 16:19:29</td>
+                                    <td class="px-6 py-4">
+                                        <button class="text-blue-600 hover:underline text-sm">详情</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 警告弹窗 -->
+    <div id="warningModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-2xl p-6 max-w-md mx-4">
+            <div class="flex items-start gap-4">
+                <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-600"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-lg font-semibold text-slate-900 mb-2">聚合方式不支持</h3>
+                    <p class="text-sm text-slate-600 mb-4">该指标的聚合方式不支持日均/月均计算，请选择聚合方式为 sum/count/avg 的原子指标。</p>
+                    <button onclick="closeWarningModal()" class="w-full px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors">
+                        知道了
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 初始化 Lucide 图标
+        lucide.createIcons();
+
+        // 当前配置状态
+        let currentConfig = {
+            dependency: null,
+            derivedType: null,
+            avgPeriod: null,
+            nullHandling: 'valid',
+            timeDimension: null,
+            timeGranularity: null
+        };
+
+        // 页面切换
+        function showPage(page) {
+            document.querySelectorAll('.page-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(page + 'Page').classList.remove('hidden');
+
+            if (page === 'detail') {
+                initChart();
+            }
+
+            lucide.createIcons();
+        }
+
+        // 刷新图表
+        function refreshChart() {
+            // 模拟刷新动画
+            const canvas = document.getElementById('trendChart');
+            if (canvas) {
+                canvas.style.opacity = '0.5';
+                setTimeout(() => {
+                    canvas.style.opacity = '1';
+                }, 500);
+            }
+        }
+
+        // 下拉菜单切换
+        function toggleDropdown(id) {
+            const dropdown = document.getElementById(id);
+            const allDropdowns = document.querySelectorAll('.dropdown-menu');
+
+            allDropdowns.forEach(d => {
+                if (d.id !== id) d.classList.remove('show');
+            });
+
+            dropdown.classList.toggle('show');
+        }
+
+        // 选择依赖指标
+        function selectDependency(name, code, type) {
+            currentConfig.dependency = { name, code, type };
+            document.getElementById('selectedDependency').innerHTML = `
+                <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                <span class="font-medium text-slate-900">${name}</span>
+                <span class="text-xs text-slate-500">${code} · ${type}</span>
+            `;
+            document.getElementById('dependencyDropdown').classList.remove('show');
+            updateConfigPreview();
+        }
+
+        // 显示聚合方式警告
+        function showAggregateWarning() {
+            document.getElementById('warningModal').classList.remove('hidden');
+        }
+
+        function closeWarningModal() {
+            document.getElementById('warningModal').classList.add('hidden');
+        }
+
+        // 选择派生类型
+        function selectDerivedType(name, value) {
+            currentConfig.derivedType = { name, value };
+            document.getElementById('selectedDerivedType').innerHTML = `
+                <span class="font-medium text-slate-900">${name}</span>
+            `;
+            document.getElementById('derivedTypeDropdown').classList.remove('show');
+
+            // 显示/隐藏日均月均配置
+            const avgConfig = document.getElementById('avgConfig');
+            if (value === 'daily_avg' || value === 'monthly_avg') {
+                avgConfig.classList.remove('hidden');
+
+                // 设置平均区间选项
+                const periodOptions = document.getElementById('avgPeriodOptions');
+                let options = [];
+
+                if (value === 'daily_avg') {
+                    options = [
+                        { label: '日', value: 'day', desc: '日日均' },
+                        { label: '月', value: 'month', desc: '月日均' },
+                        { label: '季', value: 'quarter', desc: '季日均' },
+                        { label: '年', value: 'year', desc: '年日均' }
+                    ];
+                } else {
+                    options = [
+                        { label: '月', value: 'month', desc: '月月均' },
+                        { label: '季', value: 'quarter', desc: '季月均' },
+                        { label: '年', value: 'year', desc: '年月均' }
+                    ];
+                }
+
+                periodOptions.innerHTML = options.map(opt => `
+                    <label class="flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-lg cursor-pointer hover:border-blue-300 transition-colors flex-1">
+                        <input type="radio" name="avgPeriod" value="${opt.value}" class="text-blue-600" onchange="selectAvgPeriod('${opt.value}', '${opt.label}')">
+                        <div>
+                            <span class="text-sm text-slate-700">${opt.label}</span>
+                            <span class="text-xs text-slate-500 block">${opt.desc}</span>
+                        </div>
+                    </label>
+                `).join('');
+
+            } else {
+                avgConfig.classList.add('hidden');
+                currentConfig.avgPeriod = null;
+            }
+
+            updateConfigPreview();
+        }
+
+        // 选择平均区间
+        function selectAvgPeriod(value, label) {
+            currentConfig.avgPeriod = { value, label };
+            updateTimeGranularityOptions();
+            updateConfigPreview();
+        }
+
+        // 更新时间粒度选项
+        function updateTimeGranularityOptions() {
+            if (!currentConfig.derivedType || !currentConfig.avgPeriod) return;
+
+            const granularityHint = document.getElementById('granularityHint');
+            const granularityDropdown = document.getElementById('timeGranularityDropdown');
+            const derivedType = currentConfig.derivedType.value;
+            const avgPeriod = currentConfig.avgPeriod.value;
+
+            let allowedGranularities = [];
+            let hint = '';
+
+            if (derivedType === 'daily_avg') {
+                // 日均：时间粒度可选范围 = [平均区间, 日]
+                const periodMap = {
+                    day: ['日'],
+                    month: ['日', '月'],
+                    quarter: ['日', '月', '季'],
+                    year: ['日', '月', '季', '年']
+                };
+                allowedGranularities = periodMap[avgPeriod] || [];
+                hint = `可选范围：${currentConfig.avgPeriod.label} ~ 日（闭区间）`;
+            } else if (derivedType === 'monthly_avg') {
+                // 月均：时间粒度可选范围 = [平均区间, 月]
+                const periodMap = {
+                    month: ['月'],
+                    quarter: ['月', '季'],
+                    year: ['月', '季', '年']
+                };
+                allowedGranularities = periodMap[avgPeriod] || [];
+                hint = `可选范围：${currentConfig.avgPeriod.label} ~ 月（闭区间）`;
+            }
+
+            // 更新时间粒度下拉菜单选项
+            granularityDropdown.innerHTML = allowedGranularities.map(granularity => `
+                <div class="dropdown-item" onclick="selectTimeGranularity('${granularity}')">
+                    <span>${granularity}</span>
+                </div>
+            `).join('');
+
+            granularityHint.textContent = `ℹ️ ${hint}（已过滤周粒度）`;
+            granularityHint.classList.remove('hidden');
+
+            // 如果当前选择的时间粒度不在允许范围内，清空选择
+            if (currentConfig.timeGranularity && !allowedGranularities.includes(currentConfig.timeGranularity)) {
+                currentConfig.timeGranularity = null;
+                document.getElementById('selectedTimeGranularity').innerHTML = '<span class="text-slate-400">请选择时间粒度</span>';
+            }
+        }
+
+        // 选择时间维度
+        function selectTimeDimension(name) {
+            currentConfig.timeDimension = name;
+            document.getElementById('selectedTimeDimension').innerHTML = `
+                <i data-lucide="calendar" class="w-4 h-4 text-slate-400"></i>
+                <span class="text-slate-900">${name}</span>
+            `;
+            document.getElementById('timeDimensionDropdown').classList.remove('show');
+            updateConfigPreview();
+            lucide.createIcons();
+        }
+
+        // 选择时间粒度
+        function selectTimeGranularity(name) {
+            currentConfig.timeGranularity = name;
+            document.getElementById('selectedTimeGranularity').innerHTML = `
+                <span class="text-slate-900">${name}</span>
+            `;
+            document.getElementById('timeGranularityDropdown').classList.remove('show');
+            updateConfigPreview();
+        }
+
+        // 切换筛选开关
+        function toggleFilter() {
+            const switchEl = document.getElementById('filterSwitch');
+            const content = document.getElementById('filterContent');
+
+            switchEl.classList.toggle('active');
+            content.classList.toggle('hidden');
+        }
+
+        // 切换维度选择
+        function toggleDimension(el) {
+            el.classList.toggle('selected');
+        }
+
+        // 更新配置预览
+        function updateConfigPreview() {
+            const preview = document.getElementById('configPreview');
+
+            if (!currentConfig.dependency && !currentConfig.derivedType) {
+                preview.innerHTML = `
+                    <div class="text-sm text-slate-400 text-center py-8">
+                        <i data-lucide="eye" class="w-8 h-8 mx-auto mb-2 opacity-50"></i>
+                        <p>开始配置后预览将显示在这里</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            let html = '';
+
+            if (currentConfig.dependency) {
+                html += `
+                    <div class="flex items-center justify-between py-2 border-b border-slate-100">
+                        <span class="text-sm text-slate-500">依赖指标</span>
+                        <span class="text-sm text-slate-900 font-medium">${currentConfig.dependency.name}</span>
+                    </div>
+                `;
+            }
+
+            if (currentConfig.derivedType) {
+                html += `
+                    <div class="flex items-center justify-between py-2 border-b border-slate-100">
+                        <span class="text-sm text-slate-500">派生类型</span>
+                        <span class="text-sm text-blue-600 font-medium">${currentConfig.derivedType.name}</span>
+                    </div>
+                `;
+            }
+
+            if (currentConfig.avgPeriod) {
+                html += `
+                    <div class="flex items-center justify-between py-2 border-b border-slate-100">
+                        <span class="text-sm text-slate-500">平均区间</span>
+                        <span class="text-sm text-slate-900">${currentConfig.avgPeriod.label}</span>
+                    </div>
+                `;
+            }
+
+            if (currentConfig.timeDimension) {
+                html += `
+                    <div class="flex items-center justify-between py-2 border-b border-slate-100">
+                        <span class="text-sm text-slate-500">时间维度</span>
+                        <span class="text-sm text-slate-900">${currentConfig.timeDimension}</span>
+                    </div>
+                `;
+            }
+
+            if (currentConfig.timeGranularity) {
+                html += `
+                    <div class="flex items-center justify-between py-2 border-b border-slate-100">
+                        <span class="text-sm text-slate-500">时间粒度</span>
+                        <span class="text-sm text-slate-900">${currentConfig.timeGranularity}</span>
+                    </div>
+                `;
+            }
+
+            preview.innerHTML = html || `
+                <div class="text-sm text-slate-400 text-center py-8">
+                    <i data-lucide="eye" class="w-8 h-8 mx-auto mb-2 opacity-50"></i>
+                    <p>开始配置后预览将显示在这里</p>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        // 保存指标
+        function saveIndicator() {
+            if (!currentConfig.dependency) {
+                alert('请选择依赖指标');
+                return;
+            }
+
+            if (!currentConfig.derivedType) {
+                alert('请选择派生类型');
+                return;
+            }
+
+            if ((currentConfig.derivedType.value === 'daily_avg' || currentConfig.derivedType.value === 'monthly_avg') && !currentConfig.avgPeriod) {
+                alert('请选择平均区间');
+                return;
+            }
+
+            // 模拟保存
+            const btn = document.getElementById('saveBtn');
+            btn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i> 保存成功';
+            btn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+            btn.classList.add('bg-green-600', 'hover:bg-green-700');
+
+            setTimeout(() => {
+                btn.innerHTML = '<i data-lucide="save" class="w-4 h-4"></i> 保存';
+                btn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                btn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                showPage('detail');
+                lucide.createIcons();
+            }, 1500);
+
+            lucide.createIcons();
+        }
+
+        // 初始化图表
+        function initChart() {
+            const ctx = document.getElementById('trendChart');
+            if (!ctx) return;
+
+            // 销毁已存在的图表
+            if (window.trendChartInstance) {
+                window.trendChartInstance.destroy();
+            }
+
+            window.trendChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
+                    datasets: [{
+                        label: '融资余额月日均',
+                        data: [1234567.89, 1345678.90, 1456789.01, 1567890.12, 1678901.23, 1789012.34],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.3,
+                        fill: true,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        pointBackgroundColor: '#3b82f6',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: '#1e293b',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            padding: 12,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: function(context) {
+                                    return '月日均: ¥' + context.parsed.y.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#64748b'
+                            }
+                        },
+                        y: {
+                            beginAtZero: false,
+                            grid: {
+                                color: '#e2e8f0'
+                            },
+                            ticks: {
+                                color: '#64748b',
+                                callback: function(value) {
+                                    return '¥' + (value / 10000).toFixed(0) + '万';
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    }
+                }
+            });
+        }
+
+        // 统计空值处理说明更新
+        document.addEventListener('change', function(e) {
+            if (e.target.name === 'nullHandling') {
+                const info = document.getElementById('nullHandlingInfo');
+                if (e.target.value === 'valid') {
+                    info.innerHTML = '<p>• 统计空值=否：有效周期（有数据的日期参与计算）</p>';
+                } else {
+                    info.innerHTML = '<p>• 统计空值=是：自然周期（所有日期参与计算，包括无数据的期间）</p>';
+                }
+            }
+        });
+
+        // 点击外部关闭下拉菜单
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.relative')) {
+                document.querySelectorAll('.dropdown-menu').forEach(dropdown => {
+                    dropdown.classList.remove('show');
+                });
+            }
+        });
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            showPage('create');
+
+            // 如果是详情页面，初始化图表
+            if (document.getElementById('detailPage') && !document.getElementById('detailPage').classList.contains('hidden')) {
+                initChart();
+            }
+        });
+    </script>
+</body>
+</html>
