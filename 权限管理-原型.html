@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GienBI - 权限管理</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{font-family:'Inter','Noto Sans SC',sans-serif;margin:0;padding:0;box-sizing:border-box}
+:root{--pri:#3B82F6;--pri-lt:#EFF6FF;--pri-dk:#1D4ED8;--bg:#F8FAFC;--card:#fff;--bd:#E2E8F0;--bd-lt:#F1F5F9;--t1:#0F172A;--t2:#475569;--t3:#94A3B8}
+body{background:var(--bg);display:flex;height:100vh;overflow:hidden;font-size:14px}
+
+/* Sidebar */
+aside{width:220px;background:#fff;border-right:1px solid var(--bd);display:flex;flex-direction:column;flex-shrink:0}
+aside .logo{padding:20px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px;white-space:nowrap}
+aside .logo .icon{width:34px;height:34px;background:linear-gradient(135deg,#3B82F6,#1D4ED8);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+aside nav{flex:1;padding:12px 10px;overflow-y:auto}
+aside nav .grp{font-size:10.5px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;padding:10px 10px 4px}
+aside nav a{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:8px;font-size:13.5px;font-weight:500;color:var(--t2);cursor:pointer;transition:all .12s;margin-bottom:1px;text-decoration:none;white-space:nowrap}
+aside nav a:hover{background:#F1F5F9;color:var(--t1)}
+aside nav a.active{background:var(--pri-lt);color:var(--pri);font-weight:600}
+aside nav a i,aside nav a svg{width:18px;height:18px;flex-shrink:0}
+aside .user{padding:14px 16px;border-top:1px solid var(--bd);display:flex;align-items:center;gap:8px}
+aside .user .av{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#3B82F6,#1D4ED8);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+aside .user .info{flex:1;min-width:0}
+aside .user .info .nm{font-size:13px;font-weight:600;color:var(--t1);white-space:nowrap}
+aside .user .info .em{font-size:11px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Main */
+main{flex:1;display:flex;flex-direction:column;overflow:visible;min-width:0}
+main>.hd{background:#fff;border-bottom:1px solid var(--bd);padding:0 24px;height:56px;display:flex;align-items:center;flex-shrink:0}
+main>.hd h1{font-size:17px;font-weight:700;color:var(--t1)}
+
+/* Tabs */
+.tabs{display:flex;gap:0;border-bottom:2px solid var(--bd-lt);padding:0 24px;background:#fff;flex-shrink:0}
+.tabs .t{padding:12px 20px;font-size:14px;font-weight:500;color:var(--t2);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .12s;white-space:nowrap}
+.tabs .t:hover{color:var(--t1)}
+.tabs .t.on{color:var(--pri);border-bottom-color:var(--pri);font-weight:600}
+.tab-panel{display:none!important}
+.tab-panel.on{display:flex!important}
+
+/* Split layout */
+.split{display:flex;flex:1;overflow:hidden}
+.split-l{width:260px;flex-shrink:0;border-right:1px solid var(--bd);background:#fff;display:flex;flex-direction:column}
+.split-l .hd{padding:14px;border-bottom:1px solid var(--bd-lt)}
+.split-l .lst{flex:1;overflow-y:auto;padding:6px}
+.split-r{flex:1;overflow-y:auto;background:#fff;min-width:0}
+
+/* Tree */
+.tree-item{display:flex;align-items:center;gap:7px;padding:8px 12px;border-radius:7px;cursor:pointer;font-size:13.5px;color:var(--t2);transition:all .08s;white-space:nowrap;overflow:hidden}
+#rpResTree .tree-item{overflow:visible;flex-shrink:0}
+.tree-item>i,.tree-item>svg,.tree-item>.tree-toggle-wrap{flex-shrink:0}
+.tree-item:hover{background:#F8FAFC}
+.tree-item.on{background:var(--pri-lt);color:var(--pri);font-weight:500}
+.tree-sub{margin-left:18px;border-left:1px solid var(--bd-lt);padding-left:4px}
+.tree-toggle{width:14px;height:14px;transition:transform .15s;flex-shrink:0}
+
+/* List items */
+.li{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:9px;cursor:pointer;transition:all .08s;margin-bottom:1px;white-space:nowrap}
+.li:hover{background:#F8FAFC}
+.li.on{background:var(--pri-lt)}
+.li>i,.li>svg{flex-shrink:0}
+.li .li-tt{font-size:13.5px;font-weight:600;color:var(--t1);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.li .li-sub{font-size:11.5px;color:var(--t3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .12s;white-space:nowrap;background:none}
+.btn-pri{background:var(--pri);color:#fff}
+.btn-pri:hover{background:var(--pri-dk)}
+.btn-sec{background:#fff;color:var(--t2);border:1px solid var(--bd)}
+.btn-sec:hover{background:#F8FAFC}
+.btn-gh{background:none;color:var(--t3);padding:6px;border-radius:6px}
+.btn-gh:hover{background:#F1F5F9;color:var(--t1)}
+
+/* Input/Select */
+.inp,.sel{height:34px;padding:0 10px;border:1px solid var(--bd);border-radius:7px;font-size:13px;color:var(--t1);background:#fff;outline:none;transition:all .12s}
+.inp:focus,.sel:focus{border-color:var(--pri);box-shadow:0 0 0 3px rgba(59,130,246,.08)}
+.inp{padding-left:30px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E") 8px center no-repeat}
+.sel{padding-right:28px;appearance:none;cursor:pointer;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") right 10px center no-repeat}
+.frm-inp{width:100%;height:36px;padding:0 10px;border:1px solid var(--bd);border-radius:7px;font-size:13.5px;outline:none;transition:all .12s;background:#fff}
+.frm-inp:focus{border-color:var(--pri);box-shadow:0 0 0 3px rgba(59,130,246,.06)}
+
+/* Tags & Badges */
+.tag{display:inline-flex;align-items:center;padding:2px 9px;border-radius:5px;font-size:12px;font-weight:500;margin:1px 2px;white-space:nowrap}
+.tag-blue{background:#EFF6FF;color:#1D4ED8}
+.tag-green{background:#F0FDF4;color:#15803D}
+.tag-gray{background:#F1F5F9;color:#64748B}
+.tag-red{background:#FEF2F2;color:#DC2626}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:500;white-space:nowrap}
+
+/* Table */
+.tbl-wrap{background:#fff;border:1px solid var(--bd);border-radius:14px}
+.tbl-wrap table{width:100%;border-collapse:collapse;table-layout:fixed}
+.tbl-wrap thead th{text-align:left;padding:11px 14px;font-size:12px;font-weight:600;color:var(--t3);background:#FAFAFA;border-bottom:1px solid var(--bd);text-transform:uppercase;letter-spacing:.2px;white-space:nowrap}
+.tbl-wrap thead th:first-child{padding-left:18px}
+.tbl-wrap thead th:last-child{text-align:right;padding-right:18px}
+.tbl-wrap tbody td{padding:12px 14px;font-size:13.5px;color:var(--t1);border-bottom:1px solid var(--bd-lt);vertical-align:middle;white-space:nowrap}
+.tbl-wrap tbody td:first-child{padding-left:18px}
+.tbl-wrap tbody td:last-child{text-align:right;padding-right:18px}
+.tbl-wrap tbody tr{transition:background .08s;position:relative}
+.tbl-wrap tbody tr:hover{background:#FAFBFC}
+.tbl-wrap tbody tr:last-child td{border-bottom:none}
+
+/* Tree row */
+.tree-row{cursor:pointer}
+.tree-row td{white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis}
+.tree-row .toggle{display:inline-flex;width:18px;height:18px;align-items:center;justify-content:center;border-radius:4px;transition:all .1s;flex-shrink:0;margin-right:2px;vertical-align:middle}
+.tree-row .toggle:hover{background:#E2E8F0}
+.tree-row .toggle i{width:14px;height:14px;transition:transform .15s}
+.tree-row.expanded .toggle i{transform:rotate(90deg)}
+.tree-row.parent{font-weight:600}
+.tree-row.child{background:#FAFBFC}
+.tree-row.child td:first-child{padding-left:42px}
+.tree-row.grandchild td:first-child{padding-left:66px}
+
+/* Panel */
+.panel{display:none!important}
+.panel.on{display:block!important}
+#rpLeftRegular.panel.on,#rpLeftResource.panel.on{display:flex!important;flex-direction:column}
+
+/* Detail section */
+.dsec{padding:18px 20px;border-bottom:1px solid var(--bd-lt)}
+.dsec:last-child{border-bottom:none}
+.dsec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;white-space:nowrap}
+.dsec-tt{font-size:14px;font-weight:600;color:var(--t1);white-space:nowrap}
+
+/* View switcher */
+.vs{display:flex;gap:2px;background:var(--bd-lt);border-radius:7px;padding:2px;margin-bottom:14px}
+.vs .vs-btn{padding:5px 14px;font-size:12.5px;font-weight:500;border-radius:6px;cursor:pointer;color:var(--t3);border:none;background:transparent;transition:all .1s;white-space:nowrap}
+.vs .vs-btn.on{background:#fff;color:var(--t1);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+
+/* Compact scope toggle (in-table) */
+.scope-tg{display:inline-flex;gap:0;background:var(--bd-lt);border-radius:4px;padding:1px;font-size:11px;vertical-align:middle;margin-left:6px}
+.scope-tg span{padding:2px 6px;border-radius:3px;cursor:pointer;color:var(--t3);font-weight:500;transition:all .1s;white-space:nowrap}
+.scope-tg span.on{background:#fff;color:var(--pri);box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.scope-tg.locked{opacity:.4;pointer-events:none}
+.perm-cb:disabled{opacity:.35;cursor:not-allowed}
+
+/* Horizontal scrollable tabs */
+.htabs-wrap{overflow-x:auto;overflow-y:visible;margin-bottom:14px;-webkit-overflow-scrolling:touch}
+.htabs-wrap::-webkit-scrollbar{height:3px}
+.htabs-wrap::-webkit-scrollbar-thumb{background:#D1D5DB;border-radius:2px}
+.htabs{display:flex;gap:4px;white-space:nowrap;padding-bottom:2px}
+.htab{padding:7px 16px;font-size:13px;font-weight:500;border-radius:7px;cursor:pointer;color:var(--t2);border:1px solid var(--bd);background:#fff;transition:all .12s;flex-shrink:0;white-space:nowrap}
+.htab:hover{background:#F8FAFC;border-color:#CBD5E1}
+.htab.on{background:var(--pri);color:#fff;border-color:var(--pri)}
+
+/* Modal */
+.mod-o{position:fixed;inset:0;background:rgba(15,23,42,.4);display:flex;align-items:center;justify-content:center;z-index:1000;opacity:0;visibility:hidden;transition:all .15s}
+.mod-o.show{opacity:1;visibility:visible}
+.mod{background:#fff;border-radius:16px;width:540px;max-height:85vh;overflow-y:auto;box-shadow:0 20px 50px rgba(0,0,0,.15);transform:scale(.96);transition:transform .15s}
+.mod-o.show .mod{transform:scale(1)}
+.mod-hd{padding:18px 22px;border-bottom:1px solid var(--bd-lt);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;z-index:1;border-radius:16px 16px 0 0}
+.mod-hd h3{font-size:16px;font-weight:700;white-space:nowrap}
+.mod-bd{padding:20px 22px}
+.mod-ft{padding:14px 22px;border-top:1px solid var(--bd-lt);display:flex;justify-content:flex-end;gap:8px;position:sticky;bottom:0;background:#fff;border-radius:0 0 16px 16px;white-space:nowrap}
+
+/* Section */
+.sec{padding:18px 20px;border-bottom:1px solid var(--bd-lt)}
+.sec:last-child{border-bottom:none}
+.sec-tt{font-size:15px;font-weight:600;color:var(--t1);margin-bottom:12px;white-space:nowrap}
+
+/* Switch */
+.switch-wrap{display:flex;align-items:center;gap:10px}
+.switch{position:relative;width:44px;height:24px;background:#CBD5E1;border-radius:12px;cursor:pointer;transition:all .2s;flex-shrink:0}
+.switch.on{background:var(--pri)}
+.switch::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.switch.on::after{left:22px}
+
+/* Radio */
+.radio-group{display:flex;flex-direction:column;gap:8px}
+.radio-item{display:flex;align-items:flex-start;gap:8px;padding:10px 14px;border:1px solid var(--bd);border-radius:8px;cursor:pointer;transition:all .1s}
+.radio-item:hover{background:#F8FAFC}
+.radio-item.on{border-color:var(--pri);background:var(--pri-lt)}
+.radio-item input[type=radio]{margin-top:2px;accent-color:var(--pri);cursor:pointer;flex-shrink:0}
+.radio-tt{font-size:13px;font-weight:600;white-space:nowrap}
+.radio-desc{font-size:12px;color:var(--t3);margin-top:2px}
+
+/* Banner */
+.banner{padding:10px 14px;border-radius:9px;font-size:12.5px;display:flex;align-items:flex-start;gap:8px;margin-bottom:16px}
+.banner-warn{background:#FFFBEB;color:#92400E;border:1px solid #FDE68A}
+
+/* Permission checkbox */
+.perm-cb{width:16px;height:16px;accent-color:var(--pri);cursor:pointer}
+
+/* Sub-tabs inside section */
+.subtabs{display:flex;border-bottom:1px solid var(--bd-lt);margin-bottom:14px}
+.subtab{padding:8px 16px;font-size:13px;font-weight:500;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .1s;white-space:nowrap}
+.subtab.on{color:var(--pri);border-bottom-color:var(--pri)}
+.subtab:hover{color:var(--t1)}
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside>
+  <div class="logo">
+    <div class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="12" width="3" height="9" rx="1"/><rect x="10" y="7" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="18" rx="1"/></svg></div>
+    <span style="font-size:17px;font-weight:700;color:var(--t1);">GienBI</span>
+  </div>
+  <nav>
+    <a onclick="location.href='资源目录-原型.html'"><i data-lucide="folder-tree"></i> 资源目录</a>
+    <div class="grp">系统管理</div>
+    <a onclick="location.href='用户管理-原型.html'"><i data-lucide="users"></i> 用户管理</a>
+    <a class="active"><i data-lucide="shield"></i> 权限管理</a>
+  </nav>
+  <div class="user">
+    <div class="av">管</div>
+    <div class="info"><div class="nm">管理员</div><div class="em">admin@gientech.com</div></div>
+    <span class="tag tag-blue" style="font-size:11px;">租户管理员</span>
+  </div>
+</aside>
+
+<!-- Main -->
+<main>
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="t on" onclick="switchTab('fp',this)">功能权限配置</div>
+    <div class="t" onclick="switchTab('rp',this)">资源权限配置</div>
+    <div class="t" onclick="switchTab('dl',this)">分级授权配置</div>
+  </div>
+
+  <!-- ====== Tab 1: 功能权限配置 ====== -->
+  <div id="tab-fp" class="tab-panel on" style="flex:1;overflow:visible;">
+    <div class="split">
+      <div class="split-l">
+        <div class="hd">
+          <div style="font-size:13px;font-weight:600;margin-bottom:8px;">授权对象</div>
+          <div style="display:flex;gap:4px;margin-bottom:8px;">
+            <div class="subtab on" onclick="switchFPObj('org',this)" style="padding:6px 12px;font-size:12.5px;">组织</div>
+            <div class="subtab" onclick="switchFPObj('role',this)" style="padding:6px 12px;font-size:12.5px;">角色</div>
+            <div class="subtab" onclick="switchFPObj('member',this)" style="padding:6px 12px;font-size:12.5px;">成员</div>
+          </div>
+          <input class="frm-inp" style="font-size:12.5px;margin-bottom:6px;" placeholder="搜索..." id="fpKw" oninput="renderFPObjList()">
+        </div>
+        <div class="lst" id="fpObjList"></div>
+      </div>
+      <div class="split-r" id="fpDetail">
+        <div id="fpEmpty" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--t3);opacity:.5;">
+          <i data-lucide="settings" style="width:44px;height:44px;margin-bottom:10px;"></i>
+          <span style="font-size:13px;">请从左侧选择一个对象配置功能权限</span>
+        </div>
+        <div id="fpContent" class="panel"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== Tab 2: 资源权限配置 ====== -->
+  <div id="tab-rp" class="tab-panel" style="flex:1;overflow:visible;">
+    <div class="split" style="flex:1;">
+      <!-- Left Panel -->
+      <div class="split-l" id="rpLeft">
+        <div class="hd" style="padding-bottom:10px;">
+          <div class="vs" id="rpVS" style="margin-bottom:0;width:100%;">
+            <div class="vs-btn on" onclick="switchRPView('regular',this)" style="flex:1;text-align:center;">常规视图</div>
+            <div class="vs-btn" onclick="switchRPView('resource',this)" style="flex:1;text-align:center;">资源视图</div>
+          </div>
+        </div>
+        <!-- Regular: object type tabs + list -->
+        <div id="rpLeftRegular" class="panel on" style="display:flex;flex-direction:column;height:100%;">
+          <div class="hd" style="border-top:1px solid var(--bd-lt);">
+            <div style="font-size:13px;font-weight:600;margin-bottom:8px;">授权对象</div>
+            <div style="display:flex;gap:4px;margin-bottom:8px;">
+              <div class="subtab on" onclick="switchRPObj('org',this)" style="padding:6px 12px;font-size:12.5px;">组织</div>
+              <div class="subtab" onclick="switchRPObj('role',this)" style="padding:6px 12px;font-size:12.5px;">角色</div>
+              <div class="subtab" onclick="switchRPObj('member',this)" style="padding:6px 12px;font-size:12.5px;">成员</div>
+            </div>
+            <input class="frm-inp" style="font-size:12.5px;" placeholder="搜索...">
+          </div>
+          <div class="lst" id="rpObjList"></div>
+        </div>
+        <!-- Resource: resource tree -->
+        <div id="rpLeftResource" class="panel" style="display:flex;flex-direction:column;height:100%;">
+          <div class="hd" style="padding-bottom:6px;"><div style="font-size:13px;font-weight:600;">资源列表</div></div>
+          <div style="display:flex;flex:1;min-height:0;overflow:hidden;max-height:75vh;">
+            <div style="width:126px;flex-shrink:0;border-right:1px solid var(--bd-lt);overflow:auto;padding:4px;" id="rpResTypeList"></div>
+            <div style="flex:1;display:flex;flex-direction:column;min-width:0;">
+              <div style="padding:0 4px 4px;"><input class="frm-inp" style="font-size:12px;height:30px;" placeholder="搜索资源..." id="rpResTreeKw" oninput="filterResTree()"></div>
+              <div style="flex:1;overflow:auto;padding:4px;min-width:0;" class="lst tree" id="rpResTree"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Right Panel -->
+      <div class="split-r" id="rpDetail">
+        <div id="rpEmpty" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--t3);opacity:.5;">
+          <i data-lucide="database" style="width:44px;height:44px;margin-bottom:10px;"></i>
+          <span style="font-size:13px;">请选择对象查看资源权限</span>
+        </div>
+        <div id="rpContent" class="panel"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== Tab 3: 分级授权配置 ====== -->
+  <div id="tab-dl" class="tab-panel" style="flex:1;overflow-y:auto;flex-direction:column;">
+    <div class="content" style="flex:1;overflow-y:auto;padding:20px 24px;">
+      <!-- General Settings -->
+      <div class="tbl-wrap" style="margin-bottom:16px;">
+        <div class="dsec">
+          <div class="dsec-tt" style="margin-bottom:14px;">通用设置</div>
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div>
+                <div style="font-size:14px;font-weight:600;">分级授权</div>
+                <div style="font-size:12px;color:var(--t3);margin-top:2px;">开启后，租户内可设置次级管理员并下放管理权限</div>
+              </div>
+              <div class="switch on" id="dlSwitch" onclick="toggleDL()"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Personnel Permission Config -->
+      <div class="tbl-wrap" id="dlAdminSection">
+        <div class="dsec">
+          <div class="dsec-hd"><div class="dsec-tt">人员管理权限配置</div></div>
+          <div style="display:flex;gap:16px;height:440px;">
+            <div style="width:240px;flex-shrink:0;border-right:1px solid var(--bd-lt);padding-right:16px;display:flex;flex-direction:column;">
+              <div style="display:flex;gap:4px;margin-bottom:8px;flex-shrink:0;">
+                <div class="subtab on" onclick="switchDLPerson('org',this)" style="padding:5px 12px;font-size:12px;">组织</div>
+                <div class="subtab" onclick="switchDLPerson('role',this)" style="padding:5px 12px;font-size:12px;">角色</div>
+                <div class="subtab" onclick="switchDLPerson('member',this)" style="padding:5px 12px;font-size:12px;">成员</div>
+              </div>
+              <input class="frm-inp" style="font-size:12.5px;margin-bottom:8px;flex-shrink:0;" placeholder="搜索...">
+              <div style="flex:1;overflow-y:auto;" id="dlPersonList"></div>
+            </div>
+            <div style="flex:1;min-width:0;overflow-y:auto;" id="dlPermDetail">
+              <div style="text-align:center;padding:60px 20px;color:var(--t3);font-size:13px;">请选择左侧对象配置人员管理权限</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ====== Modals ====== -->
+
+<!-- Close Delegation Confirm Modal -->
+<div id="closeDLModal" class="mod-o" style="z-index:2000;"><div class="mod" style="width:440px;"><div class="mod-bd" style="text-align:center;">
+  <div style="width:56px;height:56px;background:#FEF2F2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+    <i data-lucide="alert-triangle" style="width:28px;height:28px;color:#EF4444;"></i>
+  </div>
+  <h3 style="font-size:16px;font-weight:700;margin-bottom:12px;">确认关闭分级授权</h3>
+  <div style="text-align:left;font-size:13px;color:var(--t2);line-height:1.8;margin-bottom:16px;padding:0 10px;">
+    <div style="margin-bottom:8px;">关闭分级授权后：</div>
+    <div>· 所有次级管理员（共 <b>2</b> 位）即时失效</div>
+    <div>· 次级管理员退回为普通用户</div>
+    <div>· 次级管理员已发出的授权记录保留不撤销</div>
+    <div>· 次级管理员创建的角色保留，可由您管理</div>
+    <div style="margin-top:8px;color:var(--t3);">如再次开启，已配置的次级管理员恢复生效。</div>
+  </div>
+  <div style="display:flex;justify-content:center;gap:10px;">
+    <button class="btn btn-sec" onclick="closeModal('closeDLModal')">取消</button>
+    <button class="btn" style="background:#EF4444;color:#fff;" onclick="confirmCloseDL()">确认关闭</button>
+  </div>
+</div></div></div>
+
+<script>
+// ========== DATA ==========
+// Function menu tree
+const funcTree = [
+  { id:'dir', name:'资源目录', children:[] },
+  { id:'da', name:'数据分析', children:[
+    { id:'da-dash', name:'仪表板管理' },{ id:'da-report', name:'报表分析' },
+    { id:'da-sheet', name:'电子表格' },{ id:'da-areport', name:'分析报告' },
+    { id:'da-goal', name:'目标管理' },{ id:'da-qa', name:'智能问答' }
+  ]},
+  { id:'dp', name:'数据准备', children:[
+    { id:'dp-ds', name:'数据集' },{ id:'dp-dsrc', name:'数据源' },
+    { id:'dp-model', name:'语义模型' },{ id:'dp-fill', name:'数据填报' },
+    { id:'dp-dim', name:'维表管理' },{ id:'dp-dict', name:'字典管理' }
+  ]},
+  { id:'idx', name:'指标', children:[
+    { id:'idx-list', name:'指标列表' },{ id:'idx-cat', name:'指标分类' },
+    { id:'idx-ana', name:'指标分析' },{ id:'idx-req', name:'需求管理' }
+  ]},
+  { id:'is', name:'指标服务', children:[
+    { id:'is-app', name:'应用管理' },{ id:'is-api', name:'API服务' },
+    { id:'is-mon', name:'服务监控' }
+  ]},
+  { id:'portal', name:'数据门户', children:[
+    { id:'portal-pc', name:'PC端应用管理' },{ id:'portal-mob', name:'移动端应用管理' }
+  ]},
+  { id:'sys', name:'系统管理', children:[
+    { id:'sys-user', name:'用户管理' },{ id:'sys-perm', name:'权限管理' },
+    { id:'sys-wm', name:'水印配置' },{ id:'sys-alert', name:'监控预警' },
+    { id:'sys-task', name:'任务管理' },{ id:'sys-tmon', name:'任务监控' },
+    { id:'sys-mig', name:'资源迁移' }
+  ]},
+  { id:'ai', name:'AI 配置中心', children:[
+    { id:'ai-qa', name:'问答配置' },{ id:'ai-gen', name:'通用配置' },
+    { id:'ai-train', name:'训练评估' }
+  ]},
+  { id:'audit', name:'审计日志', children:[] },
+];
+
+const orgTree = [
+  { id:1, name:'总公司', children:[
+    { id:2, name:'销售部', children:[
+      { id:8, name:'华东区' },{ id:9, name:'华南区' }
+    ]},
+    { id:3, name:'技术部' },
+    { id:4, name:'财务部' },
+  ]},
+  { id:5, name:'分公司' },
+];
+
+function flattenOrgTree(nodes, level) {
+  let r = [];
+  nodes.forEach(n => {
+    r.push({ ...n, level, hasChildren: !!(n.children&&n.children.length) });
+    if (n.children) r = r.concat(flattenOrgTree(n.children, level+1));
+  });
+  return r;
+}
+
+const fpObjects = {
+  org: flattenOrgTree(orgTree, 0),
+  role: [{ id:1, name:'数据分析师', sub:'租户管理员创建' },{ id:2, name:'数据查看者', sub:'租户管理员创建' },{ id:3, name:'报表编辑者', sub:'租户管理员创建' },{ id:4, name:'数据开发者', sub:'租户管理员创建' },{ id:5, name:'销售分析组', sub:'次级管理员创建' }],
+  member: [{ id:1, name:'张伟（zhangwei）' },{ id:2, name:'李娜（lina）' },{ id:3, name:'王强（wangqiang）' },{ id:4, name:'赵敏（zhaomin）' }]
+};
+
+// Resource tree (Level1=resource type, Level2=folder, Level3=resource)
+const resTree = [
+  { id:'rt-dash', name:'仪表板', type:'type', icon:'bar-chart-2', children:[
+    { id:'f-sales', name:'销售分析', type:'folder', icon:'folder', children:[
+      { id:'f-daily', name:'日报', type:'folder', icon:'folder', children:[
+        { id:'r-dash1', name:'销售日报-全国', type:'resource', icon:'bar-chart-2', creator:'张伟' },
+        { id:'r-dash2', name:'销售日报-华东', type:'resource', icon:'bar-chart-2', creator:'李娜' },
+        { id:'r-dash-sk', name:'销售日报-华南', type:'resource', icon:'bar-chart-2', creator:'赵敏' },
+      ]},
+      { id:'f-weekly', name:'周报', type:'folder', icon:'folder', children:[
+        { id:'r-dash-wk1', name:'销售周报-汇总', type:'resource', icon:'bar-chart-2', creator:'张伟' },
+        { id:'r-dash-wk2', name:'销售周报-区域对比', type:'resource', icon:'bar-chart-2', creator:'李娜' },
+      ]},
+      { id:'f-customer', name:'客户分析', type:'folder', icon:'folder', children:[
+        { id:'r-dash3', name:'RFM客户分层', type:'resource', icon:'bar-chart-2', creator:'赵敏' },
+        { id:'r-dash-cp', name:'客户画像分析', type:'resource', icon:'bar-chart-2', creator:'张伟' },
+      ]},
+      { id:'f-perf', name:'业绩看板', type:'folder', icon:'folder', children:[
+        { id:'r-dash-pf1', name:'销售业绩总览', type:'resource', icon:'bar-chart-2', creator:'李娜' },
+      ]},
+      { id:'r-dash-trend', name:'销售趋势分析', type:'resource', icon:'bar-chart-2', creator:'张伟' },
+      { id:'r-dash-rank', name:'销售排名', type:'resource', icon:'bar-chart-2', creator:'赵敏' },
+      { id:'r-dash-funnel', name:'销售漏斗', type:'resource', icon:'bar-chart-2', creator:'李娜' },
+    ]},
+    { id:'f-exec', name:'高管驾驶舱', type:'folder', icon:'folder', children:[
+      { id:'f-exec-overview', name:'综合看板', type:'folder', icon:'folder', children:[
+        { id:'r-dash4', name:'CEO看板', type:'resource', icon:'bar-chart-2', creator:'张伟' },
+        { id:'r-dash-op', name:'运营概览', type:'resource', icon:'bar-chart-2', creator:'张伟' },
+      ]},
+      { id:'f-exec-kpi', name:'KPI追踪', type:'folder', icon:'folder', children:[
+        { id:'r-dash-kpi1', name:'月度KPI仪表板', type:'resource', icon:'bar-chart-2', creator:'李娜' },
+      ]},
+    ]},
+    { id:'f-region', name:'区域分析', type:'folder', icon:'folder', children:[
+      { id:'r-dash-re1', name:'华东区域看板', type:'resource', icon:'bar-chart-2', creator:'赵敏' },
+      { id:'r-dash-re2', name:'华南区域看板', type:'resource', icon:'bar-chart-2', creator:'赵敏' },
+    ]},
+    { id:'r-dash5', name:'Q3销售月报', type:'resource', icon:'bar-chart-2', creator:'张伟' },
+    { id:'r-dash-annual', name:'年度销售总览', type:'resource', icon:'bar-chart-2', creator:'张伟' },
+    { id:'r-dash-rt', name:'实时监控大屏', type:'resource', icon:'bar-chart-2', creator:'李娜' },
+  ]},
+  { id:'rt-report', name:'报表分析', type:'type', icon:'file-text', children:[
+    { id:'f-fin', name:'财务报表', type:'folder', icon:'folder', children:[
+      { id:'r-rpt1', name:'利润表', type:'resource', icon:'file-text', creator:'陈静' },
+      { id:'r-rpt2', name:'成本分析报告', type:'resource', icon:'file-text', creator:'陈静' },
+    ]},
+    { id:'r-rpt3', name:'用户行为分析', type:'resource', icon:'file-text', creator:'赵敏' },
+  ]},
+  { id:'rt-sheet', name:'电子表格', type:'type', icon:'table', children:[
+    { id:'r-sht1', name:'年度预算表', type:'resource', icon:'table', creator:'王强' },
+  ]},
+  { id:'rt-ds', name:'数据集', type:'type', icon:'database', children:[
+    { id:'r-ds1', name:'销售数据集', type:'resource', icon:'database', creator:'张伟' },
+    { id:'r-ds2', name:'用户数据集', type:'resource', icon:'database', creator:'赵敏' },
+  ]},
+  { id:'rt-dsrc', name:'数据源', type:'type', icon:'hard-drive', children:[
+    { id:'r-dsrc1', name:'SalesDB', type:'resource', icon:'hard-drive', creator:'张伟' },
+    { id:'r-dsrc2', name:'UserDB', type:'resource', icon:'hard-drive', creator:'张伟' },
+  ]},
+];
+
+// Secondary admins
+
+// ========== TAB SWITCHING ==========
+function switchTab(tab, el) {
+  document.querySelectorAll('.tabs .t').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('on'));
+  document.getElementById('tab-'+tab).classList.add('on');
+  if (tab==='fp') { renderFPObjList(); }
+  if (tab==='rp') { renderRPObjList(); renderRPResTree(); }
+  if (tab==='dl') renderDLPersonList();
+  lucide.createIcons();
+}
+
+// ========== TAB 1: 功能权限配置 ==========
+let fpObjType = 'org', fpSelId = null;
+
+function switchFPObj(type, el) {
+  el.parentElement.querySelectorAll('.subtab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  fpObjType = type; fpSelId = null;
+  renderFPObjList(); resetFP();
+}
+
+function renderFPObjList() {
+  const kw = (document.getElementById('fpKw')?.value||'').toLowerCase();
+  const list = (fpObjects[fpObjType]||[]).filter(o => !kw || o.name.toLowerCase().includes(kw));
+  if (fpObjType === 'org') {
+    document.getElementById('fpObjList').innerHTML = buildOrgListHTML(orgTree, 0, kw);
+  } else {
+    document.getElementById('fpObjList').innerHTML = list.map(o =>
+      `<div class="li${fpSelId===o.id?' on':''}" onclick="selectFPObj(${o.id},this)"><i data-lucide="${fpObjType==='role'?'shield':'user'}" style="width:15px;height:15px;flex-shrink:0;"></i><span class="li-tt">${o.name}</span></div>`
+    ).join('');
+  }
+  lucide.createIcons();
+}
+
+function buildRPOrgListHTML(nodes, level, kw) {
+  return nodes.map(n => {
+    const hasKids = n.children && n.children.length > 0;
+    const match = !kw || n.name.toLowerCase().includes(kw);
+    const childHTML = hasKids ? buildRPOrgListHTML(n.children, level+1, kw) : '';
+    const visible = match || childHTML;
+    if (!visible) return '';
+    return `<div class="tree-item${rpSelObjId===n.id?' on':''}" style="padding-left:${level*16+12}px;" data-id="${n.id}">
+      ${hasKids ? '<span class="tree-toggle-wrap" style="width:14px;height:14px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;"><i data-lucide="chevron-right" style="width:14px;height:14px;"></i></span>' : '<span style="width:14px;flex-shrink:0;"></span>'}
+      <span style="display:inline-flex;align-items:center;gap:7px;flex:1;min-width:0;" onclick="selectRPObj(${n.id},this.parentElement.parentElement)"><i data-lucide="${hasKids?'building-2':'users'}" style="width:15px;height:15px;flex-shrink:0;"></i><span>${n.name}</span></span>
+    </div>${hasKids ? '<div class="tree-sub" style="display:none;">'+childHTML+'</div>' : ''}`;
+  }).join('');
+}
+
+function buildOrgListHTML(nodes, level, kw) {
+  return nodes.map(n => {
+    const hasKids = n.children && n.children.length > 0;
+    const match = !kw || n.name.toLowerCase().includes(kw);
+    const childHTML = hasKids ? buildOrgListHTML(n.children, level+1, kw) : '';
+    const visible = match || childHTML;
+    if (!visible) return '';
+    return `<div class="tree-item${fpSelId===n.id?' on':''}" style="padding-left:${level*16+12}px;" data-id="${n.id}">
+      ${hasKids ? '<span class="tree-toggle-wrap" style="width:14px;height:14px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;"><i data-lucide="chevron-right" style="width:14px;height:14px;"></i></span>' : '<span style="width:14px;flex-shrink:0;"></span>'}
+      <span style="display:inline-flex;align-items:center;gap:7px;flex:1;min-width:0;" onclick="selectFPObj(${n.id},this.parentElement.parentElement)"><i data-lucide="${hasKids?'building-2':'users'}" style="width:15px;height:15px;flex-shrink:0;"></i><span>${n.name}</span></span>
+    </div>${hasKids ? '<div class="tree-sub" style="display:none;">'+childHTML+'</div>' : ''}`;
+  }).join('');
+}
+
+function selectFPObj(id, el) {
+  fpSelId = id;
+  document.querySelectorAll('#fpObjList .tree-item,#fpObjList .li').forEach(l => l.classList.remove('on'));
+  el.classList.add('on');
+  const o = (fpObjects[fpObjType]||[]).find(x=>x.id===id);
+  document.getElementById('fpEmpty').style.display='none';
+  const c = document.getElementById('fpContent'); c.classList.add('on');
+  c.innerHTML = `<div class="dsec">
+    <div class="dsec-hd">
+      <div><div class="dsec-tt">${o.name}</div><div style="font-size:12px;color:var(--t3);">${fpObjType==='org'?'组织':fpObjType==='role'?'角色':'成员'}</div></div>
+      <button class="btn btn-pri" onclick="alert('功能权限保存成功！')">保存配置</button>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:60%;">功能名称</th><th style="width:40%;text-align:center;">权限详情 <input type="checkbox" class="perm-cb" style="margin-left:6px;vertical-align:middle;" onclick="toggleAllFP(this)" title="全选/取消全选"></th></tr></thead>
+        <tbody>${buildFuncTree()}</tbody>
+      </table>
+    </div>
+  </div>`;
+  lucide.createIcons();
+}
+
+function resetFP() {
+  document.getElementById('fpEmpty').style.display='flex';
+  document.getElementById('fpContent').classList.remove('on');
+  document.getElementById('fpContent').innerHTML='';
+}
+
+function buildFuncTree() {
+  return funcTree.map(p => {
+    const hasKids = p.children && p.children.length > 0;
+    const rows = [];
+    rows.push(`<tr class="tree-row parent" onclick="toggleTreeRow(this,event)" data-id="${p.id}">
+      <td><span style="display:inline-flex;align-items:center;gap:6px;"><span class="toggle">${hasKids ? '<i data-lucide="chevron-right" style="width:14px;height:14px;flex-shrink:0;"></i>' : '<span style="display:inline-block;width:18px;"></span>'}</span><i data-lucide="${getFuncIcon(p.name)}" style="width:15px;height:15px;flex-shrink:0;"></i>${p.name}</span></td>
+      <td style="text-align:center;"><input type="checkbox" class="perm-cb" checked onclick="event.stopPropagation()"> 使用</td>
+    </tr>`);
+    if (hasKids) {
+      p.children.forEach(c => {
+        rows.push(`<tr class="tree-row child" data-parent="${p.id}" style="display:none;">
+          <td><span style="display:inline-block;width:18px;"></span>${c.name}</td>
+          <td style="text-align:center;"><input type="checkbox" class="perm-cb" checked onclick="event.stopPropagation()"> 使用</td>
+        </tr>`);
+      });
+    }
+    return rows.join('');
+  }).join('');
+}
+
+function getFuncIcon(name) {
+  const map = {'资源目录':'folder-tree','数据分析':'bar-chart-2','数据准备':'database','指标':'target','指标服务':'radio','数据门户':'monitor','系统管理':'settings','AI 配置中心':'bot','审计日志':'file-search'};
+  return map[name] || 'file';
+}
+
+function toggleAllFP(cb) {
+  const checked = cb.checked;
+  document.querySelectorAll('#fpContent input.perm-cb').forEach(c => { c.checked = checked; });
+}
+
+function toggleTreeRow(tr, e) {
+  if (e.target.tagName==='INPUT') return;
+  const id = tr.dataset.id;
+  tr.classList.toggle('expanded');
+  const expanded = tr.classList.contains('expanded');
+  document.querySelectorAll(`tr[data-parent="${id}"]`).forEach(r => r.style.display = expanded ? '' : 'none');
+  lucide.createIcons();
+}
+
+// ========== TAB 2: 资源权限配置 ==========
+let rpView = 'regular', rpObjType = 'org', rpSelObjId = null, rpSelResId = null;
+let rpResTypeSel = 'rt-dir'; // 资源视图选中的资源类型
+window.rpLockedNodes = new Set(); // 被锁定的资源节点 ID（权限不可修改）
+window.rpNodeStates = {}; // 每个节点的 scope/blocked 状态 { scope:'self'|'children', blocked:bool }
+
+function switchRPView(view, el) {
+  rpView = view;
+  document.querySelectorAll('#rpVS .vs-btn').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('rpLeftRegular').classList.toggle('on', view==='regular');
+  document.getElementById('rpLeftResource').classList.toggle('on', view==='resource');
+  // 资源视图加宽左侧面板
+  document.getElementById('rpLeft').style.width = view==='resource' ? '390px' : '260px';
+  resetRP();
+  if (view==='regular') renderRPObjList();
+  if (view==='resource') renderRPResTree();
+}
+
+function switchRPObj(type, el) {
+  el.parentElement.querySelectorAll('.subtab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  rpObjType = type; rpSelObjId = null;
+  renderRPObjList(); resetRP();
+}
+
+function renderRPObjList() {
+  if (rpObjType === 'org') {
+    document.getElementById('rpObjList').innerHTML = buildRPOrgListHTML(orgTree, 0, '');
+  } else {
+    const list = fpObjects[rpObjType]||[];
+    document.getElementById('rpObjList').innerHTML = list.map(o =>
+      `<div class="li${rpSelObjId===o.id?' on':''}" onclick="selectRPObj(${o.id},this)"><i data-lucide="${rpObjType==='role'?'shield':'user'}" style="width:15px;height:15px;flex-shrink:0;"></i><span class="li-tt">${o.name}</span></div>`
+    ).join('');
+  }
+  lucide.createIcons();
+}
+
+function selectRPObj(id, el) {
+  rpSelObjId = id;
+  document.querySelectorAll('#rpObjList .tree-item,#rpObjList .li').forEach(l => l.classList.remove('on'));
+  el.classList.add('on');
+  renderRPContent();
+}
+
+function renderRPResTypeList() {
+  const types = [
+    { id:'rt-dir', name:'资源目录', icon:'folder-tree' },
+    ...resTree.map(t => ({ id:t.id, name:t.name, icon:t.icon }))
+  ];
+  document.getElementById('rpResTypeList').innerHTML = types.map(t =>
+    `<div class="li${rpResTypeSel===t.id?' on':''}" onclick="selectRPResType('${t.id}')" style="padding:8px 10px;">
+      <i data-lucide="${t.icon}" style="width:14px;height:14px;flex-shrink:0;"></i>
+      <span class="li-tt" style="font-size:12.5px;">${t.name}</span>
+    </div>`
+  ).join('');
+}
+
+function selectRPResType(typeId) {
+  rpResTypeSel = typeId;
+  rpSelResId = null;
+  renderRPResTypeList();
+  renderRPResSubTree();
+  document.getElementById('rpEmpty').style.display = 'flex';
+  document.getElementById('rpContent').classList.remove('on');
+  document.getElementById('rpContent').innerHTML = '';
+}
+
+function renderRPResSubTree() {
+  let treeData;
+  if (rpResTypeSel === 'rt-dir') {
+    treeData = [{ id:'rt-dir-root', name:'所有资源', type:'folder', icon:'folder', children: dirTreeAsResTree }];
+  } else {
+    const curType = resTree.find(t => t.id === rpResTypeSel);
+    if (!curType) return;
+    treeData = [{ id: 'root-'+curType.id, name:'所有资源', type:'folder', icon:'folder', children: curType.children || [] }];
+  }
+  document.getElementById('rpResTree').innerHTML = buildResTreeHTML(treeData, 0);
+  lucide.createIcons();
+}
+
+function renderRPResTree() {
+  renderRPResTypeList();
+  renderRPResSubTree();
+}
+
+function filterResTree() {
+  const kw = (document.getElementById('rpResTreeKw')?.value || '').toLowerCase();
+  let treeData;
+  if (rpResTypeSel === 'rt-dir') {
+    treeData = [{ id:'rt-dir-root', name:'所有资源', type:'folder', icon:'folder', children: dirTreeAsResTree }];
+  } else {
+    const curType = resTree.find(t => t.id === rpResTypeSel);
+    if (!curType) return;
+    treeData = [{ id: 'root-'+curType.id, name:'所有资源', type:'folder', icon:'folder', children: curType.children || [] }];
+  }
+  document.getElementById('rpResTree').innerHTML = buildResTreeHTMLFiltered(treeData, 0, kw);
+  lucide.createIcons();
+}
+
+function buildResTreeHTMLFiltered(nodes, level, kw) {
+  return nodes.map(n => {
+    const hasKids = n.children && n.children.length > 0;
+    const selfMatch = !kw || n.name.toLowerCase().includes(kw);
+    let kidsHTML = '';
+    if (hasKids) kidsHTML = buildResTreeHTMLFiltered(n.children, level+1, kw);
+    const visible = selfMatch || !!kidsHTML.trim();
+    if (!visible) return '';
+    const icon = n.icon || (n.type==='folder'?'folder':n.type==='resource'?'file':'circle');
+    let cls = 'tree-item';
+    if (n.type==='type') cls += ' parent';
+    if (rpSelResId===n.id) cls += ' on';
+    return `<div class="${cls}" style="padding-left:${level*16+12}px;" onclick="selectRPRes('${n.id}',this)" data-id="${n.id}">
+      ${hasKids ? '<span class="tree-toggle-wrap" style="width:14px;height:14px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;"><i data-lucide="chevron-right" class="tree-toggle" style="width:14px;height:14px;transition:transform .15s;flex-shrink:0;transform:rotate(90deg);"></i></span>' : '<span style="width:14px;flex-shrink:0;"></span>'}
+      <i data-lucide="${icon}" style="width:15px;height:15px;flex-shrink:0;"></i>
+      <span>${n.name}</span>
+    </div>${hasKids&&kidsHTML ? '<div class="tree-sub">'+kidsHTML+'</div>' : ''}`;
+  }).join('');
+}
+
+function buildResTreeHTML(nodes, level) {
+  return nodes.map(n => {
+    const hasKids = n.children && n.children.length > 0;
+    const icon = n.icon || (n.type==='folder'?'folder':n.type==='resource'?'file':'circle');
+    let cls = 'tree-item';
+    if (n.type==='type') cls += ' parent';
+    if (rpSelResId===n.id) cls += ' on';
+    const clickHandler = `selectRPRes('${n.id}',this)`;
+    return `<div class="${cls}" style="padding-left:${level*16+12}px;" onclick="${clickHandler}" data-id="${n.id}">
+      ${hasKids ? '<span class="tree-toggle-wrap" style="width:14px;height:14px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;"><i data-lucide="chevron-right" class="tree-toggle" style="width:14px;height:14px;transition:transform .15s;flex-shrink:0;transform:rotate(90deg);"></i></span>' : '<span style="width:14px;flex-shrink:0;"></span>'}
+      <i data-lucide="${icon}" style="width:15px;height:15px;flex-shrink:0;"></i>
+      <span>${n.name}</span>
+    </div>${hasKids ? '<div class="tree-sub">'+buildResTreeHTML(n.children, level+1)+'</div>' : ''}`;
+  }).join('');
+}
+
+function buildDirTreeHTML(nodes, level) {
+  return nodes.map(n => {
+    const hasKids = n.children && n.children.length > 0;
+    const icon = n.type==='root'?'folder-root':n.type==='dir'?'layers':n.type==='user'?'user':'file';
+    let cls = 'tree-item';
+    if (rpSelResId===n.id) cls += ' on';
+    return `<div class="${cls}" style="padding-left:${level*16+12}px;" onclick="selectRPRes('${n.id}',this)" data-id="${n.id}">
+      ${hasKids ? '<span class="tree-toggle-wrap" style="width:14px;height:14px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;"><i data-lucide="chevron-right" class="tree-toggle" style="width:14px;height:14px;transition:transform .15s;flex-shrink:0;"></i></span>' : '<span style="width:14px;flex-shrink:0;"></span>'}
+      <i data-lucide="${icon}" style="width:15px;height:15px;flex-shrink:0;"></i>
+      <span>${n.name}</span>
+    </div>${hasKids ? '<div class="tree-sub" style="display:none;">'+buildDirTreeHTML(n.children, level+1)+'</div>' : ''}`;
+  }).join('');
+}
+
+
+function selectRPRes(id, el) {
+  rpSelResId = id;
+  document.querySelectorAll('#rpResTree .tree-item').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  renderRPContent();
+}
+
+function renderRPContent() {
+  document.getElementById('rpEmpty').style.display='none';
+  const c = document.getElementById('rpContent'); c.classList.add('on');
+  const selLabel = rpView==='resource' ? (rpSelResId ? rpSelResId : '请选择资源') : (rpSelObjId ? (fpObjects[rpObjType]||[]).find(x=>x.id===rpSelObjId)?.name : '请选择对象');
+  const permissions = ['全部','查看','资源维护','下载','分享','管理','授权'];
+
+  if (rpView==='regular' && rpSelObjId) {
+    const obj = (fpObjects[rpObjType]||[]).find(x=>x.id===rpSelObjId);
+    if (!obj) return;
+    renderRPRegular(obj);
+  } else if (rpView==='resource' && rpSelResId) {
+    renderRPResDetail();
+  } else {
+    c.innerHTML = `<div style="text-align:center;padding:60px 20px;color:var(--t3);font-size:13px;">请在左侧选择资源或文件夹</div>`;
+  }
+  lucide.createIcons();
+}
+
+function findNodeById(nodes, id) {
+  for (const n of nodes) {
+    if (n.id === id) return { node: n, path: [n.name] };
+    if (n.children) {
+      const found = findNodeById(n.children, id);
+      if (found) { found.path.unshift(n.name); return found; }
+    }
+  }
+  return null;
+}
+
+function renderRPResDetail() {
+  const c = document.getElementById('rpContent');
+  // 合并资源目录 + 资源类型 + "所有资源" wrapper，与 renderRPResSubTree 保持一致
+  const combinedTree = [
+    { id:'rt-dir-root', name:'所有资源', type:'folder', icon:'folder', children: dirTreeAsResTree },
+    ...resTree.map(t => ({ id:'root-'+t.id, name:'所有资源', type:'folder', icon:'folder', children: t.children || [] })),
+    ...resTree
+  ];
+  const result = findNodeById(combinedTree, rpSelResId);
+  // Check if it's a directory node (from 资源目录 tree)
+  const isDirNode = rpSelResId && (rpSelResId.startsWith('d-') || rpSelResId === 'rt-dir');
+  const isFolder = !isDirNode && result && result.node && result.node.type === 'folder';
+  const nodeName = result ? result.path.join(' > ') : rpSelResId;
+  const nodeIcon = result && result.node ? (result.node.icon || (result.node.type==='folder'?'folder':'file')) : 'file';
+  const permissions = isDirNode ? ['全部','查看','资源维护','目录管理','授权'] : ['全部','查看','下载','分享','管理','授权'];
+
+  // Build scope/inherit settings bar
+  const isRootNode = result && result.node.name === '所有资源';
+  const showSettings = !isDirNode || (isDirNode && rpSelResId !== 'rt-dir');
+  const showScope = isDirNode || isFolder;
+  const isResLocked = window.rpLockedNodes && window.rpLockedNodes.has(rpSelResId);
+  // 读取节点存储的 scope/blocked 状态
+  const nodeState = window.rpNodeStates[rpSelResId] || {};
+  const resScope = nodeState.scope || 'self';
+  const resBlocked = nodeState.blocked || false;
+  const scopeLockedClass = isResLocked && !isRootNode ? ' locked' : '';
+  const selfCls = resScope === 'self' ? 'on' : '';
+  const childCls = resScope === 'children' ? 'on' : '';
+  let settingsBar = '';
+  if (showSettings) {
+    settingsBar = `<div style="display:flex;align-items:center;gap:16px;padding:10px 14px;background:#F8FAFC;border:1px solid var(--bd-lt);border-radius:9px;margin-bottom:14px;flex-wrap:wrap;">
+      ${showScope ? `<div style="display:flex;align-items:center;gap:6px;"><span style="font-size:12px;font-weight:600;color:var(--t2);white-space:nowrap;">授权作用范围：</span><div class="scope-tg${scopeLockedClass}" style="margin:0;"><span class="${selfCls}" onclick="event.stopPropagation();var tg=this.parentElement;tg.querySelectorAll('span').forEach(s=>s.classList.remove('on'));this.classList.add('on');updateResScope('self')">本节点</span><span class="${childCls}" onclick="event.stopPropagation();var tg=this.parentElement;tg.querySelectorAll('span').forEach(s=>s.classList.remove('on'));this.classList.add('on');updateResScope('children')">本节点及子节点</span></div></div>` : ''}
+      ${isRootNode ? '<span style="font-size:12px;color:var(--t3);">禁止父项传递：-</span>' : `<label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--t2);cursor:pointer;white-space:nowrap;"><input type="checkbox" onchange="toggleResViewBlock(this)"${resBlocked?' checked':''}> 禁止父项传递</label>`}
+    </div>`;
+  }
+
+  c.innerHTML = `<div class="dsec">
+    <div class="dsec-hd"><div><div class="dsec-tt" style="display:flex;align-items:center;gap:6px;"><i data-lucide="${nodeIcon}" style="width:18px;height:18px;flex-shrink:0;color:var(--pri);"></i>${result?result.node.name:rpSelResId}</div><div style="font-size:12px;color:var(--t3);margin-top:4px;">${result?result.path.slice(0,-1).join(' > '):rpView==='resource'?'资源':'目录'} > </div></div><button class="btn btn-pri" onclick="alert('资源权限保存成功！')">保存配置</button></div>
+    ${settingsBar}
+    <div style="display:flex;gap:4px;margin-bottom:14px;">
+      <div class="subtab on" onclick="switchRPSub('org',this)" style="padding:6px 14px;font-size:12.5px;">组织</div>
+      <div class="subtab" onclick="switchRPSub('role',this)" style="padding:6px 14px;font-size:12.5px;">角色</div>
+      <div class="subtab" onclick="switchRPSub('member',this)" style="padding:6px 14px;font-size:12.5px;">成员</div>
+    </div>
+    <div id="rpSubContent"></div>
+  </div>`;
+  rpSubIsDir = isDirNode;
+  renderRPSub('org', isDirNode);
+}
+
+let rpRegularTab = 'rt-dash';
+
+function renderRPRegular(obj) {
+  const c = document.getElementById('rpContent');
+  const permissions = ['全部','查看','下载','分享','管理','授权'];
+  const tabs = resTree.map(t => ({id:t.id, name:t.name}));
+  const curType = resTree.find(t => t.id===rpRegularTab);
+  if (!curType) return;
+
+  // Wrap children in root folder
+  const wrappedTree = [{ id: 'root-'+curType.id, name:'所有资源', type:'folder', icon: curType.icon || 'folder', children: curType.children || [] }];
+
+  c.innerHTML = `<div class="dsec">
+    <div class="dsec-hd"><div><div class="dsec-tt">${obj.name}</div><div style="font-size:12px;color:var(--t3);">${rpObjType==='org'?'组织':rpObjType==='role'?'角色':'成员'}</div></div><button class="btn btn-pri" onclick="alert('资源权限保存成功！')">保存配置</button></div>
+    <div class="htabs-wrap"><div class="htabs" id="rpRegTabs">
+      ${tabs.map(t => `<div class="htab${rpRegularTab===t.id?' on':''}" onclick="switchRPRegTab('${t.id}',this)">${t.name}</div>`).join('')}
+      <div class="htab${rpRegularTab==='dir'?' on':''}" onclick="switchRPRegTab('dir',this)">资源目录</div>
+    </div></div>
+    ${rpRegularTab==='dir' ? '<div class="tbl-wrap" style="max-height:55vh;overflow-y:auto;"><table><thead><tr><th style="width:30%;">目录</th><th style="width:30%;text-align:center;">权限详情</th><th style="width:20%;text-align:center;">授权作用范围</th><th style="width:20%;text-align:center;">禁止父项传递</th></tr></thead><tbody id="rpRegTableBody">'+buildDirPermRows(dirTreeForPerm,0)+'</tbody></table></div>' : `
+    <div style="margin-bottom:10px;"><input class="frm-inp" style="font-size:12.5px;" placeholder="搜索资源..." id="rpRegKw" oninput="filterRPRegTable()"></div>
+    <div class="tbl-wrap" style="max-height:55vh;overflow-y:auto;"><table>
+      <thead><tr><th style="width:30%;">资源</th><th style="width:30%;text-align:center;">权限详情 <input type="checkbox" class="perm-cb" style="margin-left:6px;vertical-align:middle;" onclick="toggleAllRP(this)" title="全选/取消全选"></th><th style="width:20%;text-align:center;">授权作用范围</th><th style="width:20%;text-align:center;">禁止父项传递</th></tr></thead>
+      <tbody id="rpRegTableBody">
+        ${buildRPRegRows(wrappedTree, 0, permissions)}
+      </tbody>
+    </table></div>`}
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0 0;font-size:12px;color:var(--t3);"><span>共 <b style="color:var(--t2);" id="rpRegCount">0</b> 项</span><div style="display:flex;gap:4px;"><button class="btn btn-sec" style="min-width:28px;height:28px;padding:0;justify-content:center;font-size:12px;">1</button></div></div>
+  </div>`;
+  updateRPRegCount();
+  lucide.createIcons();
+}
+
+const dirTreeAsResTree = [
+  { id:'d-sales2', name:'销售分析', type:'folder', icon:'layers', children:[
+    { id:'d-daily2', name:'销售日报', type:'folder', icon:'layers' },
+    { id:'d-monthly2', name:'销售月报', type:'folder', icon:'layers' },
+    { id:'d-customer2', name:'客户分析', type:'folder', icon:'layers' },
+  ]},
+  { id:'d-fin2', name:'财务分析', type:'folder', icon:'layers', children:[
+    { id:'d-freport2', name:'财务报表', type:'folder', icon:'layers' },
+    { id:'d-cost2', name:'成本分析', type:'folder', icon:'layers' },
+  ]},
+  { id:'d-exec2', name:'高管驾驶舱', type:'folder', icon:'layers' },
+  { id:'d-public2', name:'公共报表', type:'folder', icon:'layers' },
+];
+
+const dirTreeForPerm = [
+  { name:'所有资源', children:[
+    { name:'销售分析', children:[
+      { name:'销售日报' },{ name:'销售月报' },{ name:'客户分析' }
+    ]},
+    { name:'财务分析', children:[
+      { name:'财务报表' },{ name:'成本分析' }
+    ]},
+    { name:'高管驾驶舱' },
+    { name:'公共报表' },
+  ]},
+];
+
+function buildDirPermRows(nodes, level, parentId) {
+  return nodes.map((n, idx) => {
+    const pad = level*16;
+    const hasKids = n.children && n.children.length > 0;
+    const nid = parentId ? parentId+'-d'+idx : 'd'+idx;
+    const scope = 'self';
+    let html = '<tr class="'+(hasKids?'tree-row parent expanded':'tree-row')+'" data-level="'+level+'" data-id="'+nid+'" data-type="'+(hasKids?'folder':'resource')+'" data-scope="'+scope+'"'+(parentId?' data-parent="'+parentId+'"':'')+(hasKids?' onclick="toggleRPRegRow(this,event)"':'')+'>'+
+      '<td style="padding-left:'+(pad+18)+'px;"><span style="display:inline-flex;align-items:center;gap:4px;max-width:100%;overflow:hidden;">'+(hasKids?'<span class="toggle"><i data-lucide="chevron-right" style="width:14px;height:14px;"></i></span>':'<span style="width:14px;flex-shrink:0;display:inline-block;"></span>')+'<i data-lucide="'+(level===0?'folder':'layers')+'" style="width:15px;height:15px;flex-shrink:0;"></i><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+n.name+'</span></span></td>'+
+      '<td style="text-align:center;">'+['全部','查看','资源维护','目录管理','授权'].map(p=>'<label style="margin:0 3px;cursor:pointer;font-size:12px;"><input type="checkbox" class="perm-cb" data-perm="'+p+'" '+(p==='全部'||p==='查看'?'checked':'')+' onclick="onPermChange(this,event)"> '+p+'</label>').join('')+'</td>'+
+      '<td style="text-align:center;">'+(hasKids?'<span class="scope-tg" onclick="event.stopPropagation()"><span class="on" onclick="setScope(this,\''+nid+'\',\'self\')">本节点</span><span onclick="setScope(this,\''+nid+'\',\'children\')">本节点及子节点</span></span>':'<span style="font-size:11px;color:var(--t3);">-</span>')+'</td>'+
+      '<td style="text-align:center;">'+(level===0?'<span style="font-size:11px;color:var(--t3);">-</span>':'<label style="font-size:11px;cursor:pointer;" onclick="event.stopPropagation()"><input type="checkbox" class="block-inherit-cb" onchange="onBlockInheritChange(this)"> 禁止父项传递</label>')+'</td>'+
+    '</tr>';
+    if (hasKids) html += buildDirPermRows(n.children, level+1, nid);
+    return html;
+  }).join('');
+}
+
+function buildRPRegRows(nodes, level, permissions, parentId) {
+  return nodes.map(n => {
+    const pad = level*16;
+    const hasKids = n.children && n.children.length > 0;
+    const isRes = n.type === 'resource';
+    const icon = hasKids ? 'folder' : (n.icon || 'file');
+    const cls = hasKids ? 'tree-row parent expanded' : 'tree-row';
+    const nid = n.id;
+    const scope = 'self'; // default
+    let html = `<tr class="${cls}" data-level="${level}" data-id="${nid}" data-type="${isRes?'resource':'folder'}" data-scope="${scope}"${parentId?' data-parent="'+parentId+'"':''}${hasKids?' onclick="toggleRPRegRow(this,event)"':''}>
+      <td style="padding-left:${pad+18}px;"><span style="display:inline-flex;align-items:center;gap:4px;max-width:100%;overflow:hidden;"><span class="toggle">${hasKids ? '<i data-lucide="chevron-right" style="width:14px;height:14px;flex-shrink:0;"></i>' : '<span style="width:14px;flex-shrink:0;display:inline-block;"></span>'}</span><i data-lucide="${icon}" style="width:15px;height:15px;flex-shrink:0;"></i><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${n.name}</span></span></td>
+      <td style="text-align:center;">${permissions.map(p=>`<label style="margin:0 3px;cursor:pointer;font-size:12px;"><input type="checkbox" class="perm-cb" data-perm="${p}" ${isRes&&p==='查看'?'checked':(!isRes?'checked':'')} onclick="onPermChange(this,event)"> ${p}</label>`).join('')}</td>
+      <td style="text-align:center;">${hasKids?`<span class="scope-tg" onclick="event.stopPropagation()"><span class="on" onclick="setScope(this,'${nid}','self')">本节点</span><span onclick="setScope(this,'${nid}','children')">本节点及子节点</span></span>`:'<span style="font-size:11px;color:var(--t3);">-</span>'}</td>
+      <td style="text-align:center;">${level===0?'<span style="font-size:11px;color:var(--t3);">-</span>':'<label style="font-size:11px;cursor:pointer;" onclick="event.stopPropagation()"><input type="checkbox" class="block-inherit-cb" onchange="onBlockInheritChange(this)"> 禁止父项传递</label>'}</td>
+    </tr>`;
+    if (hasKids) html += buildRPRegRows(n.children, level+1, permissions, nid);
+    return html;
+  }).join('');
+}
+
+function switchRPRegTab(tab, el) {
+  rpRegularTab = tab;
+  document.querySelectorAll('#rpRegTabs .htab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  if (tab === 'dir') {
+    document.getElementById('rpRegTableBody').innerHTML = buildDirPermRows(dirTreeForPerm, 0);
+  } else {
+    const curType = resTree.find(t => t.id===tab);
+    if (!curType) return;
+    const wrappedTree = [{ id: 'root-'+curType.id, name:'所有资源', type:'folder', icon: curType.icon || 'folder', children: curType.children || [] }];
+    document.getElementById('rpRegTableBody').innerHTML = buildRPRegRows(wrappedTree, 0, ['全部','查看','下载','分享','管理','授权']);
+  }
+  updateRPRegCount();
+  lucide.createIcons();
+}
+
+function toggleRPRegRow(tr, e) {
+  if (e.target.tagName==='INPUT') return;
+  e.stopPropagation();
+  const level = parseInt(tr.dataset.level)||0;
+  tr.classList.toggle('expanded');
+  const expanded = tr.classList.contains('expanded');
+  let next = tr.nextElementSibling;
+  while (next && parseInt(next.dataset.level||0) > level) {
+    next.style.display = expanded ? '' : 'none';
+    next = next.nextElementSibling;
+  }
+  lucide.createIcons();
+}
+
+function filterRPRegTable() {
+  const kw = (document.getElementById('rpRegKw')?.value||'').toLowerCase();
+  const curType = resTree.find(t => t.id===rpRegularTab);
+  if (!curType) return;
+  const wrappedTree = [{ id: 'root-'+curType.id, name:'所有资源', type:'folder', icon: curType.icon || 'folder', children: curType.children || [] }];
+  document.getElementById('rpRegTableBody').innerHTML = buildRPRegRowsFiltered(wrappedTree, 0, ['全部','查看','下载','分享','管理','授权'], kw);
+  updateRPRegCount();
+  lucide.createIcons();
+}
+
+function buildRPRegRowsFiltered(nodes, level, permissions, kw, parentId) {
+  return nodes.map(n => {
+    const hasKids = n.children && n.children.length > 0;
+    const isRes = n.type === 'resource';
+    const selfMatch = !kw || n.name.toLowerCase().includes(kw);
+    let kidsHTML = '';
+    if (hasKids) kidsHTML = buildRPRegRowsFiltered(n.children, level+1, permissions, kw, n.id);
+    const visible = selfMatch || !!kidsHTML.trim();
+    if (!visible) return '';
+    const pad = level*16;
+    const icon = hasKids ? 'folder' : (n.icon || 'file');
+    const cls = hasKids ? 'tree-row parent expanded' : 'tree-row';
+    const nid = n.id;
+    const scope = 'self';
+    let html = `<tr class="${cls}" data-level="${level}" data-id="${nid}" data-type="${isRes?'resource':'folder'}" data-scope="${scope}"${parentId?' data-parent="'+parentId+'"':''}${hasKids?' onclick="toggleRPRegRow(this,event)"':''}>
+      <td style="padding-left:${pad+18}px;"><span style="display:inline-flex;align-items:center;gap:4px;max-width:100%;overflow:hidden;"><span class="toggle">${hasKids ? '<i data-lucide="chevron-right" style="width:14px;height:14px;flex-shrink:0;"></i>' : '<span style="width:14px;flex-shrink:0;display:inline-block;"></span>'}</span><i data-lucide="${icon}" style="width:15px;height:15px;flex-shrink:0;"></i><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${n.name}</span></span></td>
+      <td style="text-align:center;">${permissions.map(p=>`<label style="margin:0 3px;cursor:pointer;font-size:12px;"><input type="checkbox" class="perm-cb" data-perm="${p}" ${isRes&&p==='查看'?'checked':(!isRes?'checked':'')} onclick="onPermChange(this,event)"> ${p}</label>`).join('')}</td>
+      <td style="text-align:center;">${hasKids?`<span class="scope-tg" onclick="event.stopPropagation()"><span class="on" onclick="setScope(this,'${nid}','self')">本节点</span><span onclick="setScope(this,'${nid}','children')">本节点及子节点</span></span>`:'<span style="font-size:11px;color:var(--t3);">-</span>'}</td>
+      <td style="text-align:center;">${level===0?'<span style="font-size:11px;color:var(--t3);">-</span>':'<label style="font-size:11px;cursor:pointer;" onclick="event.stopPropagation()"><input type="checkbox" class="block-inherit-cb" onchange="onBlockInheritChange(this)"> 禁止父项传递</label>'}</td>
+    </tr>`;
+    if (hasKids && kidsHTML) html += kidsHTML;
+    return html;
+  }).join('');
+}
+
+function updateRPRegCount() {
+  const el = document.getElementById('rpRegCount');
+  if (!el) return;
+  const rows = document.querySelectorAll('#rpRegTableBody tr');
+  let count = 0;
+  rows.forEach(r => { if (r.querySelector('td:last-child label')) count++; });
+  el.textContent = count;
+}
+
+function toggleAllRP(cb) {
+  const checked = cb.checked;
+  document.querySelectorAll('#rpRegTableBody input.perm-cb').forEach(c => { c.checked = checked; });
+}
+
+// ====== 权限勾选联动 ======
+function getChildRows(row) {
+  const level = parseInt(row.dataset.level);
+  const children = [];
+  let next = row.nextElementSibling;
+  while (next && next.tagName === 'TR' && parseInt(next.dataset.level) > level) {
+    if (parseInt(next.dataset.level) === level + 1) children.push(next);
+    next = next.nextElementSibling;
+  }
+  return children;
+}
+
+function getAllDescendantRows(row) {
+  const level = parseInt(row.dataset.level);
+  const descendants = [];
+  let next = row.nextElementSibling;
+  while (next && next.tagName === 'TR' && parseInt(next.dataset.level) > level) {
+    descendants.push(next);
+    next = next.nextElementSibling;
+  }
+  return descendants;
+}
+
+function getParentRow(row) {
+  const level = parseInt(row.dataset.level);
+  if (level <= 0) return null;
+  let prev = row.previousElementSibling;
+  while (prev) {
+    if (prev.tagName === 'TR' && parseInt(prev.dataset.level) === level - 1) return prev;
+    prev = prev.previousElementSibling;
+  }
+  return null;
+}
+
+// 仅检查自身是否勾选了禁止父项传递（用于向下级联时的跳过判断）
+function isSelfBlocked(row) {
+  const cb = row.querySelector('.block-inherit-cb');
+  return cb && cb.checked;
+}
+
+// 检查自身或其祖先是否阻断了来自外部的级联（block + scope=children）
+function isBlocked(row) {
+  if (isSelfBlocked(row)) return true;
+  let ancestor = getParentRow(row);
+  while (ancestor) {
+    const aBlock = ancestor.querySelector('.block-inherit-cb');
+    if (aBlock && aBlock.checked && ancestor.dataset.scope === 'children') return true;
+    ancestor = getParentRow(ancestor);
+  }
+  return false;
+}
+
+function findLockSource(row) {
+  // 找到最近的需要锁定当前行的祖先：scope='children' 且未阻断
+  let ancestor = getParentRow(row);
+  while (ancestor) {
+    if (ancestor.dataset.scope === 'children') {
+      const aBlock = ancestor.querySelector('.block-inherit-cb');
+      if (!(aBlock && aBlock.checked)) return ancestor; // 祖先 scope=children 且未阻断
+    }
+    ancestor = getParentRow(ancestor);
+  }
+  return null;
+}
+
+function lockPermCheckboxes(row) {
+  row.querySelectorAll('input.perm-cb').forEach(cb => { cb.disabled = true; });
+}
+
+function unlockPermCheckboxes(row) {
+  row.querySelectorAll('input.perm-cb').forEach(cb => { cb.disabled = false; });
+}
+
+function lockScopeToggle(row) {
+  const tg = row.querySelector('.scope-tg');
+  if (!tg) return;
+  tg.classList.add('locked');
+}
+
+function unlockScopeToggle(row) {
+  const tg = row.querySelector('.scope-tg');
+  if (!tg) return;
+  tg.classList.remove('locked');
+}
+
+function scopeLockDescendants(row, lock) {
+  const descendants = getAllDescendantRows(row);
+  descendants.forEach(desc => {
+    const descId = desc.dataset.id;
+    if (isSelfBlocked(desc)) {
+      // 自身阻断的：解锁
+      unlockScopeToggle(desc);
+      unlockPermCheckboxes(desc);
+      if (descId) window.rpLockedNodes.delete(descId);
+      return;
+    }
+    if (lock) {
+      // 锁定 scope + 同步权限 + 锁定权限
+      lockScopeToggle(desc);
+      syncPermsToRow(row, desc);
+      lockPermCheckboxes(desc);
+      if (descId) window.rpLockedNodes.add(descId);
+    } else {
+      // 仅解锁 scope 和权限，保留当前权限值
+      unlockScopeToggle(desc);
+      unlockPermCheckboxes(desc);
+      if (descId) window.rpLockedNodes.delete(descId);
+    }
+  });
+}
+
+function syncPermsToRow(srcRow, dstRow) {
+  const srcPerms = {};
+  srcRow.querySelectorAll('input.perm-cb').forEach(cb => { srcPerms[cb.dataset.perm] = cb.checked; });
+  dstRow.querySelectorAll('input.perm-cb').forEach(cb => {
+    if (srcPerms.hasOwnProperty(cb.dataset.perm)) cb.checked = srcPerms[cb.dataset.perm];
+  });
+}
+
+function onPermChange(cb, event) {
+  event.stopPropagation();
+  const row = cb.closest('tr');
+  if (!row) return;
+  // 双重防护：cb.disabled 或 scope-toggle 锁定态均不可修改
+  const scopeTg = row.querySelector('.scope-tg');
+  if (cb.disabled || (scopeTg && scopeTg.classList.contains('locked'))) return;
+
+  // "全部" 勾选联动同一行的所有权限
+  if (cb.dataset.perm === '全部') {
+    const checked = cb.checked;
+    row.querySelectorAll('input.perm-cb').forEach(c => {
+      if (c.dataset.perm !== '全部') c.checked = checked;
+    });
+  }
+
+  const scope = row.dataset.scope;
+  if (scope !== 'children') return;
+
+  const descendants = getAllDescendantRows(row);
+  descendants.forEach(desc => {
+    if (isSelfBlocked(desc)) return;
+    syncPermsToRow(row, desc);
+  });
+}
+
+function setScope(el, nid, scope) {
+  event.stopPropagation();
+  const row = el.closest('tr');
+  if (!row) return;
+  const prevScope = row.dataset.scope;
+  row.dataset.scope = scope;
+  // 同步全局状态
+  const nodeId = row.dataset.id;
+  if (nodeId) {
+    if (!window.rpNodeStates[nodeId]) window.rpNodeStates[nodeId] = {};
+    window.rpNodeStates[nodeId].scope = scope;
+  }
+  // Update toggle UI
+  const tg = el.parentElement;
+  tg.querySelectorAll('span').forEach(s => s.classList.remove('on'));
+  el.classList.add('on');
+
+  const hasBlock = row.querySelector('.block-inherit-cb')?.checked;
+
+  if (hasBlock) {
+    // 已禁止父项传递的节点，scope 变化影响后代跟随谁
+    if (scope === 'children') {
+      // 阻断扩散到后代 → 后代改为跟随本节点
+      scopeLockDescendants(row, true);
+    } else {
+      // 阻断仅自身 → 后代重新接受上层祖先锁定
+      const lockSrc = findLockSource(row);
+      if (lockSrc) scopeLockDescendants(lockSrc, true);
+    }
+  } else {
+    // 无阻断：正常 scope 行为
+    if (prevScope === 'self' && scope === 'children') {
+      scopeLockDescendants(row, true);
+    } else if (prevScope === 'children' && scope === 'self') {
+      scopeLockDescendants(row, false);
+    }
+  }
+}
+
+function onBlockInheritChange(cb) {
+  event.stopPropagation();
+  const row = cb.closest('tr');
+  if (!row) return;
+  const nodeId = row.dataset.id;
+
+  if (cb.checked) {
+    // 同步全局状态
+    if (nodeId) {
+      if (!window.rpNodeStates[nodeId]) window.rpNodeStates[nodeId] = {};
+      window.rpNodeStates[nodeId].blocked = true;
+    }
+    // 开启禁止父项传递：自身解锁，可独立设置权限
+    unlockScopeToggle(row);
+    unlockPermCheckboxes(row);
+    if (nodeId) window.rpLockedNodes.delete(nodeId);
+    if (row.dataset.scope === 'children') {
+      // 本节点及子节点：阻断父级传递，但后代跟随本节点
+      scopeLockDescendants(row, true);
+    }
+    // 本节点：仅自身阻断，后代保持原锁定状态不变
+  } else {
+    // 同步全局状态
+    if (nodeId) {
+      if (!window.rpNodeStates[nodeId]) window.rpNodeStates[nodeId] = {};
+      window.rpNodeStates[nodeId].blocked = false;
+    }
+    // 关闭禁止父项传递：重新接受父级管理
+    const lockSrc = findLockSource(row);
+    if (lockSrc) {
+      lockScopeToggle(row);
+      syncPermsToRow(lockSrc, row);
+      lockPermCheckboxes(row);
+      if (nodeId) window.rpLockedNodes.add(nodeId);
+    } else if (nodeId) {
+      window.rpLockedNodes.delete(nodeId);
+    }
+    if (row.dataset.scope === 'children') {
+      scopeLockDescendants(row, true);
+    }
+  }
+}
+
+function flattenResWithType(tree) {
+  let r = [];
+  tree.forEach(t => {
+    if (t.children) {
+      t.children.forEach(c => {
+        if (c.children) {
+          c.children.forEach(res => {
+            if (res.type==='resource') r.push({ name:res.name, typeName:t.name, typeId:t.id });
+          });
+        }
+        if (c.type==='resource') r.push({ name:c.name, typeName:t.name, typeId:t.id });
+      });
+    }
+  });
+  return r;
+}
+
+let rpSubIsDir = false;
+let rpSubType = 'org';
+function switchRPSub(type, el) {
+  rpSubType = type;
+  el.parentElement.querySelectorAll('.subtab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  renderRPSub(type, rpSubIsDir);
+}
+
+function renderRPSub(type, isDirNode) {
+  const permissions = isDirNode ? ['全部','查看','资源维护','目录管理','授权'] : ['全部','查看','下载','分享','管理','授权'];
+  const typeLabel = type==='org'?'组织':type==='role'?'角色':'成员';
+  const isLocked = window.rpLockedNodes && window.rpLockedNodes.has(rpSelResId);
+  const disabledAttr = isLocked ? ' disabled' : '';
+  const items = type==='org' ? [
+    { name:'总公司', level:0, hasKids:true, checked:['全部','查看'] },
+    { name:'销售部', level:1, hasKids:true, checked:['查看'] },
+    { name:'华东区', level:2, hasKids:false, checked:[] },
+    { name:'华南区', level:2, hasKids:false, checked:['查看'] },
+    { name:'技术部', level:1, hasKids:false, checked:['全部','查看','下载','管理'] },
+    { name:'财务部', level:1, hasKids:false, checked:[] },
+    { name:'分公司', level:0, hasKids:false, checked:['查看'] },
+  ] : type==='role' ? [
+    { name:'数据分析师', checked:['全部','查看','下载','分享','管理','授权'] },
+    { name:'数据查看者', checked:['查看'] },
+    { name:'报表编辑者', checked:['查看','下载'] },
+  ] : [
+    { name:'张伟（zhangwei）', checked:['全部','查看','下载','分享','管理','授权'] },
+    { name:'赵敏（zhaomin）', checked:['查看'] },
+    { name:'刘洋（liuyang）', checked:['查看','下载'] },
+  ];
+
+  if (type === 'org') {
+    document.getElementById('rpSubContent').innerHTML = `<div style="margin-bottom:8px;"><input class="frm-inp" style="font-size:12.5px;" placeholder="搜索组织..."></div>
+    <div class="tbl-wrap"><table><thead><tr><th style="width:40%;">组织名称</th><th style="width:60%;text-align:center;">权限详情 <input type="checkbox" class="perm-cb" style="margin-left:6px;vertical-align:middle;" onclick="toggleAllRPSub(this)" title="全选/取消全选"${disabledAttr}></th></tr></thead><tbody>
+      ${items.map(i=>`<tr class="${i.hasKids?'tree-row parent expanded':'tree-row'}" data-level="${i.level}">
+        <td style="padding-left:${i.level*16+18}px;"><span class="toggle">${i.hasKids ? '<i data-lucide="chevron-right" style="width:14px;height:14px;flex-shrink:0;"></i>' : '<span style="display:inline-block;width:14px;flex-shrink:0;"></span>'}</span><span style="display:inline-flex;align-items:center;gap:4px;max-width:100%;overflow:hidden;"><i data-lucide="${i.hasKids?'building-2':'users'}" style="width:15px;height:15px;flex-shrink:0;"></i><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${i.name}</span></span></td>
+        <td style="text-align:center;">${permissions.map(p=>`<label style="margin:0 3px;cursor:pointer;font-size:12px;"><input type="checkbox" class="perm-cb" ${i.checked.includes(p)?'checked':''}${disabledAttr}> ${p}</label>`).join('')}</td>
+      </tr>`).join('')}
+    </tbody></table></div>`;
+    document.querySelectorAll('#rpSubContent .tree-row.parent').forEach(tr => {
+      tr.onclick = function(e) { if (e.target.tagName==='INPUT') return; const lv = parseInt(this.dataset.level); this.classList.toggle('expanded'); const exp = this.classList.contains('expanded'); let n = this.nextElementSibling; while (n && parseInt(n.dataset.level||0) > lv) { n.style.display = exp ? '' : 'none'; n = n.nextElementSibling; } };
+    });
+  } else {
+    document.getElementById('rpSubContent').innerHTML = `<div style="margin-bottom:8px;"><input class="frm-inp" style="font-size:12.5px;" placeholder="搜索${typeLabel}..."></div>
+    <div class="tbl-wrap"><table><thead><tr><th style="width:40%;">${typeLabel}名称</th><th style="width:60%;text-align:center;">权限详情 <input type="checkbox" class="perm-cb" style="margin-left:6px;vertical-align:middle;" onclick="toggleAllRPSub(this)" title="全选/取消全选"${disabledAttr}></th></tr></thead><tbody>
+      ${items.map(i=>`<tr><td style="font-weight:500;">${i.name}</td><td style="text-align:center;">${permissions.map(p=>`<label style="margin:0 3px;cursor:pointer;font-size:12px;"><input type="checkbox" class="perm-cb" ${i.checked.includes(p)?'checked':''}${disabledAttr}> ${p}</label>`).join('')}</td></tr>`).join('')}
+    </tbody></table></div>`;
+  }
+}
+
+function toggleAllRPSub(cb) {
+  if (cb.disabled) return;
+  const checked = cb.checked;
+  document.querySelectorAll('#rpSubContent input.perm-cb').forEach(c => { if (!c.disabled) c.checked = checked; });
+}
+
+function updateResScope(scope) {
+  if (!rpSelResId) return;
+  if (!window.rpNodeStates[rpSelResId]) window.rpNodeStates[rpSelResId] = {};
+  window.rpNodeStates[rpSelResId].scope = scope;
+  // scope 变为 children 时锁定未阻断后代
+  // (此处仅保存状态，实际级联在常规视图的表格中生效)
+}
+
+function toggleResViewBlock(cb) {
+  if (!rpSelResId) return;
+  if (!window.rpNodeStates[rpSelResId]) window.rpNodeStates[rpSelResId] = {};
+  if (cb.checked) {
+    window.rpLockedNodes.delete(rpSelResId);
+    window.rpNodeStates[rpSelResId].blocked = true;
+  } else {
+    window.rpLockedNodes.add(rpSelResId);
+    window.rpNodeStates[rpSelResId].blocked = false;
+  }
+  renderRPResDetail();
+}
+
+function resetRP() {
+  document.getElementById('rpEmpty').style.display='flex';
+  document.getElementById('rpContent').classList.remove('on');
+  document.getElementById('rpContent').innerHTML='';
+}
+
+// ========== TAB 3: 分级授权配置 ==========
+function toggleDL() {
+  const sw = document.getElementById('dlSwitch');
+  const adminSection = document.getElementById('dlAdminSection');
+  if (sw.classList.contains('on')) {
+    sw.classList.remove('on');
+    if (adminSection) adminSection.style.display = 'none';
+  } else {
+    sw.classList.add('on');
+    if (adminSection) adminSection.style.display = '';
+  }
+  // 实时保存
+  console.log('分级授权状态已保存：' + (sw.classList.contains('on') ? '开启' : '关闭'));
+}
+
+function confirmCloseDL() {
+  closeModal('closeDLModal');
+  document.getElementById('dlSwitch').classList.remove('on');
+  document.getElementById('dlModeArea').style.display='none';
+  document.getElementById('dlAdminSection').style.display='none';
+  alert('分级授权已关闭');
+}
+
+let dlPersonType = 'org';
+let dlPersonSelId = null;
+
+function switchDLPerson(type, el) {
+  dlPersonType = type; dlPersonSelId = null;
+  el.parentElement.querySelectorAll('.subtab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  renderDLPersonList();
+  document.getElementById('dlPermDetail').innerHTML = '<div style="text-align:center;padding:60px 20px;color:var(--t3);font-size:13px;">请选择左侧对象配置人员管理权限</div>';
+}
+
+function renderDLPersonList() {
+  let items;
+  if (dlPersonType === 'org') {
+    items = dlOrgTreeData;
+    document.getElementById('dlPersonList').innerHTML = buildDLOrgTree(items, 0);
+  } else if (dlPersonType === 'role') {
+    items = ['数据分析师','数据查看者','报表编辑者','数据开发者','销售分析组','财务审计员','市场运营'];
+    document.getElementById('dlPersonList').innerHTML = items.map(r => `<div class="li${dlPersonSelId===r?' on':''}" onclick="selectDLPerson('${r}',this)"><i data-lucide="shield" style="width:15px;height:15px;"></i><div class="li-tt">${r}</div></div>`).join('');
+  } else {
+    items = ['张伟（zhangwei）','李娜（lina）','王强（wangqiang）','赵敏（zhaomin）','刘洋（liuyang）'];
+    document.getElementById('dlPersonList').innerHTML = items.map(m => `<div class="li${dlPersonSelId===m?' on':''}" onclick="selectDLPerson('${m}',this)"><i data-lucide="user" style="width:15px;height:15px;"></i><div class="li-tt">${m}</div></div>`).join('');
+  }
+  lucide.createIcons();
+}
+
+const dlOrgTreeData = [
+  { name:'总公司', children:[
+    { name:'销售部', children:[{ name:'华东区' },{ name:'华南区' }] },
+    { name:'技术部' },{ name:'财务部' },
+  ]},
+  { name:'分公司' },
+];
+
+function buildDLOrgTree(nodes, level) {
+  return nodes.map(n => {
+    const hasKids = n.children && n.children.length > 0;
+    const on = dlPersonSelId === n.name ? ' on' : '';
+    return '<div class="tree-item'+on+'" style="padding-left:'+(level*16+12)+'px;" data-id="'+n.name+'">'+
+      (hasKids ? '<span class="tree-toggle-wrap" style="width:14px;height:14px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;"><i data-lucide="chevron-right" style="width:14px;height:14px;"></i></span>' : '<span style="width:14px;flex-shrink:0;"></span>')+
+      '<span style="display:inline-flex;align-items:center;gap:6px;flex:1;cursor:pointer;" onclick="selectDLPerson(\''+n.name+'\',this.parentElement)"><i data-lucide="'+(hasKids?'building-2':'users')+'" style="width:15px;height:15px;flex-shrink:0;"></i><span>'+n.name+'</span></span>'+
+    '</div>'+(hasKids ? '<div class="tree-sub" style="display:none;">'+buildDLOrgTree(n.children, level+1)+'</div>' : '');
+  }).join('');
+}
+
+function selectDLPerson(id, el) {
+  dlPersonSelId = id;
+  if (dlPersonType === 'org') {
+    document.querySelectorAll('#dlPersonList .tree-item').forEach(t => t.classList.remove('on'));
+  } else {
+    document.querySelectorAll('#dlPersonList .li').forEach(t => t.classList.remove('on'));
+  }
+  el.classList.add('on');
+  renderDLPermDetail(id);
+}
+
+function renderDLPermDetail(id) {
+  const c = document.getElementById('dlPermDetail');
+  c.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div style="font-weight:600;font-size:14px;">${id} 的人员管理权限</div>
+      <button class="btn btn-pri btn-sm" onclick="alert('人员管理权限保存成功！')">保存</button>
+    </div>
+    <div style="margin-bottom:8px;font-size:13px;font-weight:600;color:var(--t2);">可管理的对象：</div>
+    <div style="display:flex;gap:4px;margin-bottom:10px;">
+      <div class="subtab on" onclick="switchDLPerm('org',this)" style="padding:5px 12px;font-size:12px;">组织</div>
+      <div class="subtab" onclick="switchDLPerm('role',this)" style="padding:5px 12px;font-size:12px;">角色</div>
+      <div class="subtab" onclick="switchDLPerm('member',this)" style="padding:5px 12px;font-size:12px;">成员</div>
+    </div>
+    <div id="dlPermContent"></div>`;
+  renderDLPerm('org');
+  lucide.createIcons();
+}
+
+function switchDLPerm(type, el) {
+  el.parentElement.querySelectorAll('.subtab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  renderDLPerm(type);
+}
+
+function renderDLPerm(type) {
+  if (type === 'org') {
+    document.getElementById('dlPermContent').innerHTML = '<div class="tbl-wrap"><table><thead><tr><th style="width:60%;">组织名称</th><th style="width:40%;text-align:center;">权限详情 <input type="checkbox" class="perm-cb" style="margin-left:6px;vertical-align:middle;" onclick="var t=this.closest(\'table\');t.querySelectorAll(\'input.perm-cb\').forEach(function(c){c.checked=this.checked}.bind(this))"></th></tr></thead><tbody>'+
+      flattenDLOrg(dlOrgTreeData, 0).map(o => '<tr class="'+(o.hasKids?'tree-row parent expanded':'tree-row')+'" data-level="'+o.level+'"><td style="padding-left:'+(o.level*16+18)+'px;"><span style="display:inline-flex;align-items:center;gap:4px;">'+(o.hasKids?'<span class="toggle"><i data-lucide="chevron-right" style="width:14px;height:14px;"></i></span>':'<span style="width:14px;flex-shrink:0;display:inline-block;"></span>')+'<i data-lucide="'+(o.hasKids?'building-2':'users')+'" style="width:15px;height:15px;flex-shrink:0;"></i><span>'+o.name+'</span></span></td><td style="text-align:center;"><input type="checkbox" class="perm-cb" '+(o.checked?'checked':'')+'> 管理</td></tr>').join('')+
+    '</tbody></table></div>';
+  } else if (type === 'role') {
+    const roles = ['数据分析师','数据查看者','报表编辑者','数据开发者','销售分析组','财务审计员','市场运营'];
+    document.getElementById('dlPermContent').innerHTML = '<div class="tbl-wrap"><table><thead><tr><th style="width:60%;">角色名称</th><th style="width:40%;text-align:center;">权限详情 <input type="checkbox" class="perm-cb" style="margin-left:6px;vertical-align:middle;" onclick="var t=this.closest(\'table\');t.querySelectorAll(\'input.perm-cb\').forEach(function(c){c.checked=this.checked}.bind(this))"></th></tr></thead><tbody>'+
+      roles.map(r => '<tr><td style="font-weight:500;"><span style="display:inline-flex;align-items:center;gap:4px;max-width:100%;overflow:hidden;"><i data-lucide="shield" style="width:14px;height:14px;color:var(--pri);flex-shrink:0;"></i><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+r+'</span></span></td><td style="text-align:center;"><input type="checkbox" class="perm-cb" '+(Math.random()>0.5?'checked':'')+'> 管理</td></tr>').join('')+
+    '</tbody></table></div>';
+  } else {
+    const members = ['张伟（zhangwei）','李娜（lina）','王强（wangqiang）','赵敏（zhaomin）','刘洋（liuyang）','陈静（chenjing）','杨帆（yangfan）'];
+    document.getElementById('dlPermContent').innerHTML = '<div class="tbl-wrap"><table><thead><tr><th style="width:60%;">成员</th><th style="width:40%;text-align:center;">权限详情 <input type="checkbox" class="perm-cb" style="margin-left:6px;vertical-align:middle;" onclick="var t=this.closest(\'table\');t.querySelectorAll(\'input.perm-cb\').forEach(function(c){c.checked=this.checked}.bind(this))"></th></tr></thead><tbody>'+
+      members.map(m => '<tr><td style="font-weight:500;"><span style="display:inline-flex;align-items:center;gap:4px;max-width:100%;overflow:hidden;"><i data-lucide="user" style="width:14px;height:14px;color:var(--pri);flex-shrink:0;"></i><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+m+'</span></span></td><td style="text-align:center;"><input type="checkbox" class="perm-cb" '+(Math.random()>0.5?'checked':'')+'> 管理</td></tr>').join('')+
+    '</tbody></table></div>';
+  }
+  lucide.createIcons();
+}
+
+function flattenDLOrg(nodes, level) {
+  let r = [];
+  nodes.forEach(n => {
+    const hasKids = !!(n.children && n.children.length);
+    r.push({ name:n.name, level, hasKids, checked: Math.random()>0.5 });
+    if (n.children) r = r.concat(flattenDLOrg(n.children, level+1));
+  });
+  return r;
+}
+
+// ========== MODAL ==========
+function showModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+document.querySelectorAll('.mod-o').forEach(o => o.addEventListener('click', function(e) { if (e.target===this) this.classList.remove('show'); }));
+
+// ========== CASCADING ORG CHECKBOX ==========
+document.addEventListener('change', function(e) {
+  // DL perm org table cascade
+  let cb = e.target.closest('#dlPermContent input.perm-cb');
+  if (cb) {
+    const row = cb.closest('tr');
+    if (!row) return;
+    const level = parseInt(row.dataset.level);
+    if (isNaN(level)) return;
+    const checked = cb.checked;
+    let next = row.nextElementSibling;
+    while (next && parseInt(next.dataset.level) > level) {
+      next.querySelector('input.perm-cb').checked = checked;
+      next = next.nextElementSibling;
+    }
+    if (!checked) {
+      let prev = row.previousElementSibling;
+      while (prev) {
+        const prevLevel = parseInt(prev.dataset.level);
+        if (isNaN(prevLevel)) break;
+        if (prevLevel < level) {
+          prev.querySelector('input.perm-cb').checked = false;
+        }
+        prev = prev.previousElementSibling;
+      }
+    }
+    return;
+  }
+
+  // RP sub org table cascade: 勾选父→联动子，取消子不影响父
+  cb = e.target.closest('#rpSubContent input.perm-cb');
+  if (!cb || cb.disabled) return;
+  const row = cb.closest('tr');
+  if (!row) return;
+
+  // "全部" 勾选联动同一行所有权限
+  const label = cb.parentElement;
+  if (label && label.textContent.trim().startsWith('全部')) {
+    const checked = cb.checked;
+    row.querySelectorAll('input.perm-cb').forEach(c => c.checked = checked);
+  }
+
+  const level = parseInt(row.dataset.level);
+  if (isNaN(level)) return;
+  const allCbs = Array.from(row.querySelectorAll('input.perm-cb'));
+  const cbIndex = allCbs.indexOf(cb);
+  if (cbIndex < 0) return;
+  const checked = cb.checked;
+  let next = row.nextElementSibling;
+  while (next && parseInt(next.dataset.level) > level) {
+    const childCbs = next.querySelectorAll('input.perm-cb');
+    if (childCbs[cbIndex]) childCbs[cbIndex].checked = checked;
+    next = next.nextElementSibling;
+  }
+});
+
+// ========== TREE TOGGLE (capture phase) ==========
+document.addEventListener('click', function(e) {
+  const wrap = e.target.closest('.tree-toggle-wrap');
+  if (!wrap) return;
+  e.stopPropagation();
+  const item = wrap.parentElement;
+  const sub = item.nextElementSibling;
+  const icon = wrap.querySelector('i,svg');
+  if (sub && sub.classList.contains('tree-sub')) {
+    const isHidden = sub.style.display === 'none';
+    sub.style.display = isHidden ? '' : 'none';
+    if (icon) icon.style.transform = isHidden ? 'rotate(90deg)' : '';
+  }
+  lucide.createIcons();
+}, true);
+
+// ========== INIT ==========
+document.addEventListener('DOMContentLoaded', function() {
+  renderFPObjList();
+  renderRPObjList();
+  renderDLPersonList();
+  lucide.createIcons();
+});
+</script>
+</body>
+</html>

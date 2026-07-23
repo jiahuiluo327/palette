@@ -1,0 +1,1627 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GienBI - 资源目录</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{font-family:'Inter','Noto Sans SC',sans-serif;margin:0;padding:0;box-sizing:border-box}
+:root{--pri:#3B82F6;--pri-lt:#EFF6FF;--pri-dk:#1D4ED8;--bg:#F8FAFC;--card:#fff;--bd:#E2E8F0;--bd-lt:#F1F5F9;--t1:#0F172A;--t2:#475569;--t3:#94A3B8}
+body{background:var(--bg);display:flex;height:100vh;overflow:hidden;font-size:14px}
+
+/* Sidebar */
+aside{width:220px;background:#fff;border-right:1px solid var(--bd);display:flex;flex-direction:column;flex-shrink:0}
+aside .logo{padding:20px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px;white-space:nowrap}
+aside .logo .icon{width:34px;height:34px;background:linear-gradient(135deg,#3B82F6,#1D4ED8);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+aside nav{flex:1;padding:12px 10px;overflow-y:auto}
+aside nav .grp{font-size:10.5px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;padding:10px 10px 4px}
+aside nav a{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:8px;font-size:13.5px;font-weight:500;color:var(--t2);cursor:pointer;transition:all .12s;margin-bottom:1px;text-decoration:none;white-space:nowrap}
+aside nav a:hover{background:#F1F5F9;color:var(--t1)}
+aside nav a.active{background:var(--pri-lt);color:var(--pri);font-weight:600}
+aside nav a i,aside nav a svg{width:18px;height:18px;flex-shrink:0}
+aside .user{padding:14px 16px;border-top:1px solid var(--bd);display:flex;align-items:center;gap:8px}
+aside .user .av{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#3B82F6,#1D4ED8);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+aside .user .info{flex:1;min-width:0}
+aside .user .info .nm{font-size:13px;font-weight:600;color:var(--t1);white-space:nowrap}
+aside .user .info .em{font-size:11px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Main */
+main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+
+/* Split layout */
+.split{display:flex;flex:1;overflow:hidden}
+.split-l{width:260px;flex-shrink:0;border-right:1px solid var(--bd);background:#fff;display:flex;flex-direction:column;overflow:hidden}
+.split-l .hd{padding:14px;border-bottom:1px solid var(--bd-lt);flex-shrink:0}
+.split-l .lst{flex:1;overflow-y:auto;padding:6px}
+.split-r{flex:1;overflow:hidden;background:#fff;min-width:0;display:flex;flex-direction:column}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .12s;white-space:nowrap;background:none}
+.btn-pri{background:var(--pri);color:#fff}
+.btn-pri:hover{background:var(--pri-dk)}
+.btn-sec{background:#fff;color:var(--t2);border:1px solid var(--bd)}
+.btn-sec:hover{background:#F8FAFC}
+.btn-gh{background:none;color:var(--t3);padding:6px;border-radius:6px}
+.btn-gh:hover{background:#F1F5F9;color:var(--t1)}
+
+/* Input/Select */
+.inp,.sel{height:34px;padding:0 10px;border:1px solid var(--bd);border-radius:7px;font-size:13px;color:var(--t1);background:#fff;outline:none;transition:all .12s}
+.inp:focus,.sel:focus{border-color:var(--pri);box-shadow:0 0 0 3px rgba(59,130,246,.08)}
+.inp{padding-left:30px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E") 8px center no-repeat}
+.sel{padding-right:28px;appearance:none;cursor:pointer;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") right 10px center no-repeat}
+.frm-inp{width:100%;height:36px;padding:0 10px;border:1px solid var(--bd);border-radius:7px;font-size:13.5px;outline:none;transition:all .12s;background:#fff}
+.frm-inp:focus{border-color:var(--pri);box-shadow:0 0 0 3px rgba(59,130,246,.06)}
+.frm-lbl{font-size:13px;font-weight:500;color:var(--t2);margin-bottom:5px;display:block}
+.frm-lbl .rq{color:#EF4444;margin-left:1px}
+
+/* Tags & Badges */
+.tag{display:inline-flex;align-items:center;padding:2px 9px;border-radius:5px;font-size:12px;font-weight:500;margin:1px 2px;white-space:nowrap}
+.tag-blue{background:#EFF6FF;color:#1D4ED8}
+.tag-green{background:#F0FDF4;color:#15803D}
+.tag-gray{background:#F1F5F9;color:#64748B}
+
+/* Tree items */
+.tree-item{display:flex;align-items:center;gap:7px;padding:8px 12px;border-radius:7px;cursor:pointer;font-size:13.5px;color:var(--t2);transition:all .08s;white-space:nowrap}
+.tree-item:hover{background:#F8FAFC}
+.tree-item.on{background:var(--pri-lt);color:var(--pri);font-weight:500}
+.tree-item>i,.tree-item>svg,.tree-item>.tree-toggle-wrap{flex-shrink:0}
+.tree-sub{margin-left:18px;border-left:1px solid var(--bd-lt);padding-left:4px}
+
+/* Dropdown */
+.dd{position:relative;display:inline-block}
+.dd-m{position:fixed;background:#fff;border:1px solid var(--bd);border-radius:9px;box-shadow:0 8px 30px rgba(0,0,0,.1);min-width:148px;z-index:999;opacity:0;visibility:hidden;transform:translateY(-3px);transition:all .12s}
+.dd-m.show{opacity:1;visibility:visible;transform:translateY(0)}
+.dd-m div{padding:9px 12px;font-size:13px;color:var(--t2);cursor:pointer;display:flex;align-items:center;gap:7px;transition:background .08s}
+.dd-m div:first-child{border-radius:9px 9px 0 0}
+.dd-m div:last-child{border-radius:0 0 9px 9px}
+.dd-m div:hover{background:#F8FAFC}
+.dd-m .sep{border-top:1px solid var(--bd-lt);margin:3px 0;height:0;padding:0;cursor:default}
+
+/* Table */
+.tbl-wrap{background:#fff;border:1px solid var(--bd);border-radius:14px}
+.tbl-wrap table{width:100%;border-collapse:collapse;table-layout:fixed}
+.tbl-wrap thead th{text-align:left;padding:11px 14px;font-size:12px;font-weight:600;color:var(--t3);background:#FAFAFA;border-bottom:1px solid var(--bd);white-space:nowrap}
+.tbl-wrap thead th:first-child{padding-left:18px}
+.tbl-wrap thead th:last-child{text-align:right;padding-right:18px}
+.tbl-wrap tbody td{padding:12px 14px;font-size:13.5px;color:var(--t1);border-bottom:1px solid var(--bd-lt);vertical-align:middle;white-space:nowrap}
+.tbl-wrap tbody td:first-child{padding-left:18px}
+.tbl-wrap tbody td:last-child{text-align:right;padding-right:18px}
+.tbl-wrap tbody tr{transition:background .08s}
+.tbl-wrap tbody tr:hover{background:#FAFBFC}
+.tbl-wrap tbody tr:last-child td{border-bottom:none}
+
+/* Tabs - sub */
+.subtabs{display:flex;gap:4px;margin-bottom:14px}
+.subtab{padding:7px 16px;font-size:13px;font-weight:500;color:var(--t3);cursor:pointer;border-radius:7px;transition:all .12s;white-space:nowrap;border:1px solid transparent}
+.subtab.on{color:var(--pri);background:var(--pri-lt);border-color:var(--pri-lt)}
+.subtab:hover{color:var(--t1);background:var(--bd-lt)}
+
+/* Detail section */
+.dsec{padding:18px 20px;border-bottom:1px solid var(--bd-lt)}
+.dsec:last-child{border-bottom:none}
+.dsec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;white-space:nowrap}
+.dsec-tt{font-size:14px;font-weight:600;color:var(--t1);white-space:nowrap}
+
+/* Panel */
+.panel{display:none!important}
+.panel.on{display:block!important}
+
+/* Modal */
+.mod-o{position:fixed;inset:0;background:rgba(15,23,42,.4);display:flex;align-items:center;justify-content:center;z-index:1000;opacity:0;visibility:hidden;transition:all .15s}
+.mod-o.show{opacity:1;visibility:visible}
+.mod{background:#fff;border-radius:16px;width:540px;max-height:85vh;overflow-y:auto;box-shadow:0 20px 50px rgba(0,0,0,.15);transform:scale(.96);transition:transform .15s}
+.mod-o.show .mod{transform:scale(1)}
+.mod-hd{padding:18px 22px;border-bottom:1px solid var(--bd-lt);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;z-index:1;border-radius:16px 16px 0 0}
+.mod-hd h3{font-size:16px;font-weight:700;white-space:nowrap}
+.mod-bd{padding:20px 22px}
+.mod-ft{padding:14px 22px;border-top:1px solid var(--bd-lt);display:flex;justify-content:flex-end;gap:8px;position:sticky;bottom:0;background:#fff;border-radius:0 0 16px 16px;white-space:nowrap}
+
+/* Radio */
+.radio-item{display:flex;align-items:flex-start;gap:8px;padding:10px 14px;border:1px solid var(--bd);border-radius:8px;cursor:pointer;transition:all .1s}
+.radio-item:hover{background:#F8FAFC}
+.radio-item.on{border-color:var(--pri);background:var(--pri-lt)}
+.radio-item input[type=radio]{margin-top:2px;accent-color:var(--pri);cursor:pointer;flex-shrink:0}
+.radio-tt{font-size:13px;font-weight:600;white-space:nowrap}
+.radio-desc{font-size:12px;color:var(--t3);margin-top:2px}
+
+/* Checkbox */
+.perm-cb{width:16px;height:16px;accent-color:var(--pri);cursor:pointer}
+
+/* Pagination */
+.pg{display:flex;align-items:center;justify-content:space-between;padding:12px 0 0}
+.pg-info{font-size:13px;color:var(--t3)}
+.pg-btn{width:32px;height:32px;border:1px solid var(--bd);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;background:#fff;color:var(--t2);transition:all .1s}
+.pg-btn.on{background:var(--pri);border-color:var(--pri);color:#fff;font-weight:600}
+
+/* Resource cards */
+.res-card{background:#fff;border:1px solid var(--bd);border-radius:10px;padding:14px 16px;transition:all .12s;display:flex;align-items:center;gap:14px;position:relative}
+.res-card:hover{border-color:#CBD5E1;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.res-icon{width:40px;height:40px;background:var(--pri-lt);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.res-icon i,.res-icon svg{width:20px;height:20px;color:var(--pri)}
+.res-body{flex:1;min-width:0}
+.res-name{font-weight:600;font-size:14px;color:var(--pri);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.res-meta{display:flex;align-items:center;gap:8px;margin-top:4px;font-size:12px;color:var(--t3);overflow:hidden;flex-wrap:wrap}
+.res-meta span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.res-sep{color:var(--bd);flex-shrink:0}
+.res-unmount{flex-shrink:0;font-size:12px;padding:4px 10px;justify-content:center;white-space:nowrap}
+.res-card:hover{border-color:#CBD5E1;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+
+/* No-permission card state */
+.res-card.no-access{cursor:not-allowed;opacity:.85}
+
+/* No-permission modal */
+.no-perm-modal{text-align:center;padding:8px 0}
+.no-perm-modal .icon-wrap{width:64px;height:64px;background:#FEF3C7;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+.no-perm-modal h3{font-size:17px;font-weight:700;color:var(--t1);margin-bottom:8px}
+.no-perm-modal p{font-size:13.5px;color:var(--t2);margin-bottom:20px;line-height:1.6}
+.no-perm-modal .res-info-tag{display:inline-flex;align-items:center;gap:6px;background:var(--bd-lt);padding:6px 12px;border-radius:6px;font-size:12.5px;color:var(--t2);margin-bottom:18px}
+
+/* Permission application drawer */
+.drawer-overlay{position:fixed;inset:0;background:rgba(15,23,42,.4);z-index:2000;opacity:0;visibility:hidden;transition:all .2s}
+.drawer-overlay.show{opacity:1;visibility:visible}
+.drawer{position:fixed;top:0;right:0;width:720px;height:100%;background:#fff;box-shadow:-8px 0 30px rgba(0,0,0,.12);z-index:2001;transform:translateX(100%);transition:transform .25s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column}
+.drawer-overlay.show .drawer{transform:translateX(0)}
+.drawer-hd{padding:16px 24px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.drawer-hd h3{font-size:16px;font-weight:700;color:var(--t1)}
+.drawer-bd{flex:1;overflow-y:auto;padding:24px}
+.drawer-ft{padding:14px 24px;border-top:1px solid var(--bd);display:flex;justify-content:flex-end;gap:8px;flex-shrink:0;background:#fff}
+
+/* Drawer form styles */
+.drawer .form-section{margin-bottom:24px}
+.drawer .form-section-title{font-size:15px;font-weight:600;color:var(--t1);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--bd)}
+.drawer .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.drawer .form-group{margin-bottom:16px}
+.drawer .form-label{font-size:13px;font-weight:500;color:var(--t2);margin-bottom:6px;display:block}
+.drawer .form-label .req{color:#EF4444;margin-left:1px}
+.drawer .form-input{width:100%;height:38px;padding:0 12px;border:1px solid var(--bd);border-radius:8px;font-size:13.5px;outline:none;transition:all .15s;background:#fff}
+.drawer .form-input:focus{border-color:var(--pri);box-shadow:0 0 0 3px rgba(59,130,246,.08)}
+.drawer .form-input:disabled,.drawer .form-select:disabled{background:#F5F5F5;color:var(--t3);cursor:not-allowed}
+.drawer .form-select{width:100%;height:38px;padding:0 30px 0 12px;border:1px solid var(--bd);border-radius:8px;font-size:13.5px;outline:none;transition:all .15s;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") right 10px center no-repeat;appearance:none;cursor:pointer}
+.drawer .form-select:focus{border-color:var(--pri);box-shadow:0 0 0 3px rgba(59,130,246,.08)}
+.drawer .form-textarea{width:100%;padding:10px 12px;border:1px solid var(--bd);border-radius:8px;font-size:13.5px;outline:none;resize:vertical;min-height:90px;transition:all .15s;font-family:inherit}
+.drawer .form-textarea:focus{border-color:var(--pri);box-shadow:0 0 0 3px rgba(59,130,246,.08)}
+.drawer .perm-check-group{display:flex;gap:20px;padding:12px 16px;background:var(--bd-lt);border-radius:8px;border:1px solid var(--bd)}
+.drawer .perm-check-label{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--t2);cursor:pointer}
+.drawer .perm-check-label input{width:16px;height:16px;accent-color:var(--pri)}
+.drawer .perm-hint{font-size:12px;color:var(--t3);margin-top:8px}
+.drawer .resource-table{width:100%;border-collapse:collapse}
+.drawer .resource-table th{text-align:left;padding:10px 14px;font-size:12px;font-weight:600;color:var(--t3);background:#FAFAFA;border-bottom:1px solid var(--bd)}
+.drawer .resource-table td{padding:10px 14px;font-size:13px;color:var(--t1);border-bottom:1px solid var(--bd-lt)}
+.drawer .resource-table tbody tr:last-child td{border-bottom:none}
+.drawer .resource-table-wrap{border:1px solid var(--bd);border-radius:8px;overflow:hidden}
+.drawer .upload-zone{border:2px dashed #CBD5E1;border-radius:8px;padding:24px;text-align:center;color:var(--t3);font-size:13px;cursor:pointer;transition:all .15s}
+.drawer .upload-zone:hover{border-color:var(--pri);background:#F8FAFC}
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside>
+  <div class="logo">
+    <div class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="12" width="3" height="9" rx="1"/><rect x="10" y="7" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="18" rx="1"/></svg></div>
+    <span style="font-size:17px;font-weight:700;color:var(--t1);">GienBI</span>
+  </div>
+  <nav>
+    <a class="active"><i data-lucide="folder-tree"></i> 资源目录</a>
+    <div class="grp">系统管理</div>
+    <a onclick="location.href='用户管理-原型.html'"><i data-lucide="users"></i> 用户管理</a>
+    <a onclick="location.href='权限管理-原型.html'"><i data-lucide="shield"></i> 权限管理</a>
+  </nav>
+  </nav>
+  <div class="user">
+    <div class="av">管</div>
+    <div class="info"><div class="nm">管理员</div><div class="em">admin@gientech.com</div></div>
+    <span class="tag tag-blue" style="font-size:11px;">租户管理员</span>
+  </div>
+</aside>
+
+<!-- Main -->
+<main>
+  <div class="split">
+    <!-- Left: Directory Tree -->
+    <div class="split-l">
+      <div class="hd" style="padding:12px 14px 8px;">
+        <div class="subtabs" style="margin-bottom:8px;" id="dirMainTabs">
+          <div class="subtab on" onclick="switchDirMode('public',this)">公共目录</div>
+          <div class="subtab" onclick="switchDirMode('personal',this)">个人目录</div>
+        </div>
+      </div>
+      <div id="dirPublicPanel" style="display:flex;flex-direction:column;flex:1;">
+        <div class="hd" style="padding:12px 14px 8px;border-bottom:1px solid var(--bd-lt);">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <span style="font-size:12px;font-weight:600;">公共目录</span>
+            <button class="btn btn-pri" style="padding:3px 8px;font-size:11px;" onclick="openAddDirModal()"><i data-lucide="plus" style="width:12px;height:12px;"></i> 新增</button>
+          </div>
+          <input class="frm-inp" style="font-size:12.5px;" placeholder="搜索目录...">
+        </div>
+        <div class="lst tree" id="dirTree"></div>
+      </div>
+      <div id="dirPersonalPanel" style="display:none;flex:1;overflow-y:auto;">
+        <div class="lst tree" id="dirPersonalList">
+          <div class="tree-item on" style="padding-left:12px;" onclick="selectPersonalDir('mine',this)"><i data-lucide="user" style="width:15px;height:15px;flex-shrink:0;"></i><span>我的资源</span></div>
+          <div class="tree-item" style="padding-left:12px;"><span class="tree-toggle-wrap" style="width:14px;height:14px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;" onclick="event.stopPropagation();toggleFavTree()"><i data-lucide="chevron-right" style="width:14px;height:14px;transition:transform .15s;flex-shrink:0;"></i></span><i data-lucide="star" style="width:15px;height:15px;flex-shrink:0;"></i><span style="flex:1;cursor:pointer;" onclick="selectPersonalDir('fav',this.parentElement)">我的收藏夹</span><div class="dd" id="ddd-fav" style="margin-left:auto;flex-shrink:0;"><button class="btn btn-gh" style="padding:2px 4px;" onclick="event.stopPropagation();toggleDD('ddd-fav')"><i data-lucide="more-horizontal" style="width:14px;height:14px;"></i></button><div class="dd-m"><div onclick="event.stopPropagation();createFavDirFromModal()"><i data-lucide="plus" style="width:13px;height:13px;"></i> 新增子目录</div></div></div></div>
+          <div class="tree-sub" id="favSubDirs" style="display:none;"></div>
+          <div class="tree-item" style="padding-left:12px;" onclick="selectPersonalDir('share',this)"><i data-lucide="share-2" style="width:15px;height:15px;flex-shrink:0;"></i><span>我的分享</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Detail -->
+    <div class="split-r" id="dirDetail">
+      <div style="position:sticky;top:0;z-index:10;background:#fff;padding:20px 20px 0;border-bottom:1px solid var(--bd-lt);">
+        <div style="margin-bottom:12px;">
+          <div style="position:relative;">
+            <i data-lucide="search" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--t3);z-index:1;"></i>
+            <input class="frm-inp" style="padding-left:40px;padding-right:100px;height:42px;font-size:14px;border-radius:10px;border-color:var(--bd);box-shadow:0 1px 3px rgba(0,0,0,.04);" placeholder="搜索资源名称..." id="resSearch" oninput="refreshResList()">
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:10px;">
+            <select class="sel" style="height:30px;font-size:12px;width:110px;" id="resTypeFilter" onchange="refreshResList()"><option value="">全部类型</option><option>仪表板</option><option>报表</option><option>数据集</option><option>定时任务</option><option>数据源</option></select>
+            <select class="sel" style="height:30px;font-size:12px;width:100px;" id="resCreatorFilter" onchange="refreshResList()"><option value="">全部负责人</option><option>张伟（zhangwei）</option><option>李娜（lina）</option><option>赵敏（zhaomin）</option><option>陈静（chenjing）</option></select>
+            <span style="font-size:12px;color:var(--t3);margin-left:auto;" id="resCountLabel">共 <b style="color:var(--t2);">0</b> 个资源</span>
+          </div>
+        </div>
+      </div>
+      <div style="flex:1;overflow-y:auto;background:var(--bg);">
+        <div id="dirEmpty" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;min-height:300px;color:var(--t3);opacity:.5;">
+          <i data-lucide="folder-tree" style="width:44px;height:44px;margin-bottom:10px;"></i>
+          <span style="font-size:13px;">请从左侧选择一个目录查看资源</span>
+        </div>
+        <div id="dirContent" class="panel" style="padding:0 20px;"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ====== Add Directory Modal ====== -->
+<div id="addDirModal" class="mod-o"><div class="mod"><div class="mod-hd"><h3>新增目录</h3><button class="btn btn-gh" onclick="closeModal('addDirModal')"><i data-lucide="x" style="width:18px;height:18px;"></i></button></div>
+<div class="mod-bd" style="display:flex;flex-direction:column;gap:14px;">
+  <div><label class="frm-lbl">父目录</label><select class="sel" style="width:100%;" id="addDirParent"></select></div>
+  <div><label class="frm-lbl">目录名称<span class="rq">*</span></label><input class="frm-inp" id="addDirName" placeholder="输入目录名称"></div>
+  <div><label class="frm-lbl">目录描述</label><textarea class="frm-inp" id="addDirDesc" style="resize:vertical;min-height:70px;padding-top:8px;" placeholder="目录描述"></textarea></div>
+</div>
+<div class="mod-ft"><button class="btn btn-sec" onclick="closeModal('addDirModal')">取消</button><button class="btn btn-pri" onclick="saveAddDir()">保存</button></div>
+</div></div>
+
+<!-- ====== Add Subdirectory Modal ====== -->
+<div id="dirModal" class="mod-o"><div class="mod"><div class="mod-hd"><h3 id="dirModalTitle">新增子目录</h3><button class="btn btn-gh" onclick="closeModal('dirModal')"><i data-lucide="x" style="width:18px;height:18px;"></i></button></div>
+<div class="mod-bd" style="display:flex;flex-direction:column;gap:14px;">
+  <div><label class="frm-lbl">父目录</label><input class="frm-inp" id="dirParentName" readonly style="background:#F8FAFC;color:var(--t3);"></div>
+  <div><label class="frm-lbl">目录名称<span class="rq">*</span></label><input class="frm-inp" id="dirName" placeholder="输入目录名称"></div>
+  <div><label class="frm-lbl">目录描述</label><textarea class="frm-inp" id="dirDesc" style="resize:vertical;min-height:70px;padding-top:8px;" placeholder="目录描述"></textarea></div>
+</div>
+<div class="mod-ft"><button class="btn btn-sec" onclick="closeModal('dirModal')">取消</button><button class="btn btn-pri" onclick="saveDir()">保存</button></div>
+</div></div>
+
+<!-- ====== Delete Dir Confirm Modal ====== -->
+<div id="deleteDirModal" class="mod-o" style="z-index:2000;"><div class="mod" style="width:480px;"><div class="mod-hd"><h3 id="deleteDirTitle">删除目录</h3><button class="btn btn-gh" onclick="closeModal('deleteDirModal')"><i data-lucide="x" style="width:18px;height:18px;"></i></button></div>
+<div class="mod-bd">
+  <div style="display:flex;align-items:flex-start;gap:10px;padding:12px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:9px;margin-bottom:16px;">
+    <i data-lucide="alert-triangle" style="width:20px;height:20px;color:#F59E0B;flex-shrink:0;margin-top:1px;"></i>
+    <div style="font-size:13px;color:#92400E;" id="deleteDirInfo">
+      该目录下有 <b>2</b> 个子目录，将一并删除。<br>该目录下挂载了 <b>5</b> 个资源。
+    </div>
+  </div>
+  <div style="font-size:13px;font-weight:600;color:var(--t2);margin-bottom:8px;">挂载资源的处理：</div>
+  <div class="radio-group" id="deleteResOption">
+    <label class="radio-item on"><input type="radio" name="delRes" value="keep" checked><div><div class="radio-tt">保留资源，解除挂载</div><div class="radio-desc">资源回到负责人个人资源</div></div></label>
+    <label class="radio-item"><input type="radio" name="delRes" value="migrate"><div><div class="radio-tt">迁移挂载到指定目录</div><div class="radio-desc"><select class="sel" style="width:200px;height:30px;font-size:12px;margin-top:4px;"><option>销售分析</option><option>财务分析</option><option>公共报表</option></select></div></div></label>
+  </div>
+</div>
+<div class="mod-ft"><button class="btn btn-sec" onclick="closeModal('deleteDirModal')">取消</button><button class="btn" style="background:#EF4444;color:#fff;" onclick="confirmDeleteDir()">确认删除</button></div>
+</div></div>
+
+<!-- ====== Move Dir Modal ====== -->
+<div id="moveDirModal" class="mod-o"><div class="mod" style="width:480px;"><div class="mod-hd"><h3 id="moveDirTitle">移动目录</h3><button class="btn btn-gh" onclick="closeModal('moveDirModal')"><i data-lucide="x" style="width:18px;height:18px;"></i></button></div>
+<div class="mod-bd">
+  <div style="margin-bottom:14px;"><span style="font-size:12px;color:var(--t3);">当前位置：</span><span style="font-size:13px;font-weight:500;" id="moveFromPath">/销售分析/销售日报</span></div>
+  <div style="font-size:13px;font-weight:600;color:var(--t2);margin-bottom:8px;">目标位置：</div>
+  <div style="max-height:240px;overflow-y:auto;border:1px solid var(--bd);border-radius:8px;padding:6px;" id="moveDirTree"></div>
+  <div style="font-size:12px;color:var(--t3);margin-top:8px;">移动后，拥有该目录权限的用户/组织/角色将自动获得新父目录的权限。</div>
+</div>
+<div class="mod-ft"><button class="btn btn-sec" onclick="closeModal('moveDirModal')">取消</button><button class="btn btn-pri" onclick="closeModal('moveDirModal');alert('目录移动成功！')">确认移动</button></div>
+</div></div>
+
+<!-- ====== Mount Resource Modal ====== -->
+<div id="mountResModal" class="mod-o"><div class="mod" style="width:540px;"><div class="mod-hd"><h3 id="mountResTitle">添加资源</h3><button class="btn btn-gh" onclick="closeModal('mountResModal')"><i data-lucide="x" style="width:18px;height:18px;"></i></button></div>
+<div class="mod-bd">
+  <div style="margin-bottom:14px;"><label class="frm-lbl">添加到<span class="rq">*</span></label><div style="max-height:160px;overflow-y:auto;border:1px solid var(--bd);border-radius:8px;padding:6px;" id="mountTargetTree"></div></div>
+  <div style="margin-bottom:14px;">
+    <span style="font-size:13px;font-weight:600;color:var(--t2);margin-right:12px;">资源类型</span>
+    <label style="margin-right:16px;cursor:pointer;font-size:13px;"><input type="radio" name="mountType" value="internal" checked onchange="toggleMountType()" style="accent-color:var(--pri);margin-right:4px;"> 内部资源</label>
+    <label style="cursor:pointer;font-size:13px;"><input type="radio" name="mountType" value="external" onchange="toggleMountType()" style="accent-color:var(--pri);margin-right:4px;"> 外部链接</label>
+  </div>
+  <div id="mountInternal">
+    <div style="display:flex;gap:8px;margin-bottom:10px;">
+      <input class="frm-inp" style="font-size:12.5px;" placeholder="搜索资源...">
+      <select class="sel" style="width:130px;flex-shrink:0;font-size:12.5px;"><option>全部类型</option><option>仪表板</option><option>报表</option><option>数据集</option><option>定时任务</option><option>数据源</option></select>
+    </div>
+    <div class="tbl-wrap" style="overflow-x:auto;">
+      <table style="min-width:650px;table-layout:auto;"><thead><tr><th style="width:30px;text-align:center;"><input type="checkbox" class="perm-cb"></th><th>资源名称</th><th>类型</th><th>来源路径</th><th>负责人</th></tr></thead><tbody>
+        <tr><td style="text-align:center;"><input type="checkbox" class="perm-cb" checked></td><td style="font-weight:500;"><span style="display:inline-flex;align-items:center;gap:4px;max-width:100%;overflow:hidden;"><i data-lucide="bar-chart-2" style="width:14px;height:14px;color:var(--pri);flex-shrink:0;"></i><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Q3销售月报</span></span></td><td><span class="tag tag-gray">仪表板</span></td><td><span style="font-size:12px;color:var(--t3);">仪表板管理/销售分析/销售月报</span></td><td><span style="font-size:12px;color:var(--t3);">张伟（zhangwei）</span></td></tr>
+        <tr><td style="text-align:center;"><input type="checkbox" class="perm-cb" checked></td><td style="font-weight:500;"><span style="display:inline-flex;align-items:center;gap:4px;max-width:100%;overflow:hidden;"><i data-lucide="bar-chart-2" style="width:14px;height:14px;color:var(--pri);flex-shrink:0;"></i><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">RFM客户分层</span></span></td><td><span class="tag tag-gray">仪表板</span></td><td><span style="font-size:12px;color:var(--t3);">仪表板管理/销售分析/客户分析</span></td><td><span style="font-size:12px;color:var(--t3);">赵敏（zhaomin）</span></td></tr>
+        <tr><td style="text-align:center;"><input type="checkbox" class="perm-cb"></td><td style="font-weight:500;"><span style="display:inline-flex;align-items:center;gap:4px;max-width:100%;overflow:hidden;"><i data-lucide="file-text" style="width:14px;height:14px;color:var(--pri);flex-shrink:0;"></i><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">财务报表</span></span></td><td><span class="tag tag-gray">报表</span></td><td><span style="font-size:12px;color:var(--t3);">报表分析/财务分析/财务报表</span></td><td><span style="font-size:12px;color:var(--t3);">陈静（chenjing）</span></td></tr>
+        <tr><td style="text-align:center;"><input type="checkbox" class="perm-cb" checked></td><td style="font-weight:500;"><span style="display:inline-flex;align-items:center;gap:4px;max-width:100%;overflow:hidden;"><i data-lucide="file-text" style="width:14px;height:14px;color:var(--pri);flex-shrink:0;"></i><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">成本分析报告</span></span></td><td><span class="tag tag-gray">报表</span></td><td><span style="font-size:12px;color:var(--t3);">报表分析/财务分析/成本分析</span></td><td><span style="font-size:12px;color:var(--t3);">张伟（zhangwei）</span></td></tr>
+        <tr><td style="text-align:center;"><input type="checkbox" class="perm-cb"></td><td style="font-weight:500;"><span style="display:inline-flex;align-items:center;gap:4px;max-width:100%;overflow:hidden;"><i data-lucide="database" style="width:14px;height:14px;color:var(--pri);flex-shrink:0;"></i><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">销售数据集</span></span></td><td><span class="tag tag-gray">数据集</span></td><td><span style="font-size:12px;color:var(--t3);">数据集</span></td><td><span style="font-size:12px;color:var(--t3);">张伟（zhangwei）</span></td></tr>
+        <tr><td style="text-align:center;"><input type="checkbox" class="perm-cb"></td><td style="font-weight:500;"><span style="display:inline-flex;align-items:center;gap:4px;max-width:100%;overflow:hidden;"><i data-lucide="database" style="width:14px;height:14px;color:var(--pri);flex-shrink:0;"></i><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">用户数据集</span></span></td><td><span class="tag tag-gray">数据集</span></td><td><span style="font-size:12px;color:var(--t3);">数据集</span></td><td><span style="font-size:12px;color:var(--t3);">赵敏（zhaomin）</span></td></tr>
+      </tbody></table>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;"><span style="font-size:12px;color:var(--t3);">已选 <b style="color:var(--t1);">3</b> 个资源，共 6 条，每页 8 条</span><div style="display:flex;gap:4px;"><button class="pg-btn on">1</button></div></div>
+    <div style="font-size:11px;color:var(--t3);margin-top:4px;">只能添加自己有"管理"权限的资源。</div>
+  </div>
+  <div id="mountExternal" style="display:none;">
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div><label class="frm-lbl">链接名称<span class="rq">*</span></label><input class="frm-inp" placeholder="输入链接名称"></div>
+      <div><label class="frm-lbl">链接 URL<span class="rq">*</span></label><input class="frm-inp" placeholder="https://..."></div>
+      <div><label class="frm-lbl">链接描述</label><textarea class="frm-inp" style="resize:vertical;min-height:60px;padding-top:8px;" placeholder="链接描述"></textarea></div>
+    </div>
+  </div>
+</div>
+<div class="mod-ft"><button class="btn btn-sec" onclick="closeModal('mountResModal')">取消</button><button class="btn btn-pri" onclick="closeModal('mountResModal');alert('资源挂载成功！')">确认挂载</button></div>
+</div></div>
+
+<!-- ====== Mount to Directory Modal ====== -->
+<div id="mountToDirModal" class="mod-o"><div class="mod" style="width:460px;"><div class="mod-hd"><h3>添加到目录</h3><button class="btn btn-gh" onclick="closeModal('mountToDirModal')"><i data-lucide="x" style="width:18px;height:18px;"></i></button></div>
+<div class="mod-bd">
+  <div style="margin-bottom:12px;"><span style="font-size:13px;color:var(--t2);">已选 <b style="color:var(--t1);" id="mountDirCount">0</b> 个资源，请选择目标目录：</span></div>
+  <div style="max-height:280px;overflow-y:auto;border:1px solid var(--bd);border-radius:8px;padding:6px;" id="mountDirTree"></div>
+  <div style="font-size:11px;color:var(--t3);margin-top:6px;">添加后资源将出现在目标目录下。</div>
+</div>
+<div class="mod-ft"><button class="btn btn-sec" onclick="closeModal('mountToDirModal')">取消</button><button class="btn btn-pri" onclick="confirmMountToDir()">确认添加</button></div>
+</div></div>
+
+<!-- Move Resource Modal -->
+<div id="moveResModal" class="mod-o"><div class="mod" style="width:460px;"><div class="mod-hd"><h3>移动资源</h3><button class="btn btn-gh" onclick="closeModal('moveResModal')"><i data-lucide="x" style="width:18px;height:18px;"></i></button></div>
+<div class="mod-bd">
+  <div style="margin-bottom:12px;"><span style="font-size:13px;color:var(--t2);" id="moveResLabel">请选择目标目录：</span></div>
+  <div style="max-height:280px;overflow-y:auto;border:1px solid var(--bd);border-radius:8px;padding:6px;" id="moveDirTree"></div>
+  <div style="font-size:11px;color:var(--t3);margin-top:6px;">移动后资源将从当前目录移除，挂载到目标目录下。</div>
+</div>
+<div class="mod-ft"><button class="btn btn-sec" onclick="closeModal('moveResModal')">取消</button><button class="btn btn-pri" onclick="confirmMoveRes()">确认移动</button></div>
+</div></div>
+
+<!-- ====== Favorite Select Modal ====== -->
+<div id="favSelectModal" class="mod-o"><div class="mod" style="width:460px;"><div class="mod-hd"><h3>收藏资源</h3><button class="btn btn-gh" onclick="closeModal('favSelectModal')"><i data-lucide="x" style="width:18px;height:18px;"></i></button></div>
+<div class="mod-bd">
+  <div style="margin-bottom:12px;"><span style="font-size:13px;color:var(--t2);">收藏资源：<b style="color:var(--t1);" id="favResName"></b></span></div>
+  <div style="font-size:13px;font-weight:600;color:var(--t2);margin-bottom:8px;">选择收藏夹：</div>
+  <div style="max-height:240px;overflow-y:auto;border:1px solid var(--bd);border-radius:8px;padding:6px;" id="favSelectTree"></div>
+</div>
+<div class="mod-ft"><button class="btn btn-sec" onclick="closeModal('favSelectModal')">取消</button><button class="btn btn-pri" onclick="confirmFavSelect()">确认收藏</button></div>
+</div></div>
+
+<!-- ====== Edit Fav Sub Directory Modal ====== -->
+<div id="editFavDirModal" class="mod-o"><div class="mod"><div class="mod-hd"><h3>编辑收藏夹</h3><button class="btn btn-gh" onclick="closeModal('editFavDirModal')"><i data-lucide="x" style="width:18px;height:18px;"></i></button></div>
+<div class="mod-bd" style="display:flex;flex-direction:column;gap:14px;">
+  <div><label class="frm-lbl">父目录</label><div style="max-height:160px;overflow-y:auto;border:1px solid var(--bd);border-radius:8px;padding:6px;" id="editFavParentTree"></div></div>
+  <div><label class="frm-lbl">目录名称<span class="rq">*</span></label><input class="frm-inp" id="editFavDirName" placeholder="输入名称"></div>
+  <div><label class="frm-lbl">目录描述</label><textarea class="frm-inp" id="editFavDirDesc" style="resize:vertical;min-height:60px;padding-top:8px;" placeholder="目录描述"></textarea></div>
+</div>
+<div class="mod-ft"><button class="btn btn-sec" onclick="closeModal('editFavDirModal')">取消</button><button class="btn btn-pri" onclick="saveEditFavDir()">保存</button></div>
+</div></div>
+
+<!-- ====== Delete Fav Sub Directory Modal ====== -->
+<div id="deleteFavDirModal" class="mod-o" style="z-index:2000;"><div class="mod" style="width:480px;"><div class="mod-hd"><h3 id="deleteFavDirTitle">删除目录</h3><button class="btn btn-gh" onclick="closeModal('deleteFavDirModal')"><i data-lucide="x" style="width:18px;height:18px;"></i></button></div>
+<div class="mod-bd">
+  <div style="display:flex;align-items:flex-start;gap:10px;padding:12px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:9px;margin-bottom:16px;">
+    <i data-lucide="alert-triangle" style="width:20px;height:20px;color:#F59E0B;flex-shrink:0;margin-top:1px;"></i>
+    <div style="font-size:13px;color:#92400E;" id="deleteFavDirInfo">该目录下收藏了 <b>3</b> 个资源。</div>
+  </div>
+  <div style="font-size:13px;font-weight:600;color:var(--t2);margin-bottom:8px;">收藏资源的处理：</div>
+  <div class="radio-group" id="deleteFavResOption">
+    <label class="radio-item on"><input type="radio" name="delFavRes" value="remove" checked><div><div class="radio-tt">取消收藏，删除目录</div><div class="radio-desc">资源从收藏夹中移除</div></div></label>
+    <label class="radio-item"><input type="radio" name="delFavRes" value="move"><div><div class="radio-tt">转移到其他目录</div><div class="radio-desc"><div style="max-height:120px;overflow-y:auto;border:1px solid var(--bd);border-radius:6px;padding:6px;margin-top:8px;" id="moveFavResTree"></div></div></div></label>
+  </div>
+</div>
+<div class="mod-ft"><button class="btn btn-sec" onclick="closeModal('deleteFavDirModal')">取消</button><button class="btn" style="background:#EF4444;color:#fff;" id="deleteFavDirConfirm">确认删除</button></div>
+</div></div>
+
+<!-- ====== Transfer Fav Dir Modal ====== -->
+<div id="transferFavDirModal" class="mod-o"><div class="mod" style="width:440px;"><div class="mod-hd"><h3>转移到其他目录</h3><button class="btn btn-gh" onclick="closeModal('transferFavDirModal')"><i data-lucide="x" style="width:18px;height:18px;"></i></button></div>
+<div class="mod-bd">
+  <div style="margin-bottom:12px;font-size:13px;color:var(--t2);" id="transferFavDirMsg"></div>
+  <div style="font-size:13px;font-weight:600;color:var(--t2);margin-bottom:8px;">选择目标目录：</div>
+  <div style="max-height:200px;overflow-y:auto;border:1px solid var(--bd);border-radius:8px;padding:6px;" id="transferFavTree"></div>
+</div>
+<div class="mod-ft"><button class="btn btn-sec" onclick="closeModal('transferFavDirModal')">取消</button><button class="btn btn-pri" id="transferFavConfirm">确认转移</button></div>
+</div></div>
+
+<!-- ====== Favorite Sub Directory Modal ====== -->
+<div id="favSubDirModal" class="mod-o"><div class="mod"><div class="mod-hd"><h3>新增子收藏夹</h3><button class="btn btn-gh" onclick="closeModal('favSubDirModal')"><i data-lucide="x" style="width:18px;height:18px;"></i></button></div>
+<div class="mod-bd" style="display:flex;flex-direction:column;gap:14px;">
+  <div><label class="frm-lbl">父目录</label><div style="max-height:160px;overflow-y:auto;border:1px solid var(--bd);border-radius:8px;padding:6px;" id="favParentTree"></div></div>
+  <div><label class="frm-lbl">目录名称<span class="rq">*</span></label><input class="frm-inp" id="favSubDirName" placeholder="输入名称"></div>
+  <div><label class="frm-lbl">目录描述</label><textarea class="frm-inp" id="favSubDirDesc" style="resize:vertical;min-height:60px;padding-top:8px;" placeholder="目录描述"></textarea></div>
+</div>
+<div class="mod-ft"><button class="btn btn-sec" onclick="closeModal('favSubDirModal')">取消</button><button class="btn btn-pri" onclick="saveFavSubDir()">保存</button></div>
+</div></div>
+
+<!-- ====== Unmount Confirm Modal ====== -->
+<div id="unmountConfirmModal" class="mod-o" style="z-index:2000;"><div class="mod" style="width:400px;"><div class="mod-bd" style="text-align:center;">
+  <div style="width:56px;height:56px;background:#FFFBEB;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+    <i data-lucide="alert-triangle" style="width:28px;height:28px;color:#F59E0B;"></i>
+  </div>
+  <h3 style="font-size:16px;font-weight:700;margin-bottom:8px;">确认移除</h3>
+  <p id="unmountResName" style="font-size:13px;color:var(--t2);margin-bottom:12px;">确定从当前目录移除 <b>Q3销售月报</b> 吗？</p>
+  <p style="font-size:12px;color:var(--t3);margin-bottom:20px;">移除后资源回到负责人个人资源，资源权限不受影响。</p>
+  <div style="display:flex;justify-content:center;gap:10px;">
+    <button class="btn btn-sec" onclick="closeModal('unmountConfirmModal')">取消</button>
+    <button class="btn btn-pri" onclick="closeModal('unmountConfirmModal');alert('移除成功！')">确认移除</button>
+  </div>
+</div></div></div>
+
+<!-- ====== No Permission Modal ====== -->
+<div id="noPermModal" class="mod-o" style="z-index:3000;"><div class="mod" style="width:440px;"><div class="mod-hd" style="border-bottom:none;padding-bottom:0;"><h3></h3><button class="btn btn-gh" onclick="closeModal('noPermModal')"><i data-lucide="x" style="width:18px;height:18px;"></i></button></div>
+<div class="mod-bd no-perm-modal">
+  <div class="icon-wrap"><i data-lucide="shield-alert" style="width:32px;height:32px;color:#F59E0B;"></i></div>
+  <h3>暂无访问权限</h3>
+  <p>您当前没有权限访问此资源。<br>如需访问，请提交权限申请，审批通过后即可查看。</p>
+  <div class="res-info-tag" id="noPermResInfo"><i data-lucide="file-text" style="width:14px;height:14px;color:var(--t3);"></i><span></span></div>
+  <div style="display:flex;justify-content:center;gap:10px;">
+    <button class="btn btn-sec" onclick="closeModal('noPermModal')">取消</button>
+    <button class="btn btn-pri" onclick="closeModal('noPermModal');openPermApplyDrawer()"><i data-lucide="file-text" style="width:15px;height:15px;"></i> 申请权限</button>
+  </div>
+</div></div></div>
+
+<!-- ====== Permission Application Drawer ====== -->
+<div id="permApplyOverlay" class="drawer-overlay" onclick="if(event.target===this)closePermApplyDrawer()">
+<div class="drawer" id="permApplyDrawer">
+  <div class="drawer-hd">
+    <h3><i data-lucide="file-text" style="width:18px;height:18px;margin-right:6px;color:var(--pri);"></i>资源权限申请</h3>
+    <button class="btn btn-gh" onclick="closePermApplyDrawer()"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
+  </div>
+  <div class="drawer-bd">
+    <!-- 申请单信息 -->
+    <div class="form-section">
+      <div class="form-section-title">申请单信息</div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">申请单号</label><input class="form-input" value="REQ-2026007" disabled></div>
+        <div class="form-group"><label class="form-label">申请单名称<span class="req">*</span></label><input class="form-input" id="permApplyName" placeholder="请输入申请单名称"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">资源类型<span class="req">*</span></label><select class="form-select" id="permApplyResType" disabled><option value="">请选择资源类型</option><option>仪表板</option><option>报表分析</option><option>电子表格</option><option>指标列表</option><option>移动端应用</option><option>PC端应用</option><option>数据填报</option><option>需求管理</option></select></div>
+        <div class="form-group"><label class="form-label">审批类型<span class="req">*</span></label><select class="form-select" disabled><option>资源权限申请</option></select></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">申请权限<span class="req">*</span></label>
+        <div class="perm-check-group">
+          <label class="perm-check-label"><input type="checkbox" id="permApplyView" checked onchange="handlePermApplyChange('view')"> 查看</label>
+          <label class="perm-check-label"><input type="checkbox" id="permApplyDownload" onchange="handlePermApplyChange('download')"> 下载</label>
+          <label class="perm-check-label"><input type="checkbox" id="permApplyShare" onchange="handlePermApplyChange('share')"> 分享</label>
+          <label class="perm-check-label"><input type="checkbox" id="permApplyManage" onchange="handlePermApplyChange('manage')"> 管理</label>
+        </div>
+        <div class="perm-hint"><i data-lucide="info" style="width:12px;height:12px;display:inline;vertical-align:-2px;"></i> 提示：选择下载、分享、管理权限时，将自动勾选查看权限</div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">优先级<span class="req">*</span></label><select class="form-select" id="permApplyPriority"><option value="">请选择优先级</option><option value="low">低</option><option value="normal" selected>普通</option><option value="high">高</option><option value="urgent">紧急</option></select></div>
+        <div class="form-group"><label class="form-label">影响范围<span class="req">*</span></label><select class="form-select" id="permApplyScope"><option value="">请选择影响范围</option><option value="department">部门级</option><option value="company">公司级</option><option value="public">对外公开</option></select></div>
+      </div>
+      <div class="form-group"><label class="form-label">模板名称</label><input class="form-input" value="权限申请审批模板-默认匹配" disabled><div class="perm-hint">根据资源类型和审批类型自动匹配</div></div>
+      <div class="form-group"><label class="form-label">申请说明<span class="req">*</span></label><textarea class="form-textarea" id="permApplyReason" placeholder="请详细描述申请原因、背景、预期效果等信息"></textarea></div>
+      <div class="form-group">
+        <label class="form-label">附件</label>
+        <div class="upload-zone" onclick="alert('上传功能演示')">
+          <i data-lucide="upload-cloud" style="width:28px;height:28px;margin:0 auto 8px;display:block;color:var(--t3);"></i>
+          <span>点击上传</span> 或拖拽文件到此处
+          <div style="font-size:11px;margin-top:4px;">支持上传文档、图片等文件，最多10个文件，单个文件不超过10MB</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 申请内容 -->
+    <div class="form-section">
+      <div class="form-section-title">申请内容</div>
+      <div class="resource-table-wrap">
+        <table class="resource-table">
+          <thead><tr><th style="width:35%;">资源名称</th><th style="width:25%;">类型</th><th style="width:40%;">所属目录路径</th></tr></thead>
+          <tbody id="permApplyResList">
+            <tr><td colspan="3" style="text-align:center;color:var(--t3);padding:24px;">暂无资源</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="drawer-ft">
+    <button class="btn btn-sec" onclick="closePermApplyDrawer()">取消</button>
+    <button class="btn btn-sec" onclick="savePermApplyDraft()"><i data-lucide="save" style="width:14px;height:14px;"></i> 保存草稿</button>
+    <button class="btn btn-pri" onclick="submitPermApply()"><i data-lucide="send" style="width:14px;height:14px;"></i> 保存并提交</button>
+  </div>
+</div></div>
+
+<script>
+// ========== DATA ==========
+const dirTreeData = [
+  { id:'d-sales', name:'销售分析', type:'dir', children:[
+    { id:'d-daily', name:'销售日报', type:'dir', resCount:2, childCount:0 },
+    { id:'d-monthly', name:'销售月报', type:'dir', resCount:1, childCount:0 },
+    { id:'d-customer', name:'客户分析', type:'dir', resCount:2, childCount:0 },
+  ]},
+  { id:'d-fin', name:'财务分析', type:'dir', children:[
+    { id:'d-freport', name:'财务报表', type:'dir', resCount:1, childCount:0 },
+    { id:'d-cost', name:'成本分析', type:'dir', resCount:1, childCount:0 },
+  ]},
+  { id:'d-exec', name:'高管驾驶舱', type:'dir', resCount:1, childCount:0, children:[] },
+  { id:'d-public', name:'公共报表', type:'dir', resCount:0, childCount:0, children:[] },
+];
+
+// Mounted resources for each directory
+const mountResData = {
+  'd-daily': [
+    { name:'销售日报-全国', type:'仪表板', creator:'张伟（zhangwei）', updater:'张伟（zhangwei）', updateTime:'2024-06-15 14:30', mountTime:'2024-01-10 14:30' },
+    { name:'销售日报-华东', type:'仪表板', creator:'李娜（lina）', updater:'李娜（lina）', updateTime:'2024-06-12 09:15', mountTime:'2024-01-12 09:15' },
+  ],
+  'd-monthly': [{ name:'Q3销售月报', type:'仪表板', creator:'张伟（zhangwei）', updater:'张伟（zhangwei）', updateTime:'2024-06-20 11:00', mountTime:'2024-06-20 11:00' }],
+  'd-customer': [
+    { name:'RFM客户分层', type:'仪表板', creator:'赵敏（zhaomin）', updater:'赵敏（zhaomin）', updateTime:'2024-05-15 16:45', mountTime:'2024-02-15 16:45', noAccess:true },
+    { name:'客户画像分析', type:'报表', creator:'张伟（zhangwei）', updater:'张伟（zhangwei）', updateTime:'2024-05-01 10:30', mountTime:'2024-03-01 10:30' },
+  ],
+  'd-freport': [{ name:'利润表', type:'报表', creator:'陈静（chenjing）', updater:'陈静（chenjing）', updateTime:'2024-06-20 08:00', mountTime:'2024-01-20 08:00', noAccess:true }],
+  'd-cost': [{ name:'成本分析报告', type:'报表', creator:'张伟（zhangwei）', updater:'王强（wangqiang）', updateTime:'2024-06-10 13:20', mountTime:'2024-04-10 13:20' }],
+  'd-exec': [{ name:'CEO看板', type:'仪表板', creator:'张伟（zhangwei）', updater:'张伟（zhangwei）', updateTime:'2024-07-01 15:00', mountTime:'2024-01-05 15:00' }],
+  'du-zw': [
+    { name:'年度销售分析', type:'仪表板', creator:'张伟（zhangwei）', updater:'张伟（zhangwei）', updateTime:'2024-07-03 10:00', mountTime:'-', mountedDir:'' },
+    { name:'客户流失预警', type:'报表', creator:'张伟（zhangwei）', updater:'张伟（zhangwei）', updateTime:'2024-06-28 16:30', mountTime:'-', mountedDir:'' },
+    { name:'Q3销售趋势', type:'仪表板', creator:'张伟（zhangwei）', updater:'张伟（zhangwei）', updateTime:'2024-06-15 09:00', mountTime:'-', mountedDir:'', resDirPath:'' },
+    { name:'CEO看板', type:'仪表板', creator:'张伟（zhangwei）', updater:'张伟（zhangwei）', updateTime:'2024-07-01 15:00', mountTime:'2024-01-05 15:00', mountedDir:'高管驾驶舱' },
+    { name:'用户画像看板', type:'仪表板', creator:'张伟（zhangwei）', updater:'张伟（zhangwei）', updateTime:'2024-05-20 14:00', mountTime:'-', mountedDir:'' },
+    { name:'月报汇总表', type:'报表', creator:'张伟（zhangwei）', updater:'张伟（zhangwei）', updateTime:'2024-04-10 11:00', mountTime:'2024-04-10 11:00', mountedDir:'财务分析' },
+  ],
+  'du-ls': [
+    { name:'供应链看板', type:'仪表板', creator:'李四（lisi）', updater:'李四（lisi）', updateTime:'2024-07-01 09:00', mountTime:'-', mountedDir:'', noAccess:true },
+    { name:'库存分析报告', type:'报表', creator:'李四（lisi）', updater:'李四（lisi）', updateTime:'2024-06-20 16:00', mountTime:'-', mountedDir:'' },
+    { name:'物流监控面板', type:'仪表板', creator:'李四（lisi）', updater:'李四（lisi）', updateTime:'2024-06-01 10:00', mountTime:'2024-06-01 10:00', mountedDir:'公共报表' },
+  ],
+};
+
+function getDirResources(dirId) {
+  let res = [...(mountResData[dirId] || [])];
+  const dir = findDirNode(dirTreeData, dirId);
+  if (dir && dir.children) {
+    dir.children.forEach(c => {
+      res = res.concat(getDirResources(c.id));
+    });
+  }
+  return res;
+}
+
+function findDirNode(nodes, id) {
+  for (const n of nodes) {
+    if (n.id === id) return n;
+    if (n.children) { const f = findDirNode(n.children, id); if (f) return f; }
+  }
+  return null;
+}
+
+function getFuncPath(type) {
+  const map = {
+    '仪表板':'仪表板管理','报表':'报表分析','数据集':'数据集','数据源':'数据源',
+    '电子表格':'电子表格','分析报告':'分析报告','定时任务':'定时任务'
+  };
+  return map[type] || type;
+}
+
+// Functional source paths (independent of resource directory tree)
+const funcSourcePath = {
+  'd-daily': '仪表板管理/销售分析/销售日报',
+  'd-monthly': '仪表板管理/销售分析/销售月报',
+  'd-customer': '仪表板管理/销售分析/客户分析',
+  'd-freport': '报表分析/财务分析/财务报表',
+  'd-cost': '报表分析/财务分析/成本分析',
+  'd-exec': '仪表板管理/高管驾驶舱',
+};
+
+function getFullSourcePath(m) {
+  const srcKey = Object.keys(mountResData).find(k => mountResData[k].some(r => r.name === m.name));
+  if (!srcKey) return getFuncPath(m.type);
+  return funcSourcePath[srcKey] || getFuncPath(m.type);
+}
+
+function getDirSource(dirId) {
+  const path = findPath(dirTreeData, dirId, []);
+  return path ? path.join('/') : '';
+}
+
+let favSubDirs = [{id:'fav-sub1',name:'核心报表'},{id:'fav-sub2',name:'日常监控'}];
+
+function toggleFavTree() {
+  const sub = document.getElementById('favSubDirs');
+  const icon = document.querySelector('#dirPersonalList .tree-toggle-wrap i, #dirPersonalList .tree-toggle-wrap svg');
+  if (sub) {
+    const hidden = sub.style.display === 'none';
+    sub.style.display = hidden ? '' : 'none';
+    if (icon) icon.style.transform = hidden ? 'rotate(90deg)' : '';
+  }
+}
+
+function renderFavSubDirs() {
+  document.getElementById('favSubDirs').innerHTML = favSubDirs.map(d =>
+    '<div class="tree-item" style="padding-left:30px;" onclick="selectPersonalDir(\'fav-sub-'+d.id+'\',this)"><i data-lucide="folder" style="width:14px;height:14px;flex-shrink:0;"></i><span style="flex:1;">'+d.name+'</span><div class="dd" id="ddd-fav-'+d.id+'" style="margin-left:auto;flex-shrink:0;"><button class="btn btn-gh" style="padding:2px 4px;" onclick="event.stopPropagation();toggleDD(\'ddd-fav-'+d.id+'\')"><i data-lucide="more-horizontal" style="width:14px;height:14px;"></i></button><div class="dd-m"><div onclick="event.stopPropagation();createFavDirFromModal(\''+d.id+'\')"><i data-lucide="plus" style="width:13px;height:13px;"></i> 新增子目录</div><div onclick="event.stopPropagation();editFavSubDir(\''+d.id+'\',\''+d.name+'\')"><i data-lucide="edit-3" style="width:13px;height:13px;"></i> 编辑</div><div class="sep"></div><div style="color:#EF4444;" onclick="event.stopPropagation();deleteFavSubDir(\''+d.id+'\')"><i data-lucide="trash-2" style="width:13px;height:13px;"></i> 删除</div></div></div></div>'
+  ).join('');
+  lucide.createIcons();
+}
+
+function saveFavSubDir() {
+  const name = document.querySelector('#favSubDirModal .frm-inp').value;
+  if (!name) { alert('请输入目录名称'); return; }
+  favSubDirs.push({id:'fav-sub-'+(favSubDirs.length+1), name:name});
+  closeModal('favSubDirModal');
+  renderFavSubDirs();
+}
+
+let editFavDirTargetId = null;
+
+function editFavSubDir(id, oldName) {
+  editFavDirTargetId = id;
+  favParentSelected = 'root';
+  const d = favSubDirs.find(x=>x.id===id);
+  if (!d) return;
+  document.getElementById('editFavDirName').value = d.name;
+  document.getElementById('editFavDirDesc').value = d.desc || '';
+  if (d.parent) favParentSelected = d.parent;
+  const tree = document.getElementById('editFavParentTree');
+  let html = '<div class="tree-item'+(favParentSelected==='root'?' on':'')+'" style="padding-left:12px;" onclick="selectEditFavParent(\'root\',this)"><i data-lucide="star" style="width:15px;height:15px;flex-shrink:0;"></i><span style="flex:1;">我的收藏夹</span></div>';
+  html += '<div class="tree-sub">';
+  favSubDirs.forEach(d => {
+    if (d.id !== id) html += '<div class="tree-item'+(favParentSelected===d.id?' on':'')+'" style="padding-left:30px;" onclick="selectEditFavParent(\''+d.id+'\',this)"><i data-lucide="folder" style="width:14px;height:14px;flex-shrink:0;"></i><span style="flex:1;">'+d.name+'</span></div>';
+  });
+  html += '</div>';
+  tree.innerHTML = html;
+  showModal('editFavDirModal');
+  lucide.createIcons();
+}
+
+function selectEditFavParent(id, el) {
+  favParentSelected = id;
+  document.querySelectorAll('#editFavParentTree .tree-item').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+}
+
+function saveEditFavDir() {
+  const name = document.getElementById('editFavDirName').value;
+  if (!name) { alert('请输入目录名称'); return; }
+  const d = favSubDirs.find(x=>x.id===editFavDirTargetId);
+  if (d) { d.name = name; d.desc = document.getElementById('editFavDirDesc').value; d.parent = favParentSelected === 'root' ? null : favParentSelected; }
+  closeModal('editFavDirModal');
+  renderFavSubDirs();
+}
+
+let deleteFavDirTargetId = null;
+
+function deleteFavSubDir(id) {
+  const d = favSubDirs.find(x=>x.id===id);
+  if (!d) return;
+  deleteFavDirTargetId = id;
+  const hasChildren = favSubDirs.some(x => x.parent === id);
+  if (hasChildren) {
+    alert('该目录下存在子目录，请先删除子目录');
+    return;
+  }
+  document.getElementById('deleteFavDirTitle').textContent = '删除目录「'+d.name+'」';
+  const hasResources = favorites.size > 0;
+  document.getElementById('deleteFavDirInfo').innerHTML = '该目录下收藏了 <b>'+favorites.size+'</b> 个资源。';
+  document.getElementById('deleteFavDirConfirm').onclick = function() {
+    const choice = document.querySelector('input[name="delFavRes"]:checked').value;
+    if (choice === 'remove') {
+      favorites.clear();
+    } else {
+      const sel = document.querySelector('#moveFavResTree .tree-item.on');
+      if (!sel) { alert('请选择目标目录'); return; }
+    }
+    favSubDirs = favSubDirs.filter(x=>x.id!==deleteFavDirTargetId);
+    closeModal('deleteFavDirModal');
+    renderFavSubDirs();
+    refreshResList();
+  };
+  document.querySelector('#deleteFavResOption .radio-item').classList.add('on');
+  document.querySelector('#deleteFavResOption .radio-item:last-child').classList.remove('on');
+  document.querySelector('input[name="delFavRes"][value="remove"]').checked = true;
+  // Build move target tree
+  const tree = document.getElementById('moveFavResTree');
+  let html = '<div class="tree-item on" style="padding-left:12px;" onclick="selectMoveFavTarget(\'root\',this)"><i data-lucide="star" style="width:14px;height:14px;flex-shrink:0;"></i><span>我的收藏夹</span></div>';
+  favSubDirs.forEach(d => {
+    if (d.id !== deleteFavDirTargetId) html += '<div class="tree-item" style="padding-left:28px;" onclick="selectMoveFavTarget(\''+d.id+'\',this)"><i data-lucide="folder" style="width:14px;height:14px;flex-shrink:0;"></i><span>'+d.name+'</span></div>';
+  });
+  tree.innerHTML = html;
+  showModal('deleteFavDirModal');
+  lucide.createIcons();
+
+  // Radio click handling
+  document.querySelectorAll('#deleteFavResOption .radio-item').forEach(item => {
+    item.onclick = function() {
+      document.querySelectorAll('#deleteFavResOption .radio-item').forEach(i => i.classList.remove('on'));
+      this.classList.add('on');
+      this.querySelector('input').checked = true;
+      document.getElementById('moveFavResTree').style.display = this.querySelector('input').value === 'move' ? '' : 'none';
+    };
+  });
+  document.getElementById('moveFavResTree').style.display = 'none';
+}
+
+function selectMoveFavTarget(id, el) {
+  document.querySelectorAll('#moveFavResTree .tree-item').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+}
+
+// ========== DIR MODE ==========
+let dirMode = 'public';
+let personalMode = 'mine';
+
+function switchDirMode(mode, el) {
+  dirMode = mode;
+  document.querySelectorAll('#dirMainTabs .subtab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('dirPublicPanel').style.display = mode === 'public' ? '' : 'none';
+  document.getElementById('dirPersonalPanel').style.display = mode === 'personal' ? 'block' : 'none';
+  if (mode === 'personal') {
+    selDirId = null;
+    document.querySelectorAll('#dirPersonalList .tree-item').forEach(l => l.classList.remove('on'));
+    document.querySelector('#dirPersonalList .tree-item').classList.add('on');
+    personalMode = 'mine';
+    renderFavSubDirs();
+    showPersonalContent('mine');
+  } else {
+    refreshResList();
+  }
+}
+
+function selectPersonalDir(mode, el) {
+  personalMode = mode;
+  document.querySelectorAll('#dirPersonalList .tree-item').forEach(l => l.classList.remove('on'));
+  if (el) el.classList.add('on');
+  if (mode.startsWith('fav-sub-')) {
+    const sub = favSubDirs.find(d => ('fav-sub-'+d.id) === mode);
+    const c = document.getElementById('dirContent');
+    c.classList.add('on');
+    document.getElementById('dirEmpty').style.display='none';
+    c.innerHTML = '<div class="dsec" style="padding:20px 0 0 20px;">'+
+      '<div class="dsec-tt" style="display:inline-flex;align-items:center;gap:6px;margin-bottom:12px;"><i data-lucide="folder" style="width:16px;height:16px;color:var(--pri);flex-shrink:0;"></i>'+(sub?sub.name:'子收藏夹')+'</div>'+
+      '<div style="text-align:center;padding:40px;color:var(--t3);font-size:13px;">暂无收藏资源</div>'+
+    '</div>';
+  } else {
+    showPersonalContent(mode);
+  }
+  lucide.createIcons();
+}
+
+function showPersonalContent(mode) {
+  document.getElementById('dirEmpty').style.display='none';
+  const c = document.getElementById('dirContent');
+  c.classList.add('on');
+
+  if (mode === 'mine') {
+    c.innerHTML = '<div class="dsec" style="padding:20px 0 0 20px;">'+
+      '<div class="dsec-tt" style="display:inline-flex;align-items:center;gap:6px;margin-bottom:12px;"><i data-lucide="user" style="width:16px;height:16px;color:var(--pri);flex-shrink:0;"></i>我的资源</div>'+
+      '<div style="display:flex;gap:4px;margin-bottom:14px;"><div class="subtab on" onclick="switchMineTab(\'created\',this)" style="padding:6px 14px;font-size:12.5px;">我负责的</div><div class="subtab" onclick="switchMineTab(\'granted\',this)" style="padding:6px 14px;font-size:12.5px;">授权给我的</div></div>'+
+      '<div id="mineTabContent">'+buildMineResList('created')+'</div>'+
+    '</div>';
+  } else if (mode === 'fav') {
+    c.innerHTML = '<div class="dsec" style="padding:20px 0 0 20px;">'+
+      '<div class="dsec-tt" style="display:inline-flex;align-items:center;gap:6px;margin-bottom:12px;"><i data-lucide="star" style="width:16px;height:16px;color:#F59E0B;flex-shrink:0;"></i>我的收藏夹</div>'+
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><label style="font-size:12px;color:var(--t2);cursor:pointer;"><input type="checkbox" class="perm-cb" style="margin-right:4px;" onchange="document.querySelectorAll(\'.mount-check\').forEach(c=>c.checked=this.checked)"> 全选</label><button class="btn btn-sec" style="font-size:12px;padding:4px 10px;color:#EF4444;border-color:#FECACA;" onclick="batchUnfav()"><i data-lucide="star-off" style="width:13px;height:13px;"></i> 取消收藏</button></div>'+
+      '<div style="display:flex;flex-direction:column;gap:8px;">'+getAllResources().map(m => ({...m, resDirPath: m.mountedDir||''})).filter(r => favorites.has(r.name)).map(m=>renderResCard(m,'fav')).join('')+'</div>'+
+      '<div class="pg"><span class="pg-info">共 '+(getAllResources().filter(r=>favorites.has(r.name)).length)+' 个资源</span></div>'+
+    '</div>';
+  } else if (mode === 'share') {
+    c.innerHTML = '<div class="dsec" style="padding:20px 0 0 20px;">'+
+      '<div class="dsec-tt" style="display:inline-flex;align-items:center;gap:6px;margin-bottom:12px;"><i data-lucide="share-2" style="width:16px;height:16px;color:var(--pri);flex-shrink:0;"></i>我的分享</div>'+
+      '<div class="tbl-wrap" style="overflow-x:auto;"><table style="min-width:1000px;table-layout:auto;"><thead><tr><th>资源名称</th><th>类型</th><th>来源路径</th><th>公共目录路径</th><th>链接</th><th>过期时间</th><th style="width:130px;">操作</th></tr></thead><tbody>'+
+      '<tr><td style="font-weight:500;"><span style="display:inline-flex;align-items:center;gap:4px;"><i data-lucide="bar-chart-2" style="width:14px;height:14px;color:var(--pri);flex-shrink:0;"></i>Q3销售月报</span></td><td><span class="tag tag-gray">仪表板</span></td><td><span style="font-size:12px;color:var(--t3);">仪表板管理/销售分析/销售月报</span></td><td><span style="font-size:12px;color:var(--t3);">销售分析/销售月报</span></td><td><span style="font-size:12px;color:var(--pri);">https://gienbi.com/s/abc123</span></td><td><span style="font-size:12px;color:var(--t3);">2026-12-31</span></td><td><button class="btn btn-gh" style="color:var(--t3);padding:2px 4px;font-size:12px;">复制链接</button><button class="btn btn-gh" style="color:var(--t3);padding:2px 4px;font-size:12px;">操作</button><button class="btn btn-gh" style="color:var(--t3);padding:2px 4px;font-size:12px;">删除</button></td></tr>'+
+      '</tbody></table></div>'+
+    '</div>';
+  }
+  lucide.createIcons();
+}
+
+function switchShareTab(type, el) {
+  el.parentElement.querySelectorAll('.subtab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  const content = type === 'internal' ?
+    '<div class="tbl-wrap"><table><thead><tr><th>资源名称</th><th>类型</th><th>分享对象</th><th>分享时间</th><th style="width:50px;">操作</th></tr></thead><tbody>'+
+    '<tr><td style="font-weight:500;"><i data-lucide="bar-chart-2" style="width:14px;height:14px;color:var(--pri);margin-right:6px;"></i>年度销售分析</td><td><span class="tag tag-gray">仪表板</span></td><td>赵敏（zhaomin）</td><td><span style="font-size:12px;color:var(--t3);">2024-07-03</span></td><td><button class="btn btn-gh" style="color:var(--t3);">取消</button></td></tr>'+
+    '</tbody></table></div>' :
+    '<div class="tbl-wrap" style="overflow-x:auto;"><table style="min-width:1000px;table-layout:auto;"><thead><tr><th>资源名称</th><th>类型</th><th>来源路径</th><th>公共目录路径</th><th>链接</th><th>过期时间</th><th style="width:130px;">操作</th></tr></thead><tbody>'+
+    '<tr><td style="font-weight:500;"><span style="display:inline-flex;align-items:center;gap:4px;"><i data-lucide="bar-chart-2" style="width:14px;height:14px;color:var(--pri);flex-shrink:0;"></i>Q3销售月报</span></td><td><span class="tag tag-gray">仪表板</span></td><td><span style="font-size:12px;color:var(--t3);">仪表板管理/销售分析/销售月报</span></td><td><span style="font-size:12px;color:var(--t3);">销售分析/销售月报</span></td><td><span style="font-size:12px;color:var(--pri);">https://gienbi.com/s/abc123</span></td><td><span style="font-size:12px;color:var(--t3);">2026-12-31</span></td><td><button class="btn btn-gh" style="color:var(--t3);padding:2px 4px;font-size:12px;">复制链接</button><button class="btn btn-gh" style="color:var(--t3);padding:2px 4px;font-size:12px;">操作</button><button class="btn btn-gh" style="color:var(--t3);padding:2px 4px;font-size:12px;">删除</button></td></tr>'+
+    '</tbody></table></div>';
+  document.getElementById('shareTabContent').innerHTML = content;
+  lucide.createIcons();
+}
+
+function switchMineTab(type, el) {
+  el.parentElement.querySelectorAll('.subtab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('mineTabContent').innerHTML = buildMineResList(type);
+  lucide.createIcons();
+}
+
+function buildMineResList(type) {
+  let res = getAllResources().map(m => ({ ...m, resDirPath: (m.mountedDir||'') }));
+  const filtered = type === 'created' ? res.filter((r,i) => i % 2 === 0) : res.filter((r,i) => i % 2 === 1);
+  return filtered.length === 0 ? '<div style="text-align:center;padding:40px;color:var(--t3);">暂无资源</div>' :
+    '<div style="display:flex;flex-direction:column;gap:8px;">'+filtered.map(m=>renderResCard(m,'personal')).join('')+'</div><div class="pg"><span class="pg-info">共 '+filtered.length+' 个资源</span></div>';
+}
+
+function buildPersonalResList() {
+  let res = getAllResources().map(m => ({ ...m, resDirPath: (m.mountedDir||'') }));
+  return res.length === 0 ? '<div style="text-align:center;padding:40px;color:var(--t3);">暂无资源</div>' :
+    '<div style="display:flex;flex-direction:column;gap:8px;">'+res.map(m=>renderResCard(m,'personal')).join('')+'</div><div class="pg"><span class="pg-info">共 '+res.length+' 个资源</span></div>';
+}
+
+// ========== RENDER DIR TREE ==========
+let selDirId = null;
+
+function renderDirTree() {
+  function build(nodes, level) {
+    return nodes.map(n => {
+      const hasKids = n.children && n.children.length > 0;
+      const icon = n.type==='root'?'folder-root':n.type==='dir'?'folder':n.type==='user'?'user':'file';
+      const cls = 'tree-item' + (selDirId===n.id?' on':'');
+      return `<div class="${cls}" style="padding-left:${level*16+12}px;" data-id="${n.id}">
+        ${hasKids ? '<span class="tree-toggle-wrap" style="width:14px;height:14px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;"><i data-lucide="chevron-right" style="width:14px;height:14px;transition:transform .15s;flex-shrink:0;'+(level<=1?'transform:rotate(90deg);':'')+'"></i></span>' : '<span style="width:14px;flex-shrink:0;"></span>'}
+        <span style="display:inline-flex;align-items:center;gap:6px;flex:1;min-width:0;cursor:pointer;" onclick="selectDir('${n.id}',this.parentElement)">
+          <i data-lucide="${icon}" style="width:15px;height:15px;flex-shrink:0;"></i><span>${n.name}</span>
+        </span>
+        <div class="dd" id="ddd-${n.id}" style="margin-left:auto;flex-shrink:0;">
+          <button class="btn btn-gh" style="padding:2px 4px;" onclick="event.stopPropagation();toggleDD('ddd-${n.id}')"><i data-lucide="more-horizontal" style="width:14px;height:14px;"></i></button>
+          <div class="dd-m">
+            <div onclick="event.stopPropagation();openDirModal('${n.id}')"><i data-lucide="plus" style="width:13px;height:13px;"></i> 新增子目录</div>
+            <div onclick="event.stopPropagation();openDirModalEdit('${n.id}', '${n.parentId || 'd-root'}')"><i data-lucide="edit-3" style="width:13px;height:13px;"></i> 编辑</div>
+            <div onclick="event.stopPropagation();document.getElementById('mountResTitle').textContent='添加资源到「'+findDirName('${n.id}')+'」';openMountResModal('${n.id}')"><i data-lucide="paperclip" style="width:13px;height:13px;"></i> 添加资源</div>
+            <div class="sep"></div>
+            <div style="color:#EF4444;" onclick="event.stopPropagation();openDeleteModal('${n.id}')"><i data-lucide="trash-2" style="width:13px;height:13px;"></i> 删除</div>
+          </div>
+        </div>
+      </div>${hasKids ? '<div class="tree-sub"'+(level>=2?' style="display:none;"':'')+'>'+build(n.children, level+1)+'</div>' : ''}`;
+    }).join('');
+  }
+  document.getElementById('dirTree').innerHTML = build(dirTreeData, 0);
+  lucide.createIcons();
+}
+
+let favorites = new Set();
+let favTab = 'all';
+let resMoreCount = 0;
+
+let pendingFavName = '';
+
+function toggleFav(name) {
+  pendingFavName = name;
+  if (favorites.has(name)) {
+    favorites.delete(name);
+    refreshResList();
+  } else {
+    buildFavTreeModal();
+    showModal('favSelectModal');
+  }
+}
+
+function buildFavTreeModal() {
+  document.getElementById('favResName').textContent = pendingFavName;
+  document.getElementById('favSelectTree').innerHTML = buildFavDirTree(0);
+  lucide.createIcons();
+}
+
+function buildFavDirTree(level) {
+  const pad = 12;
+  let html = '<div class="tree-item" style="padding-left:'+pad+'px;" onclick="selectFavDir(\'root\',this)"><i data-lucide="star" style="width:15px;height:15px;flex-shrink:0;"></i><span style="flex:1;">我的收藏夹</span></div>';
+  html += '<div class="tree-sub">';
+  favSubDirs.forEach(d => {
+    html += '<div class="tree-item" style="padding-left:'+(pad+18)+'px;" onclick="selectFavDir(\''+d.id+'\',this)"><span style="width:14px;flex-shrink:0;"></span><i data-lucide="folder" style="width:14px;height:14px;flex-shrink:0;"></i><span style="flex:1;">'+d.name+'</span></div>';
+  });
+  html += '</div>';
+  html += '<div class="tree-item" style="padding-left:'+pad+'px;color:var(--pri);cursor:pointer;" onclick="createFavDirFromModal()"><i data-lucide="plus" style="width:14px;height:14px;flex-shrink:0;"></i><span>新增子目录</span></div>';
+  return html;
+}
+
+function selectFavDir(dirId, el) {
+  document.querySelectorAll('#favSelectTree .tree-item').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  el.setAttribute('data-selected', dirId);
+}
+
+let favParentSelected = 'root';
+
+function createFavDirFromModal(currentDirId) {
+  favParentSelected = currentDirId || 'root';
+  const tree = document.getElementById('favParentTree');
+  let html = '<div class="tree-item'+(favParentSelected==='root'?' on':'')+'" style="padding-left:12px;" onclick="selectFavParent(\'root\',this)"><i data-lucide="star" style="width:15px;height:15px;flex-shrink:0;"></i><span style="flex:1;">我的收藏夹</span></div>';
+  html += '<div class="tree-sub">';
+  favSubDirs.forEach(d => {
+    html += '<div class="tree-item'+(favParentSelected===d.id?' on':'')+'" style="padding-left:30px;" onclick="selectFavParent(\''+d.id+'\',this)"><i data-lucide="folder" style="width:14px;height:14px;flex-shrink:0;"></i><span style="flex:1;">'+d.name+'</span></div>';
+  });
+  html += '</div>';
+  tree.innerHTML = html;
+  showModal('favSubDirModal');
+  lucide.createIcons();
+}
+
+function selectFavParent(id, el) {
+  favParentSelected = id;
+  document.querySelectorAll('#favParentTree .tree-item').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+}
+
+function saveFavSubDir() {
+  const name = document.getElementById('favSubDirName').value;
+  if (!name) { alert('请输入目录名称'); return; }
+  favSubDirs.push({id:'fav-sub-'+(favSubDirs.length+1), name:name, parent: favParentSelected==='root'?null:favParentSelected});
+  closeModal('favSubDirModal');
+  buildFavTreeModal();
+  renderFavSubDirs();
+}
+
+function confirmFavSelect() {
+  const sel = document.querySelector('#favSelectTree .tree-item.on');
+  if (!sel) { alert('请选择收藏夹目录'); return; }
+  favorites.add(pendingFavName);
+  closeModal('favSelectModal');
+  refreshResList();
+}
+
+function switchFavTab(tab, el) {
+  favTab = tab;
+  document.querySelectorAll('#favTabs .subtab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  refreshResList();
+}
+
+function getResIcon(type) { return type==='仪表板'?'bar-chart-2':type==='报表'?'file-text':type==='数据集'?'database':'hard-drive'; }
+
+function isUserNodeFn(id) {
+  function search(nodes) {
+    for (const n of nodes) {
+      if (n.id===id) return n.type==='user';
+      if (n.children) { const f = search(n.children); if (f!==null) return f; }
+    }
+    return null;
+  }
+  return search(dirTreeData) || false;
+}
+
+function findDirName(id) {
+  function search(nodes) {
+    for (const n of nodes) {
+      if (n.id===id) return n.name;
+      if (n.children) { const f = search(n.children); if (f) return f; }
+    }
+    return '';
+  }
+  return search(dirTreeData);
+}
+
+// ========== TREE TOGGLE ==========
+document.addEventListener('click', function(e) {
+  const wrap = e.target.closest('.tree-toggle-wrap');
+  if (!wrap) return;
+  e.stopPropagation();
+  const item = wrap.parentElement;
+  const sub = item.nextElementSibling;
+  const icon = wrap.querySelector('i,svg');
+  if (sub && sub.classList.contains('tree-sub')) {
+    const isHidden = sub.style.display==='none';
+    sub.style.display = isHidden ? '' : 'none';
+    if (icon) icon.style.transform = isHidden ? 'rotate(90deg)' : '';
+  }
+}, true);
+
+// ========== SELECT DIR ==========
+function selectDir(id, el) {
+  if (selDirId === id) {
+    // Deselect
+    selDirId = null;
+    el.classList.remove('on');
+  } else {
+    selDirId = id;
+    document.querySelectorAll('#dirTree .tree-item').forEach(t => t.classList.remove('on'));
+    el.classList.add('on');
+  }
+  document.getElementById('dirEmpty').style.display='none';
+  document.getElementById('dirContent').classList.add('on');
+  refreshResList();
+}
+
+function getAllResources() {
+  let all = [];
+  Object.keys(mountResData).forEach(dirId => {
+    mountResData[dirId].forEach(m => {
+      all.push({ ...m, dirId, dirName: findDirName(dirId) });
+    });
+  });
+  return all;
+}
+
+function refreshResList() {
+  const c = document.getElementById('dirContent');
+  const kw = (document.getElementById('resSearch')?.value || '').toLowerCase();
+  const typeFilter = document.getElementById('resTypeFilter')?.value || '';
+  const creatorFilter = document.getElementById('resCreatorFilter')?.value || '';
+
+  // Gather resources
+  let mounts;
+  if (selDirId) {
+    mounts = getDirResources(selDirId);
+    mounts = mounts.map(m => {
+      const resDirPath = getDirSource(selDirId) || '';
+      return { ...m, resDirPath, source: getFullSourcePath(m) };
+    });
+  } else {
+    mounts = getAllResources().map(m => {
+      const isPersonal = m.dirId === 'du-zw' || m.dirId === 'du-ls';
+      const resDirPath = isPersonal ? (m.mountedDir || '') : (getDirSource(m.dirId) || '');
+      return { ...m, resDirPath, source: getFullSourcePath(m) };
+    });
+  }
+
+  // Apply filters
+  if (kw) mounts = mounts.filter(m => m.name.toLowerCase().includes(kw));
+  if (typeFilter) mounts = mounts.filter(m => m.type === typeFilter);
+  if (creatorFilter) mounts = mounts.filter(m => m.creator.includes(creatorFilter));
+
+  updateResCount(mounts.length);
+
+  if (!selDirId) {
+    document.getElementById('dirEmpty').style.display='none';
+    c.classList.add('on');
+    c.innerHTML = '<div class="dsec" style="padding-top:20px;">'+
+      '<div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;margin-bottom:10px;"><label style="font-size:12px;color:var(--t2);cursor:pointer;margin-right:auto;"><input type="checkbox" class="perm-cb" style="margin-right:4px;" onchange="document.querySelectorAll(\'.mount-check\').forEach(c=>c.checked=this.checked)"> 全选</label><div style="display:flex;gap:4px;"><button class="btn btn-sec" style="font-size:12px;padding:4px 10px;" onclick="batchMoveRes()"><i data-lucide="folder-input" style="width:13px;height:13px;"></i> 移动</button><button class="btn btn-sec" style="font-size:12px;padding:4px 10px;color:#EF4444;border-color:#FECACA;" onclick="batchUnmount()"><i data-lucide="link-2-off" style="width:13px;height:13px;"></i> 移除</button></div></div><div style="height:12px;flex-shrink:0;"></div>'+
+      (mounts.length===0 ? '<div style="text-align:center;padding:60px 20px;color:var(--t3);font-size:13px;"><div style="display:flex;justify-content:center;margin-bottom:10px;"><i data-lucide="'+(favTab==='fav'?'star':'inbox')+'" style="width:40px;height:40px;opacity:.3;"></i></div><div>'+(favTab==='fav'?'暂无收藏资源':'未找到匹配的资源')+'</div></div>' :
+      '<div style="display:flex;flex-direction:column;gap:8px;">'+mounts.map(m=>renderResCard(m,true)).join('')+'</div><div class="pg"><span class="pg-info">共 '+mounts.length+' 个资源</span><div style="display:flex;gap:4px;"><button class="pg-btn on">1</button></div></div>')+
+    '</div>';
+    lucide.createIcons();
+    return;
+  }
+
+  const name = findDirName(selDirId);
+  const showOps = true;
+  c.innerHTML = `<div class="dsec" style="padding-top:12px;">
+    <div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;margin-bottom:10px;"><label style="font-size:12px;color:var(--t2);cursor:pointer;margin-right:auto;"><input type="checkbox" class="perm-cb" style="margin-right:4px;" onchange="document.querySelectorAll('.mount-check').forEach(c=>c.checked=this.checked)"> 全选</label><div style="display:flex;gap:4px;"><button class="btn btn-sec" style="font-size:12px;padding:4px 10px;" onclick="batchMoveRes()"><i data-lucide="folder-input" style="width:13px;height:13px;"></i> 移动</button><button class="btn btn-sec" style="font-size:12px;padding:4px 10px;color:#EF4444;border-color:#FECACA;" onclick="batchUnmount()"><i data-lucide="link-2-off" style="width:13px;height:13px;"></i> 移除</button></div></div>
+    ${mounts.length===0 ? '<div style="text-align:center;padding:40px 20px;color:var(--t3);font-size:13px;"><div style="display:flex;justify-content:center;margin-bottom:10px;"><i data-lucide="'+(favTab==='fav'?'star':'inbox')+'" style="width:40px;height:40px;opacity:.3;"></i></div><div>'+(favTab==='fav'?'暂无收藏资源':'暂无资源')+'</div></div>' :
+    '<div style="display:flex;flex-direction:column;gap:8px;">'+mounts.map(m=>renderResCard(m,showOps)).join('')+'</div><div class="pg"><span class="pg-info">共 '+mounts.length+' 个添加资源</span><div style="display:flex;gap:4px;"><button class="pg-btn on">1</button></div></div>'}
+  </div>`;
+  lucide.createIcons();
+}
+
+function renderResCard(m, showOps) {
+  const icon = getResIcon(m.type);
+  const name = m.name.replace(/'/g, "\\'");
+  const isFav = favorites.has(m.name);
+  const cid = ++resMoreCount;
+  const noAccess = m.noAccess === true;
+  const cardClass = noAccess ? 'res-card no-access' : 'res-card';
+  const clickHandler = noAccess
+    ? 'handleResourceClick(event, \''+name+'\', \''+m.type+'\', \''+(m.creator||'').replace(/'/g,"\\'")+'\', \''+(m.source||getFullSourcePath(m)).replace(/'/g,"\\'")+'\', \''+(m.resDirPath||'').replace(/'/g,"\\'")+'\')'
+    : 'alert(\'查看资源: '+name+'\\n类型: '+m.type+'\\n负责人: '+m.creator+'\')';
+  return '<div class="'+cardClass+'" style="cursor:pointer;" onclick="'+clickHandler+'">'+
+    ''+(showOps==='personal' ? '' : '<input type="checkbox" class="perm-cb mount-check" style="flex-shrink:0;" onclick="event.stopPropagation()">')+''+
+    '<div class="res-icon"><i data-lucide="'+icon+'"></i></div>'+
+    '<div class="res-body">'+
+      '<div class="res-name">'+m.name+'</div>'+
+      '<div class="res-meta">'+
+        '<span class="tag tag-gray">'+m.type+'</span>'+
+        '<span><span style="color:var(--t3);">来源路径：</span>'+ (m.source||'-') +'</span>'+
+        '<span class="res-sep">|</span>'+
+        '<span><span style="color:var(--t3);">公共目录路径：</span>'+ (m.resDirPath||'-') +'</span>'+
+        '<span class="res-sep">|</span>'+
+        '<span><span style="color:var(--t3);">负责人：</span>'+m.creator+'</span>'+
+        '<span class="res-sep">|</span>'+
+        '<span><span style="color:var(--t3);">更新时间：</span>'+m.updateTime+'</span>'+
+      '</div>'+
+    '</div>'+
+    '<button class="btn btn-gh" style="flex-shrink:0;padding:4px;color:'+(isFav?'#F59E0B':'var(--t3)')+';" onclick="event.stopPropagation();toggleFav(\''+name+'\')" title="收藏"><i data-lucide="star" style="width:15px;height:15px;"></i></button>'+
+    (showOps === 'personal' || showOps === 'fav' ? '' :
+     showOps === 'mount' ? (m.mountedDir ? '<button class="btn btn-sec res-unmount" onclick="event.stopPropagation();document.getElementById(\'unmountResName\').innerHTML=\'确定从当前目录移除 <b>'+name+'</b> 吗？\';showModal(\'unmountConfirmModal\')"><i data-lucide="link-2-off" style="width:13px;height:13px;"></i>移除</button><button class="btn btn-sec res-unmount" onclick="event.stopPropagation();moveSingleRes(\''+name+'\')"><i data-lucide="folder-input" style="width:13px;height:13px;"></i>移动</button>' : '<button class="btn btn-pri res-unmount" style="color:#3B82F6!important;border-color:#BFDBFE!important;background:#EFF6FF!important;" onclick="event.stopPropagation();mountSingleToDir(\''+name+'\')"><i data-lucide="plus" style="width:13px;height:13px;"></i>添加到目录</button><button class="btn btn-sec res-unmount" onclick="event.stopPropagation();moveSingleRes(\''+name+'\')"><i data-lucide="folder-input" style="width:13px;height:13px;"></i>移动</button>') :
+     showOps === true ? '<button class="btn btn-sec res-unmount" onclick="event.stopPropagation();moveSingleRes(\''+name+'\')"><i data-lucide="folder-input" style="width:13px;height:13px;"></i>移动</button><button class="btn btn-sec res-unmount" onclick="event.stopPropagation();document.getElementById(\'unmountResName\').innerHTML=\'确定从当前目录移除 <b>'+name+'</b> 吗？\';showModal(\'unmountConfirmModal\')"><i data-lucide="link-2-off" style="width:13px;height:13px;"></i>移除</button>' : '<span style="width:64px;flex-shrink:0;"></span>')+
+    '<div class="dd" style="flex-shrink:0;" id="rmore-'+cid+'"><button class="btn btn-gh" style="padding:4px;" onclick="event.stopPropagation();toggleDD(\'rmore-'+cid+'\')"> <i data-lucide="more-horizontal" style="width:15px;height:15px;"></i></button><div class="dd-m"><div onclick="event.stopPropagation();alert(\'编辑: '+name+'\')"><i data-lucide="edit-3" style="width:13px;height:13px;"></i> 编辑</div><div onclick="event.stopPropagation();alert(\'另存为: '+name+'\')"><i data-lucide="copy" style="width:13px;height:13px;"></i> 另存为</div><div onclick="event.stopPropagation();alert(\'查看血缘: '+name+'\')"><i data-lucide="git-branch" style="width:13px;height:13px;"></i> 查看血缘</div><div class="sep"></div><div onclick="event.stopPropagation();alert(\'导出Excel: '+name+'\')"><i data-lucide="file-spreadsheet" style="width:13px;height:13px;"></i> 导出 Excel</div><div onclick="event.stopPropagation();alert(\'导出PDF: '+name+'\')"><i data-lucide="file-text" style="width:13px;height:13px;"></i> 导出 PDF</div></div></div>'+
+  '</div>';
+}
+
+function updateResCount(count) {
+  document.getElementById('resCountLabel').innerHTML = '共 <b style="color:var(--t2);">'+count+'</b> 个资源';
+}
+
+function updateBreadcrumb(id) {
+  function findPath(nodes, target, path) {
+    for (const n of nodes) {
+      const np = [...path, n.name];
+      if (n.id===target) return np;
+      if (n.children) { const f = findPath(n.children, target, np); if (f) return f; }
+    }
+    return null;
+  }
+  const path = findPath(dirTreeData, id, []);
+  if (path) document.getElementById('dirBreadcrumb').textContent = '路径：' + path.join(' > ');
+}
+
+function switchDirTab(tab, el) {
+  el.parentElement.querySelectorAll('.subtab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('dirMountTab').classList.toggle('on', tab==='mount');
+  document.getElementById('dirPermTab').classList.toggle('on', tab==='perm');
+  if (tab==='perm') renderDirPerm('org');
+}
+
+function switchDirPermTab(type, el) {
+  el.parentElement.querySelectorAll('.subtab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  renderDirPerm(type);
+}
+
+function renderDirPerm(type) {
+  const permissions = ['查看','下载','分享','管理'];
+  const items = type==='org' ? [
+    { name:'总公司', level:0, hasKids:true, checked:['查看'] },
+    { name:'销售部', level:1, hasKids:false, checked:['查看','下载'] },
+    { name:'技术部', level:1, hasKids:false, checked:['查看','下载','分享','管理'] },
+    { name:'财务部', level:1, hasKids:false, checked:[] },
+  ] : type==='role' ? [
+    { name:'数据分析师', checked:['查看','下载','分享','管理'] },
+    { name:'数据查看者', checked:['查看'] },
+    { name:'报表编辑者', checked:['查看','下载'] },
+  ] : [
+    { name:'张伟（zhangwei）', checked:['查看','下载','分享','管理'] },
+    { name:'赵敏（zhaomin）', checked:['查看'] },
+  ];
+  document.getElementById('dirPermSubContent').innerHTML = `<div class="tbl-wrap"><table><thead><tr><th style="width:35%;">${type==='org'?'组织':type==='role'?'角色':'成员'}名称</th><th style="width:65%;text-align:center;">权限详情 <input type="checkbox" class="perm-cb" style="margin-left:6px;vertical-align:middle;"></th></tr></thead><tbody>
+    ${type==='org' ? items.map(i=>`<tr class="${i.hasKids?'tree-row parent expanded':''}" data-level="${i.level}"><td style="padding-left:${i.level*16+18}px;"><span style="display:inline-flex;align-items:center;gap:4px;overflow:hidden;">${i.hasKids?'<span class="toggle"><i data-lucide="chevron-right" style="width:14px;height:14px;"></i></span>':'<span style="width:14px;flex-shrink:0;display:inline-block;"></span>'}<i data-lucide="${i.hasKids?'building-2':'users'}" style="width:15px;height:15px;flex-shrink:0;"></i><span style="white-space:nowrap;">${i.name}</span></span></td><td style="text-align:center;">${permissions.map(p=>`<label style="margin:0 3px;cursor:pointer;font-size:12px;"><input type="checkbox" class="perm-cb" ${i.checked.includes(p)?'checked':''}> ${p}</label>`).join('')}</td></tr>`).join('') :
+    items.map(i=>`<tr><td style="font-weight:500;"><span style="display:inline-flex;align-items:center;gap:4px;max-width:100%;overflow:hidden;"><i data-lucide="${type==='role'?'shield':'user'}" style="width:14px;height:14px;color:var(--pri);flex-shrink:0;"></i><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${i.name}</span></span></td><td style="text-align:center;">${permissions.map(p=>`<label style="margin:0 3px;cursor:pointer;font-size:12px;"><input type="checkbox" class="perm-cb" ${i.checked.includes(p)?'checked':''}> ${p}</label>`).join('')}</td></tr>`).join('')}
+  </tbody></table></div>`;
+  lucide.createIcons();
+}
+
+// ========== MODAL OPERATIONS ==========
+function getAllDirs(nodes, prefix) {
+  prefix = prefix || '';
+  let result = [];
+  nodes.forEach(n => {
+    if (n.type === 'root' && n.name === '个人资源') return;
+    if (n.type !== 'user') {
+      result.push({ id: n.id, name: prefix + n.name });
+      if (n.children) result = result.concat(getAllDirs(n.children, prefix + n.name + ' > '));
+    }
+  });
+  return result;
+}
+
+function populateDirParent(selectedId) {
+  const sel = document.getElementById('dirParent');
+  const dirs = getAllDirs(dirTreeData);
+  sel.innerHTML = dirs.map(d => `<option value="${d.id}" ${d.id===selectedId?'selected':''}>${d.name}</option>`).join('');
+}
+
+function populateAddDirParent(selectedId) {
+  const sel = document.getElementById('addDirParent');
+  const dirs = getAllDirs(dirTreeData);
+  sel.innerHTML = dirs.map(d => `<option value="${d.id}" ${d.id===selectedId?'selected':''}>${d.name}</option>`).join('');
+}
+
+function openAddDirModal() {
+  populateAddDirParent('d-root');
+  document.getElementById('addDirName').value = '';
+  document.getElementById('addDirDesc').value = '';
+  showModal('addDirModal');
+}
+
+function saveAddDir() {
+  const parentId = document.getElementById('addDirParent').value;
+  const name = document.getElementById('addDirName').value.trim();
+  const desc = document.getElementById('addDirDesc').value.trim();
+
+  if (!name) {
+    alert('请输入目录名称');
+    return;
+  }
+
+  // Add new directory logic here
+  closeModal('addDirModal');
+  alert('目录创建成功！');
+}
+
+function openDirModal(parentId) {
+  document.getElementById('dirModalTitle').textContent = '新增子目录';
+  document.getElementById('dirParentName').value = findDirPath(parentId);
+  document.getElementById('dirName').value = '';
+  document.getElementById('dirDesc').value = '';
+  showModal('dirModal');
+}
+
+function findDirPath(dirId) {
+  function findPath(nodes, target, path) {
+    for (const n of nodes) {
+      if (n.id === target) return path + n.name;
+      if (n.children) {
+        const found = findPath(n.children, target, path + n.name + ' > ');
+        if (found) return found;
+      }
+    }
+    return null;
+  }
+  return findPath(dirTreeData, dirId, '') || dirId;
+}
+
+function openDirModalEdit(id, parentId) {
+  populateAddDirParent(parentId);
+  document.getElementById('addDirName').value = findDirName(id);
+  document.getElementById('addDirDesc').value = '';
+  showModal('addDirModal');
+}
+
+let mountTargetSelectedId = null;
+
+function openMountResModal(presetDirId) {
+  mountTargetSelectedId = presetDirId || null;
+  const tree = document.getElementById('mountTargetTree');
+  const buildTree = function(nodes, level) {
+    return nodes.map(n => {
+      if (n.id === 'd-root' || n.id === 'd-personal') {
+        if (n.children) return buildTree(n.children, level);
+        return '';
+      }
+      if (n.type === 'user') return '';
+      const hasKids = n.children && n.children.length > 0;
+      const on = mountTargetSelectedId === n.id ? ' on' : '';
+      let html = '<div class="tree-item'+on+'" style="padding-left:'+(level*16+12)+'px;" data-dirid="'+n.id+'" onclick="selectMountTargetItem(\''+n.id+'\',this)">'+
+        (hasKids ? '<span style="width:14px;height:14px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:10px;color:var(--t3);" onclick="event.stopPropagation();toggleMountTree(this)">▶</span>' : '<span style="width:14px;flex-shrink:0;"></span>')+
+        '<i data-lucide="folder" style="width:15px;height:15px;flex-shrink:0;"></i><span>'+n.name+'</span>'+
+      '</div>';
+      if (hasKids) html += '<div class="tree-sub">'+buildTree(n.children, level+1)+'</div>';
+      return html;
+    }).join('');
+  };
+  tree.innerHTML = buildTree(dirTreeData, 0);
+  document.getElementById('mountResTitle').textContent = '添加资源';
+  showModal('mountResModal');
+  lucide.createIcons();
+}
+
+function selectMountTargetItem(id, el) {
+  mountTargetSelectedId = id;
+  document.querySelectorAll('#mountTargetTree .tree-item').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+}
+
+function toggleMountType() {
+  const isExternal = document.querySelector('input[name="mountType"]:checked').value === 'external';
+  document.getElementById('mountInternal').style.display = isExternal ? 'none' : '';
+  document.getElementById('mountExternal').style.display = isExternal ? '' : 'none';
+}
+
+function saveDir() { closeModal('dirModal'); alert('目录保存成功！'); }
+
+let mountTargetDirId = null;
+let moveTargetDirId = null;
+let pendingMoveResName = null; // 单个移动的资源名
+
+function buildMountDirTree(nodes, level) {
+  return nodes.map(n => {
+    // Skip root node "全部资源" and "个人资源" branch, but recurse into their children
+    if (n.id === 'd-root' || n.id === 'd-personal') {
+      if (n.children) return buildMountDirTree(n.children, level);
+      return '';
+    }
+    if (n.type === 'user') return '';
+    const hasKids = n.children && n.children.length > 0;
+    let html = '<div class="tree-item" style="padding-left:'+(level*16+12)+'px;" data-id="'+n.id+'">'+
+      (hasKids ? '<span style="width:14px;height:14px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:10px;color:var(--t3);" onclick="event.stopPropagation();toggleMountTree(this)">▶</span>' : '<span style="width:14px;flex-shrink:0;"></span>')+
+      '<span style="display:inline-flex;align-items:center;gap:6px;flex:1;min-width:0;cursor:pointer;" onclick="selectMountTarget(\''+n.id+'\',this.parentElement)"><i data-lucide="folder" style="width:15px;height:15px;flex-shrink:0;"></i><span>'+n.name+'</span></span>'+
+    '</div>';
+    if (hasKids) {
+      const kidsHTML = buildMountDirTree(n.children, level+1);
+      if (kidsHTML.trim()) html += '<div class="tree-sub" style="display:none;">'+kidsHTML+'</div>';
+    }
+    return html;
+  }).join('');
+}
+
+function toggleMountTree(el) {
+  const item = el.parentElement;
+  const sub = item.nextElementSibling;
+  if (sub && sub.classList.contains('tree-sub')) {
+    const isHidden = sub.style.display === 'none';
+    sub.style.display = isHidden ? '' : 'none';
+    el.textContent = isHidden ? '▼' : '▶';
+  }
+}
+
+function selectMountTarget(id, el) {
+  mountTargetDirId = id;
+  document.querySelectorAll('#mountDirTree .tree-item').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+}
+
+function buildMoveDirTree(nodes, level) {
+  return nodes.map(n => {
+    if (n.id === 'd-root' || n.id === 'd-personal') {
+      if (n.children) return buildMoveDirTree(n.children, level);
+      return '';
+    }
+    if (n.type === 'user') return '';
+    const hasKids = n.children && n.children.length > 0;
+    let html = '<div class="tree-item" style="padding-left:'+(level*16+12)+'px;" data-id="'+n.id+'">'+
+      (hasKids ? '<span style="width:14px;height:14px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:10px;color:var(--t3);" onclick="event.stopPropagation();toggleMountTree(this)">▶</span>' : '<span style="width:14px;flex-shrink:0;"></span>')+
+      '<span style="display:inline-flex;align-items:center;gap:6px;flex:1;min-width:0;cursor:pointer;" onclick="selectMoveTarget(\''+n.id+'\',this.parentElement)"><i data-lucide="folder" style="width:15px;height:15px;flex-shrink:0;"></i><span>'+n.name+'</span></span>'+
+    '</div>';
+    if (hasKids) {
+      const kidsHTML = buildMoveDirTree(n.children, level+1);
+      if (kidsHTML.trim()) html += '<div class="tree-sub" style="display:none;">'+kidsHTML+'</div>';
+    }
+    return html;
+  }).join('');
+}
+
+function selectMoveTarget(id, el) {
+  moveTargetDirId = id;
+  document.querySelectorAll('#moveDirTree .tree-item').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+}
+
+function mountToDir() {
+  const checked = document.querySelectorAll('.mount-check:checked');
+  if (checked.length === 0) { alert('请先勾选需要添加的资源'); return; }
+  mountTargetDirId = null;
+  document.getElementById('mountDirTree').innerHTML = buildMountDirTree(dirTreeData, 0);
+  document.getElementById('mountDirCount').textContent = checked.length;
+  showModal('mountToDirModal');
+  lucide.createIcons();
+}
+
+function mountSingleToDir(name) {
+  mountTargetDirId = null;
+  document.getElementById('mountDirTree').innerHTML = buildMountDirTree(dirTreeData, 0);
+  document.getElementById('mountDirCount').textContent = '1（'+name+'）';
+  showModal('mountToDirModal');
+  lucide.createIcons();
+}
+
+function moveSingleRes(name) {
+  moveTargetDirId = null;
+  pendingMoveResName = name;
+  document.getElementById('moveResLabel').innerHTML = '移动资源 <b style="color:var(--t1);">'+name+'</b>，请选择目标目录：';
+  document.getElementById('moveDirTree').innerHTML = buildMountDirTree(dirTreeData, 0);
+  // 将 mount 目标选择转到 move 变量
+  const origFn = window.selectMountTarget;
+  window.selectMountTarget = function(id, el) {
+    moveTargetDirId = id;
+    document.querySelectorAll('#moveDirTree .tree-item').forEach(t => t.classList.remove('on'));
+    el.classList.add('on');
+  };
+  lucide.createIcons();
+  showModal('moveResModal');
+}
+
+function confirmMoveRes() {
+  if (!moveTargetDirId) { alert('请选择目标目录'); return; }
+  const targetName = findDirName(moveTargetDirId);
+  const count = document.querySelectorAll('.mount-check:checked').length;
+  closeModal('moveResModal');
+  if (count > 1) {
+    alert('已将 '+count+' 个资源移动到 '+targetName+'！');
+  } else {
+    alert('已将 '+(pendingMoveResName||'选中资源')+' 移动到 '+targetName+'！');
+  }
+  refreshResList();
+}
+
+function batchUnfav() {
+  const checked = document.querySelectorAll('.mount-check:checked');
+  if (checked.length === 0) { alert('请先勾选需要取消收藏的资源'); return; }
+  checked.forEach(c => {
+    const card = c.closest('.res-card');
+    const name = card.querySelector('.res-name').textContent;
+    if (favorites.has(name)) favorites.delete(name);
+  });
+  alert('已取消 '+checked.length+' 个资源的收藏');
+  showPersonalContent('fav');
+}
+
+function batchUnmount() {
+  const checked = document.querySelectorAll('.mount-check:checked');
+  if (checked.length === 0) { alert('请先勾选需要移除的资源'); return; }
+  document.getElementById('unmountResName').innerHTML = '确定要移除选中的 <b>'+checked.length+'</b> 个资源吗？';
+  // Override confirm button to do batch
+  const origConfirm = document.querySelector('#unmountConfirmModal .btn-pri');
+  origConfirm.onclick = function() {
+    closeModal('unmountConfirmModal');
+    alert('已移除 '+checked.length+' 个资源！');
+    refreshResList();
+  };
+  showModal('unmountConfirmModal');
+}
+
+function batchMoveRes() {
+  const checked = document.querySelectorAll('.mount-check:checked');
+  if (checked.length === 0) { alert('请先勾选需要移动的资源'); return; }
+  moveTargetDirId = null;
+  pendingMoveResName = null;
+  document.getElementById('moveResLabel').innerHTML = '已选 <b style="color:var(--t1);">'+checked.length+'</b> 个资源，请选择目标目录：';
+  document.getElementById('moveDirTree').innerHTML = buildMoveDirTree(dirTreeData, 0);
+  showModal('moveResModal');
+  lucide.createIcons();
+}
+
+function batchMountToDir() {
+  const checked = document.querySelectorAll('.mount-check:checked');
+  if (checked.length === 0) { alert('请先勾选需添加的资源'); return; }
+  mountTargetDirId = null;
+  document.getElementById('mountDirTree').innerHTML = buildMountDirTree(dirTreeData, 0);
+  document.getElementById('mountDirCount').textContent = checked.length;
+  showModal('mountToDirModal');
+  lucide.createIcons();
+}
+
+function confirmMountToDir() {
+  if (!mountTargetDirId) { alert('请选择目标目录'); return; }
+  const checked = document.querySelectorAll('.mount-check:checked');
+  closeModal('mountToDirModal');
+  alert('已将 '+(checked.length || 1)+' 个资源添加到目录！');
+}
+
+function openDeleteModal(id) {
+  const dir = findDirNode(dirTreeData, id);
+  const hasChildren = dir && dir.children && dir.children.length > 0;
+  if (hasChildren) {
+    alert('该目录下存在子目录，请先删除或移走所有子目录后再删除。');
+    return;
+  }
+  document.getElementById('deleteDirTitle').textContent = '删除目录「'+findDirName(id)+'」';
+  const mountCount = (mountResData[id] || []).length;
+  document.getElementById('deleteDirInfo').innerHTML = '该目录下挂载了 <b>'+(mountCount||0)+'</b> 个资源。';
+  showModal('deleteDirModal');
+}
+
+function confirmDeleteDir() { closeModal('deleteDirModal'); alert('目录已删除！'); }
+
+function openMoveModal(id) {
+  document.getElementById('moveDirTitle').textContent = '移动目录「'+findDirName(id)+'」';
+  const pathEl = document.getElementById('moveFromPath');
+  const path = findPath(dirTreeData, id, []);
+  if (pathEl) pathEl.textContent = path ? path.join(' > ') : '/' + findDirName(id);
+  document.getElementById('moveDirTree').innerHTML = buildMountDirTree(dirTreeData, 0);
+  showModal('moveDirModal');
+  lucide.createIcons();
+}
+
+function findPath(nodes, target, path) {
+  for (const n of nodes) {
+    const np = [...path, n.name];
+    if (n.id===target) return np;
+    if (n.children) { const f = findPath(n.children, target, np); if (f) return f; }
+  }
+  return null;
+}
+
+// ========== DROPDOWN ==========
+function toggleDD(id) {
+  const dd = document.getElementById(id);
+  const m = dd?.querySelector('.dd-m');
+  if (!m || !dd) return;
+  const wasShown = m.classList.contains('show');
+  document.querySelectorAll('.dd-m.show').forEach(d => d.classList.remove('show'));
+  if (!wasShown) {
+    const rect = dd.getBoundingClientRect();
+    m.style.top = (rect.bottom + 2) + 'px';
+    m.style.right = (window.innerWidth - rect.right) + 'px';
+    m.classList.add('show');
+  }
+}
+
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.dd')) document.querySelectorAll('.dd-m.show').forEach(d => d.classList.remove('show'));
+});
+
+// ========== MODAL ==========
+function showModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+document.querySelectorAll('.mod-o').forEach(o => o.addEventListener('click', function(e) { if (e.target===this) this.classList.remove('show'); }));
+
+// ========== DELETE RES RADIO ==========
+document.querySelectorAll('#deleteResOption .radio-item').forEach(item => {
+  item.addEventListener('click', function() {
+    document.querySelectorAll('#deleteResOption .radio-item').forEach(i => i.classList.remove('on'));
+    this.classList.add('on');
+    this.querySelector('input[type=radio]').checked = true;
+  });
+});
+
+// ========== NO PERMISSION HANDLING ==========
+let pendingPermRes = null;
+
+function handleResourceClick(event, name, type, creator, sourcePath, resDirPath) {
+  // Store resource info for the application form
+  pendingPermRes = { name, type, creator, sourcePath, resDirPath };
+  // Update no-permission modal info
+  document.getElementById('noPermResInfo').querySelector('span').textContent = name + ' · ' + type;
+  const iconEl = document.getElementById('noPermResInfo').querySelector('i,svg');
+  if (iconEl) iconEl.setAttribute('data-lucide', getResIcon(type));
+  showModal('noPermModal');
+  lucide.createIcons();
+}
+
+function openPermApplyDrawer() {
+  if (!pendingPermRes) return;
+  const r = pendingPermRes;
+  // Auto-fill form fields
+  document.getElementById('permApplyName').value = '申请访问「' + r.name + '」权限';
+  document.getElementById('permApplyResType').value = r.type;
+  document.getElementById('permApplyReason').value = '因工作需要，申请访问资源「' + r.name + '」（类型：' + r.type + '，负责人：' + r.creator + '），用于日常数据分析与业务决策。请审批。';
+  // Reset permissions
+  document.getElementById('permApplyView').checked = true;
+  document.getElementById('permApplyDownload').checked = false;
+  document.getElementById('permApplyShare').checked = false;
+  document.getElementById('permApplyManage').checked = false;
+  // Pre-fill priority & scope
+  document.getElementById('permApplyPriority').value = 'normal';
+  document.getElementById('permApplyScope').value = 'department';
+  // Populate resource list
+  document.getElementById('permApplyResList').innerHTML =
+    '<tr>'+
+      '<td><div style="display:flex;align-items:center;gap:6px;"><i data-lucide="'+getResIcon(r.type)+'" style="width:15px;height:15px;color:var(--pri);flex-shrink:0;"></i><span style="font-weight:500;">'+r.name+'</span></div></td>'+
+      '<td><span class="tag tag-gray">'+r.type+'</span></td>'+
+      '<td><span style="font-size:12px;color:var(--t3);">'+(r.resDirPath || r.sourcePath || '-')+'</span></td>'+
+    '</tr>';
+  // Show drawer
+  document.getElementById('permApplyOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+  lucide.createIcons();
+}
+
+function closePermApplyDrawer() {
+  document.getElementById('permApplyOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+function handlePermApplyChange(changedPerm) {
+  const viewCb = document.getElementById('permApplyView');
+  if (changedPerm === 'download' || changedPerm === 'share' || changedPerm === 'manage') {
+    const cb = document.getElementById('permApply' + changedPerm.charAt(0).toUpperCase() + changedPerm.slice(1));
+    if (cb && cb.checked) viewCb.checked = true;
+  }
+  if (changedPerm === 'view' && !viewCb.checked) {
+    document.getElementById('permApplyDownload').checked = false;
+    document.getElementById('permApplyShare').checked = false;
+    document.getElementById('permApplyManage').checked = false;
+  }
+}
+
+function savePermApplyDraft() {
+  const name = document.getElementById('permApplyName').value;
+  if (!name) { alert('请输入申请单名称'); return; }
+  if (!document.getElementById('permApplyResType').value) { alert('请选择资源类型'); return; }
+  alert('草稿已保存！');
+  closePermApplyDrawer();
+}
+
+function submitPermApply() {
+  const name = document.getElementById('permApplyName').value;
+  const resType = document.getElementById('permApplyResType').value;
+  const reason = document.getElementById('permApplyReason').value;
+  const priority = document.getElementById('permApplyPriority').value;
+  const scope = document.getElementById('permApplyScope').value;
+  if (!name) { alert('请输入申请单名称'); return; }
+  if (!resType) { alert('请选择资源类型'); return; }
+  if (!reason) { alert('请填写申请说明'); return; }
+  if (!priority) { alert('请选择优先级'); return; }
+  if (!scope) { alert('请选择影响范围'); return; }
+  const perms = [];
+  if (document.getElementById('permApplyView').checked) perms.push('查看');
+  if (document.getElementById('permApplyDownload').checked) perms.push('下载');
+  if (document.getElementById('permApplyShare').checked) perms.push('分享');
+  if (document.getElementById('permApplyManage').checked) perms.push('管理');
+  if (perms.length === 0) { alert('请至少选择一项申请权限'); return; }
+  if (confirm('确认提交此权限申请吗？\n\n资源：' + pendingPermRes.name + '\n申请权限：' + perms.join('、') + '\n优先级：' + (priority==='urgent'?'紧急':priority==='high'?'高':priority==='low'?'低':'普通'))) {
+    alert('权限申请已提交！审批通过后即可访问该资源。');
+    closePermApplyDrawer();
+    pendingPermRes = null;
+  }
+}
+
+// ========== INIT ==========
+document.addEventListener('DOMContentLoaded', function() {
+  renderDirTree();
+  renderFavSubDirs();
+  refreshResList();
+  lucide.createIcons();
+});
+</script>
+</body>
+</html>
