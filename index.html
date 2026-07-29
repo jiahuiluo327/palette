@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Gien BI 原型中心</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #f5f7fb;
+            color: #333;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1677ff, #4096ff);
+            color: white;
+            padding: 40px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, .12);
+        }
+
+        header h1 {
+            font-size: 34px;
+        }
+
+        header p {
+            margin-top: 10px;
+            opacity: .9;
+        }
+
+        .container {
+            width: 1200px;
+            margin: 40px auto;
+        }
+
+        #search {
+            width: 100%;
+            padding: 14px 18px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            margin-bottom: 35px;
+            outline: none;
+        }
+
+        #search:focus {
+            border-color: #1677ff;
+        }
+
+        .module {
+            margin-bottom: 35px;
+        }
+
+        .module-title {
+            font-size: 22px;
+            margin-bottom: 18px;
+            color: #1677ff;
+            border-left: 5px solid #1677ff;
+            padding-left: 12px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 22px;
+            text-decoration: none;
+            color: #333;
+            transition: .25s;
+            border: 1px solid #eee;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(22,119,255,.15);
+            border-color: #1677ff;
+        }
+
+        .icon {
+            font-size: 34px;
+        }
+
+        .title {
+            margin-top: 15px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .desc {
+            margin-top: 8px;
+            color: #888;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        footer {
+            text-align: center;
+            color: #999;
+            margin: 60px 0;
+        }
+
+        @media(max-width:1000px){
+            .container{
+                width:95%;
+            }
+
+            .grid{
+                grid-template-columns:repeat(2,1fr);
+            }
+        }
+
+        @media(max-width:700px){
+
+            .grid{
+                grid-template-columns:1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<header>
+
+    <h1>🚀 Gien BI 原型中心</h1>
+
+    <p>产品原型导航 · GitHub Pages</p>
+
+</header>
+
+<div class="container">
+
+    <input id="search"
+           placeholder="🔍 搜索页面，例如：权限、模板、应用..." />
+
+    <!-- 应用管理 -->
+
+    <div class="module">
+
+        <div class="module-title">
+            📱 应用管理
+        </div>
+
+        <div class="grid">
+
+            <a class="card" href="application-create.html">
+                <div class="icon">➕</div>
+                <div class="title">发起申请</div>
+                <div class="desc"></div>
+            </a>
+
+            <a class="card" href="application-edit.html">
+                <div class="icon">✏️</div>
+                <div class="title">编辑申请</div>
+                <div class="desc"></div>
+            </a>
+
+            <a class="card" href="my-applications.html">
+                <div class="icon">📋</div>
+                <div class="title">申请列表</div>
+                <div class="desc"></div>
+            </a>
+
+            <a class="card" href="my-pending.html">
+                <div class="icon">⏳</div>
+                <div class="title">待办列表</div>
+                <div class="desc"></div>
+            </a>
+
+            <a class="card" href="my-completed.html">
+                <div class="icon">✅</div>
+                <div class="title">已办列表</div>
+                <div class="desc"></div>
+            </a>
+
+            <a class="card" href="detail.html">
+                <div class="icon">📄</div>
+                <div class="title">申请详情</div>
+                <div class="desc"></div>
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- 模板 -->
+
+    <div class="module">
+
+        <div class="module-title">
+            📚 模板管理
+        </div>
+
+        <div class="grid">
+
+            <a class="card" href="template-create.html">
+                <div class="icon">📝</div>
+                <div class="title">模板创建</div>
+            </a>
+
+            <a class="card" href="template-management.html">
+                <div class="icon">📂</div>
+                <div class="title">模板管理</div>
+            </a>
+
+            <a class="card" href="template-view.html">
+                <div class="icon">👀</div>
+                <div class="title">模板查看</div>
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- 权限 -->
+
+    <div class="module">
+
+        <div class="module-title">
+            🔐 用户与权限
+        </div>
+
+        <div class="grid">
+
+            <a class="card" href="用户管理-原型.html">
+                <div class="icon">👤</div>
+                <div class="title">用户管理</div>
+            </a>
+
+            <a class="card" href="权限管理-原型.html">
+                <div class="icon">🔑</div>
+                <div class="title">权限管理</div>
+            </a>
+
+            <a class="card" href="资源目录-原型.html">
+                <div class="icon">📁</div>
+                <div class="title">资源目录</div>
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- 指标 -->
+
+    <div class="module">
+
+        <div class="module-title">
+            📈 指标平台
+        </div>
+
+        <div class="grid">
+
+            <a class="card" href="日均月均派生指标创建.html">
+                <div class="icon">📊</div>
+                <div class="title">日均/月均派生指标</div>
+                <div class="desc">指标配置原型</div>
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<footer>
+
+    Gien BI Prototype Center © 2026
+
+</footer>
+
+<script>
+
+const search=document.getElementById("search");
+
+search.onkeyup=function(){
+
+let keyword=this.value.toLowerCase();
+
+document.querySelectorAll(".card").forEach(card=>{
+
+let text=card.innerText.toLowerCase();
+
+card.style.display=text.includes(keyword)?"block":"none";
+
+});
+
+}
+
+</script>
+
+</body>
+
+</html>
