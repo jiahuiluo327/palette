@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>已办列表 - 流程中心</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@1.23.0/dist/umd/lucide.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+        .nav-item.active {
+            background-color: #E6F0FF;
+            color: #1677FF;
+        }
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .status-approved {
+            background-color: #F6FFED;
+            color: #52C41A;
+            border: 1px solid #B7EB8F;
+        }
+        .status-rejected {
+            background-color: #FFF2F0;
+            color: #F5222D;
+            border: 1px solid #FFCCC7;
+        }
+        .status-cancelled {
+            background-color: #F5F5F5;
+            color: #8C8C8C;
+            border: 1px solid #D9D9D9;
+        }
+        .priority-badge {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .priority-urgent {
+            background-color: #FFF1F0;
+            color: #F5222D;
+            border: 1px solid #FFCCC7;
+        }
+        .priority-high {
+            background-color: #FFF7E6;
+            color: #FA8C16;
+            border: 1px solid #FFD591;
+        }
+        .priority-normal {
+            background-color: #F0F7FF;
+            color: #1677FF;
+            border: 1px solid #91CAFF;
+        }
+        .priority-low {
+            background-color: #F5F5F5;
+            color: #8C8C8C;
+            border: 1px solid #D9D9D9;
+        }
+        .action-badge {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .action-approve {
+            background-color: #F6FFED;
+            color: #52C41A;
+        }
+        .action-reject {
+            background-color: #FFF2F0;
+            color: #F5222D;
+        }
+        .my-action-tab.active {
+            background-color: #1677FF;
+            color: white;
+        }
+        .table-row:hover {
+            background-color: #F5F5F5;
+        }
+        .btn-primary {
+            background-color: #1677FF;
+            color: white;
+            transition: all 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #4096FF;
+        }
+        .btn-secondary {
+            background-color: white;
+            color: #1677FF;
+            border: 1px solid #D9D9D9;
+            transition: all 0.2s;
+        }
+        .btn-secondary:hover {
+            border-color: #1677FF;
+            color: #1677FF;
+        }
+        .filter-select {
+            border: 1px solid #D9D9D9;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .filter-select:hover {
+            border-color: #1677FF;
+        }
+        .filter-select:focus {
+            outline: none;
+            border-color: #1677FF;
+            box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.1);
+        }
+        /* 表格冻结列样式 */
+        .sticky-col {
+            position: sticky;
+            background: white;
+            z-index: 10;
+        }
+        .sticky-col-left {
+            position: sticky;
+            left: 0;
+            background: white;
+            z-index: 10;
+        }
+        .sticky-col-left::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 1px;
+            background-color: #E5E7EB;
+        }
+        .sticky-col-right {
+            position: sticky;
+            right: 0;
+            background: white;
+            z-index: 10;
+        }
+        .sticky-col-right::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 1px;
+            background-color: #E5E7EB;
+        }
+        .thead-sticky {
+            position: sticky;
+            top: 0;
+            background: #F9FAFB;
+            z-index: 20;
+        }
+        .thead-sticky th {
+            background: #F9FAFB;
+        }
+        /* 表格列宽 */
+        .col-checkbox { width: 50px; min-width: 50px; }
+        .col-id { width: 140px; min-width: 140px; }
+        .col-name { width: 250px; min-width: 200px; }
+        .col-type { width: 120px; min-width: 100px; }
+        .col-action-type { width: 100px; min-width: 80px; }
+        .col-priority { width: 100px; min-width: 80px; }
+        .col-status { width: 100px; min-width: 80px; }
+        .col-handler { width: 140px; min-width: 120px; }
+        .col-wait-time { width: 160px; min-width: 140px; }
+        .col-applicant { width: 100px; min-width: 80px; }
+        .col-time { width: 160px; min-width: 140px; }
+        .col-action { width: 150px; min-width: 130px; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="flex h-screen">
+        <!-- 左侧导航菜单 -->
+        <aside class="w-56 bg-white border-r border-gray-200 flex flex-col">
+            <div class="p-4 border-b border-gray-200">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <i data-lucide="layout-grid" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <span class="font-semibold text-lg text-gray-800">GienBI</span>
+                </div>
+            </div>
+
+            <nav class="flex-1 py-4 overflow-y-auto">
+                <!-- 其他菜单收起 -->
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                        <span>数据分析</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 ml-auto"></i>
+                    </div>
+                </div>
+
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="tag" class="w-4 h-4"></i>
+                        <span>标签</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 ml-auto"></i>
+                    </div>
+                </div>
+
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="trending-up" class="w-4 h-4"></i>
+                        <span>指标</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 ml-auto"></i>
+                    </div>
+                </div>
+
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="settings" class="w-4 h-4"></i>
+                        <span>系统管理</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 ml-auto"></i>
+                    </div>
+                </div>
+
+                <!-- 流程中心（展开） -->
+                <div class="px-3 mb-2">
+                    <div class="bg-blue-50 rounded-lg p-2">
+                        <div class="flex items-center gap-2 text-gray-700 font-medium text-sm py-2 px-3">
+                            <i data-lucide="clipboard-list" class="w-4 h-4"></i>
+                            <span>流程中心</span>
+                        </div>
+                        <div class="ml-6 mt-1 space-y-1">
+                            <a href="my-applications.html" class="flex items-center gap-2 text-gray-600 text-sm py-2 px-3 rounded-lg cursor-pointer hover:bg-gray-100">
+                                <i data-lucide="file-text" class="w-4 h-4"></i>
+                                <span>申请列表</span>
+                            </a>
+                            <a href="my-pending.html" class="flex items-center gap-2 text-gray-600 text-sm py-2 px-3 rounded-lg cursor-pointer hover:bg-gray-100">
+                                <i data-lucide="clock" class="w-4 h-4"></i>
+                                <span>待办列表</span>
+                                <span class="ml-auto bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">12</span>
+                            </a>
+                            <a href="my-completed.html" class="nav-item active flex items-center gap-2 text-sm py-2 px-3 rounded-lg cursor-pointer">
+                                <i data-lucide="check-circle" class="w-4 h-4"></i>
+                                <span>已办列表</span>
+                            </a>
+                            <a href="template-management.html" class="flex items-center gap-2 text-gray-600 text-sm py-2 px-3 rounded-lg cursor-pointer hover:bg-gray-100">
+                                <i data-lucide="layout-template" class="w-4 h-4"></i>
+                                <span>模板管理</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="store" class="w-4 h-4"></i>
+                        <span>模板市场</span>
+                    </div>
+                </div>
+
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="archive" class="w-4 h-4"></i>
+                        <span>管理中心</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 ml-auto"></i>
+                    </div>
+                </div>
+
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="scroll-text" class="w-4 h-4"></i>
+                        <span>审计日志</span>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="p-4 border-t border-gray-200">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-blue-500 rounded-full flex items-center justify-center text-white font-medium">
+                        A
+                    </div>
+                    <div class="flex-1">
+                        <div class="text-sm font-medium text-gray-800">管理员</div>
+                        <div class="text-xs text-gray-500">admin@qq.com</div>
+                    </div>
+                    <i data-lucide="chevron-left" class="w-5 h-5 text-gray-400 cursor-pointer hover:text-gray-600"></i>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="flex-1 flex flex-col bg-gray-50 overflow-hidden">
+            <header class="bg-white border-b border-gray-200 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2 text-sm">
+                        <a href="#" class="text-gray-500 hover:text-gray-700">流程中心</a>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+                        <span class="text-gray-800 font-medium">已办列表</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                    </div>
+                </div>
+            </header>
+
+            <div class="flex-1 overflow-auto p-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200">
+                    <!-- Tab切换 -->
+                    <div class="px-6 pt-6">
+                        <div class="flex items-center gap-2">
+                            <button class="my-action-tab active px-4 py-2 rounded-lg text-sm font-medium transition" data-my-action="all">
+                                全部 <span class="ml-1">(5)</span>
+                            </button>
+                            <button class="my-action-tab px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition" data-my-action="handled">
+                                我已处理 <span class="ml-1">(4)</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 筛选区 -->
+                    <div class="px-6 py-4 border-b border-gray-100">
+                        <div class="flex items-center gap-3 flex-wrap">
+                            <div class="w-48">
+                                <input type="text" placeholder="搜索申请单号或申请单名称" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                            </div>
+                            <select class="filter-select">
+                                <option>全部申请类型</option>
+                                <option>资源发布</option>
+                                <option>资源下架</option>
+                                <option>资源删除</option>
+                                <option>资源导入</option>
+                                <option>资源导出</option>
+                                <option>资源权限申请</option>
+                                <option>功能权限申请</option>
+                                <option>数据入库</option>
+                                <option>数据导入</option>
+                                <option>数据导出</option>
+                                <option>数据变更</option>
+                            </select>
+                            <select class="filter-select">
+                                <option>全部资源类型</option>
+                                <option>仪表板</option>
+                                <option>报表分析</option>
+                                <option>电子表格</option>
+                                <option>分析报告</option>
+                                <option>目标管理</option>
+                                <option>指标分析</option>
+                                <option>指标列表</option>
+                                <option>API服务</option>
+                                <option>数据集</option>
+                                <option>数据源</option>
+                                <option>数据填报</option>
+                                <option>语义模型</option>
+                                <option>维表管理</option>
+                                <option>字典管理</option>
+                                <option>监控预警</option>
+                                <option>任务管理</option>
+                                <option>资源迁移</option>
+                                <option>问答助理</option>
+                                <option>移动端应用</option>
+                                <option>PC端应用</option>
+                            </select>
+                            <select class="filter-select">
+                                <option>全部优先级</option>
+                                <option>紧急</option>
+                                <option>高</option>
+                                <option>普通</option>
+                                <option>低</option>
+                            </select>
+                            <select class="filter-select" id="timeFilter" onchange="toggleCustomDateRange()">
+                                <option>全部时间</option>
+                                <option>今天</option>
+                                <option>本周</option>
+                                <option>本月</option>
+                                <option>近三月</option>
+                                <option>自定义</option>
+                            </select>
+                            <!-- 自定义日期范围选择器 -->
+                            <div id="customDateRange" class="hidden flex items-center gap-2">
+                                <input type="datetime-local" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                                <span class="text-gray-500">至</span>
+                                <input type="datetime-local" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 数据表格 -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="thead-sticky sticky-col-left col-id px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="left: 0;">申请单号</th>
+                                    <th class="thead-sticky col-name px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">申请单名称</th>
+                                    <th class="thead-sticky col-action-type px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">申请类型</th>
+                                    <th class="thead-sticky col-type px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">资源类型</th>
+                                    <th class="thead-sticky col-priority px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">优先级</th>
+                                    <th class="thead-sticky col-status px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">当前状态</th>
+                                    <th class="thead-sticky col-handler px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">当前节点处理人</th>
+                                    <th class="thead-sticky col-wait-time px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">当前节点等待时长</th>
+                                    <th class="thead-sticky col-applicant px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">申请人</th>
+                                    <th class="thead-sticky col-time px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">申请时间</th>
+                                    <th class="thead-sticky col-time px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">更新时间</th>
+                                    <th class="thead-sticky col-action px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">处理结果</th>
+                                    <th class="thead-sticky col-time px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">处理时间</th>
+                                    <th class="thead-sticky col-handler px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">处理人</th>
+                                    <th class="thead-sticky sticky-col-right col-action px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                <tr class="table-row transition">
+                                    <td class="sticky-col-left col-id px-4 py-3 whitespace-nowrap" style="left: 0;">
+                                        <span class="text-sm font-medium text-blue-600">REQ-2025101</span>
+                                    </td>
+                                    <td class="col-name px-4 py-3">
+                                        <div class="text-sm text-gray-900">仪表板D发布审批</div>
+                                    </td>
+                                    <td class="col-action-type px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        资源发布
+                                    </td>
+                                    <td class="col-type px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        仪表板
+                                    </td>
+                                    <td class="col-priority px-4 py-3 whitespace-nowrap">
+                                        <span class="priority-badge priority-high">高</span>
+                                    </td>
+                                    <td class="col-status px-4 py-3 whitespace-nowrap">
+                                        <span class="status-badge status-approved">已通过</span>
+                                    </td>
+                                    <td class="col-handler px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        李明远（limingyuan）
+                                    </td>
+                                    <td class="col-wait-time px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        2小时15分
+                                    </td>
+                                    <td class="col-applicant px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        孙丽华（sunlihua）
+                                    </td>
+                                    <td class="col-time px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        2026-07-01 09:00
+                                    </td>
+                                    <td class="col-time px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        2026-07-01 09:45
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        <span class="action-badge action-approve">通过</span>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        2026-07-01 10:30
+                                    </td>
+                                    <td class="col-handler px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        李明远（limingyuan）
+                                    </td>
+                                    <td class="sticky-col-right col-action px-4 py-3 whitespace-nowrap text-right">
+                                        <a href="detail.html?id=REQ-2025101" class="text-blue-600 hover:text-blue-800 text-sm font-medium">详情</a>
+                                    </td>
+                                </tr>
+                                <tr class="table-row transition">
+                                    <td class="sticky-col-left col-id px-4 py-3 whitespace-nowrap" style="left: 0;">
+                                        <span class="text-sm font-medium text-blue-600">REQ-2025102</span>
+                                    </td>
+                                    <td class="col-name px-4 py-3">
+                                        <div class="text-sm text-gray-900">报表C导出申请</div>
+                                    </td>
+                                    <td class="col-action-type px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        资源导出
+                                    </td>
+                                    <td class="col-type px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        报表分析
+                                    </td>
+                                    <td class="col-priority px-4 py-3 whitespace-nowrap">
+                                        <span class="priority-badge priority-normal">普通</span>
+                                    </td>
+                                    <td class="col-status px-4 py-3 whitespace-nowrap">
+                                        <span class="status-badge status-rejected">已驳回</span>
+                                    </td>
+                                    <td class="col-handler px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        王志强（wangzhiqiang）
+                                    </td>
+                                    <td class="col-wait-time px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        5小时30分
+                                    </td>
+                                    <td class="col-applicant px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        周伟（zhouwei）
+                                    </td>
+                                    <td class="col-time px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        2026-06-30 14:00
+                                    </td>
+                                    <td class="col-time px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        2026-06-30 14:30
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        <span class="action-badge action-reject">驳回</span>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        2026-06-30 16:45
+                                    </td>
+                                    <td class="col-handler px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        王志强（wangzhiqiang）
+                                    </td>
+                                    <td class="sticky-col-right col-action px-4 py-3 whitespace-nowrap text-right">
+                                        <a href="detail.html?id=REQ-2025102" class="text-blue-600 hover:text-blue-800 text-sm font-medium">详情</a>
+                                    </td>
+                                </tr>
+                                <tr class="table-row transition">
+                                    <td class="sticky-col-left col-id px-4 py-3 whitespace-nowrap" style="left: 0;">
+                                        <span class="text-sm font-medium text-blue-600">REQ-2025103</span>
+                                    </td>
+                                    <td class="col-name px-4 py-3">
+                                        <div class="text-sm text-gray-900">指标D权限申请</div>
+                                    </td>
+                                    <td class="col-action-type px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        资源权限申请
+                                    </td>
+                                    <td class="col-type px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        指标列表
+                                    </td>
+                                    <td class="col-priority px-4 py-3 whitespace-nowrap">
+                                        <span class="priority-badge priority-urgent">紧急</span>
+                                    </td>
+                                    <td class="col-status px-4 py-3 whitespace-nowrap">
+                                        <span class="status-badge status-approved">已通过</span>
+                                    </td>
+                                    <td class="col-handler px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        张磊（zhanglei）
+                                    </td>
+                                    <td class="col-wait-time px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        1小时50分
+                                    </td>
+                                    <td class="col-applicant px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        吴晓东（wuxiaodong）
+                                    </td>
+                                    <td class="col-time px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        2026-06-30 09:30
+                                    </td>
+                                    <td class="col-time px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        2026-06-30 10:15
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        <span class="action-badge action-approve">通过</span>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        2026-06-30 11:20
+                                    </td>
+                                    <td class="col-handler px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        张磊（zhanglei）
+                                    </td>
+                                    <td class="sticky-col-right col-action px-4 py-3 whitespace-nowrap text-right">
+                                        <a href="detail.html?id=REQ-2025103" class="text-blue-600 hover:text-blue-800 text-sm font-medium">详情</a>
+                                    </td>
+                                </tr>
+                                <tr class="table-row transition">
+                                    <td class="sticky-col-left col-id px-4 py-3 whitespace-nowrap" style="left: 0;">
+                                        <span class="text-sm font-medium text-blue-600">REQ-2025104</span>
+                                    </td>
+                                    <td class="col-name px-4 py-3">
+                                        <div class="text-sm text-gray-900">数据变更-E表格导入</div>
+                                    </td>
+                                    <td class="col-action-type px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        数据变更
+                                    </td>
+                                    <td class="col-type px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        电子表格
+                                    </td>
+                                    <td class="col-priority px-4 py-3 whitespace-nowrap">
+                                        <span class="priority-badge priority-low">低</span>
+                                    </td>
+                                    <td class="col-status px-4 py-3 whitespace-nowrap">
+                                        <span class="status-badge status-approved">已通过</span>
+                                    </td>
+                                    <td class="col-handler px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        陈芳（chenfang）
+                                    </td>
+                                    <td class="col-wait-time px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        4小时20分
+                                    </td>
+                                    <td class="col-applicant px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        钱一鸣（qianyiming）
+                                    </td>
+                                    <td class="col-time px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        2026-06-29 10:00
+                                    </td>
+                                    <td class="col-time px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        2026-06-29 11:30
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        <span class="action-badge action-approve">通过</span>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        2026-06-29 15:00
+                                    </td>
+                                    <td class="col-handler px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        陈芳（chenfang）
+                                    </td>
+                                    <td class="sticky-col-right col-action px-4 py-3 whitespace-nowrap text-right">
+                                        <a href="detail.html?id=REQ-2025104" class="text-blue-600 hover:text-blue-800 text-sm font-medium">详情</a>
+                                    </td>
+                                </tr>
+                                <tr class="table-row transition">
+                                    <td class="sticky-col-left col-id px-4 py-3 whitespace-nowrap" style="left: 0;">
+                                        <span class="text-sm font-medium text-blue-600">REQ-2025098</span>
+                                    </td>
+                                    <td class="col-name px-4 py-3">
+                                        <div class="text-sm text-gray-900">需求审批-Q3规划</div>
+                                    </td>
+                                    <td class="col-action-type px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        资源发布
+                                    </td>
+                                    <td class="col-type px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        任务管理
+                                    </td>
+                                    <td class="col-priority px-4 py-3 whitespace-nowrap">
+                                        <span class="priority-badge priority-high">高</span>
+                                    </td>
+                                    <td class="col-status px-4 py-3 whitespace-nowrap">
+                                        <span class="status-badge status-cancelled">已撤销</span>
+                                    </td>
+                                    <td class="col-handler px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        赵建国（zhaojianguo）
+                                    </td>
+                                    <td class="col-wait-time px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        3小时10分
+                                    </td>
+                                    <td class="col-applicant px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        李四海（lisihai）
+                                    </td>
+                                    <td class="col-time px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        2026-06-28 09:00
+                                    </td>
+                                    <td class="col-time px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        2026-06-28 10:45
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        <span class="action-badge action-approve">通过</span>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        2026-06-28 14:30
+                                    </td>
+                                    <td class="col-handler px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        赵建国（zhaojianguo）
+                                    </td>
+                                    <td class="sticky-col-right col-action px-4 py-3 whitespace-nowrap text-right">
+                                        <a href="detail.html?id=REQ-2025098" class="text-blue-600 hover:text-blue-800 text-sm font-medium">详情</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- 分页区 -->
+                    <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+                        <div class="text-sm text-gray-500">
+                            共 5 条已办记录
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button class="px-3 py-1 border border-gray-300 rounded text-sm text-gray-400 cursor-not-allowed" disabled>
+                                <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                            </button>
+                            <button class="w-8 h-8 bg-blue-600 text-white rounded text-sm font-medium">1</button>
+                            <button class="w-8 h-8 border border-gray-300 rounded text-sm text-gray-600 hover:bg-gray-50">2</button>
+                            <button class="px-3 py-1 border border-gray-300 rounded text-sm text-gray-600 hover:bg-gray-50">
+                                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                            </button>
+                            <select class="ml-2 border border-gray-300 rounded text-sm py-1 px-2">
+                                <option>10 条/页</option>
+                                <option>20 条/页</option>
+                                <option>50 条/页</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 初始化图标
+        lucide.createIcons();
+
+        // 自动为表格行标记"我的操作"类型
+        document.querySelectorAll('.table-row').forEach(row => {
+            const badge = row.querySelector('.action-badge');
+            if (!badge) return;
+            if (badge.classList.contains('action-approve')) {
+                row.setAttribute('data-my-action', 'approved');
+            } else if (badge.classList.contains('action-reject')) {
+                row.setAttribute('data-my-action', 'rejected');
+            }
+        });
+
+        // Tab切换
+        document.querySelectorAll('.my-action-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.my-action-tab').forEach(t => {
+                    t.classList.remove('active');
+                    t.classList.add('text-gray-600', 'hover:bg-gray-100');
+                });
+                this.classList.add('active');
+                this.classList.remove('text-gray-600', 'hover:bg-gray-100');
+
+                const filterType = this.dataset.myAction;
+                document.querySelectorAll('.table-row').forEach(row => {
+                    if (filterType === 'all') {
+                        row.style.display = '';
+                    } else if (filterType === 'handled') {
+                        const action = row.getAttribute('data-my-action');
+                        row.style.display = (action === 'approved' || action === 'rejected') ? '' : 'none';
+                    } else {
+                        const action = row.getAttribute('data-my-action');
+                        row.style.display = action === filterType ? '' : 'none';
+                    }
+                });
+            });
+        });
+
+        // 切换自定义日期范围显示
+        function toggleCustomDateRange() {
+            const timeFilter = document.getElementById('timeFilter');
+            const customDateRange = document.getElementById('customDateRange');
+            if (timeFilter && customDateRange) {
+                if (timeFilter.value === '自定义') {
+                    customDateRange.classList.remove('hidden');
+                } else {
+                    customDateRange.classList.add('hidden');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

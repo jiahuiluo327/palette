@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>发起申请 - 流程中心</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@1.23.0/dist/umd/lucide.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+        .nav-item.active {
+            background-color: #E6F0FF;
+            color: #1677FF;
+        }
+        .btn-primary {
+            background-color: #1677FF;
+            color: white;
+            transition: all 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #4096FF;
+        }
+        .btn-primary:disabled {
+            background-color: #BFBFBF;
+            cursor: not-allowed;
+        }
+        .btn-secondary {
+            background-color: white;
+            color: #1677FF;
+            border: 1px solid #D9D9D9;
+            transition: all 0.2s;
+        }
+        .btn-secondary:hover {
+            border-color: #1677FF;
+            color: #1677FF;
+        }
+        .form-input {
+            border: 1px solid #D9D9D9;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 14px;
+            transition: all 0.2s;
+            width: 100%;
+        }
+        .form-input:hover {
+            border-color: #1677FF;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #1677FF;
+            box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.1);
+        }
+        .form-input:disabled {
+            background-color: #F5F5F5;
+            cursor: not-allowed;
+        }
+        .form-select {
+            border: 1px solid #D9D9D9;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 14px;
+            transition: all 0.2s;
+            width: 100%;
+            background-color: white;
+        }
+        .form-select:hover {
+            border-color: #1677FF;
+        }
+        .form-select:focus {
+            outline: none;
+            border-color: #1677FF;
+            box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.1);
+        }
+        .form-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #262626;
+            margin-bottom: 8px;
+        }
+        .form-label-required::after {
+            content: '*';
+            color: #F5222D;
+            margin-left: 4px;
+        }
+        .form-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #262626;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #E5E7EB;
+        }
+        .resource-item {
+            background-color: #F9FAFB;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="flex h-screen">
+        <!-- 左侧导航菜单 -->
+        <aside class="w-56 bg-white border-r border-gray-200 flex flex-col">
+            <div class="p-4 border-b border-gray-200">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <i data-lucide="layout-grid" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <span class="font-semibold text-lg text-gray-800">GienBI</span>
+                </div>
+            </div>
+
+            <nav class="flex-1 py-4 overflow-y-auto">
+                <!-- 其他菜单收起 -->
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                        <span>数据分析</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 ml-auto"></i>
+                    </div>
+                </div>
+
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="tag" class="w-4 h-4"></i>
+                        <span>标签</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 ml-auto"></i>
+                    </div>
+                </div>
+
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="trending-up" class="w-4 h-4"></i>
+                        <span>指标</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 ml-auto"></i>
+                    </div>
+                </div>
+
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="settings" class="w-4 h-4"></i>
+                        <span>系统管理</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 ml-auto"></i>
+                    </div>
+                </div>
+
+                <!-- 流程中心（展开） -->
+                <div class="px-3 mb-2">
+                    <div class="bg-blue-50 rounded-lg p-2">
+                        <div class="flex items-center gap-2 text-gray-700 font-medium text-sm py-2 px-3">
+                            <i data-lucide="clipboard-list" class="w-4 h-4"></i>
+                            <span>流程中心</span>
+                        </div>
+                        <div class="ml-6 mt-1 space-y-1">
+                            <a href="my-applications.html" class="nav-item active flex items-center gap-2 text-sm py-2 px-3 rounded-lg cursor-pointer">
+                                <i data-lucide="file-text" class="w-4 h-4"></i>
+                                <span>申请列表</span>
+                            </a>
+                            <a href="my-pending.html" class="flex items-center gap-2 text-gray-600 text-sm py-2 px-3 rounded-lg cursor-pointer hover:bg-gray-100">
+                                <i data-lucide="clock" class="w-4 h-4"></i>
+                                <span>待办列表</span>
+                                <span class="ml-auto bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">12</span>
+                            </a>
+                            <a href="my-completed.html" class="flex items-center gap-2 text-gray-600 text-sm py-2 px-3 rounded-lg cursor-pointer hover:bg-gray-100">
+                                <i data-lucide="check-circle" class="w-4 h-4"></i>
+                                <span>已办列表</span>
+                            </a>
+                            <a href="template-management.html" class="flex items-center gap-2 text-gray-600 text-sm py-2 px-3 rounded-lg cursor-pointer hover:bg-gray-100">
+                                <i data-lucide="layout-template" class="w-4 h-4"></i>
+                                <span>模板管理</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="store" class="w-4 h-4"></i>
+                        <span>模板市场</span>
+                    </div>
+                </div>
+
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="archive" class="w-4 h-4"></i>
+                        <span>管理中心</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 ml-auto"></i>
+                    </div>
+                </div>
+
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="scroll-text" class="w-4 h-4"></i>
+                        <span>审计日志</span>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- 用户信息 -->
+            <div class="p-4 border-t border-gray-200">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-blue-500 rounded-full flex items-center justify-center text-white font-medium">
+                        A
+                    </div>
+                    <div class="flex-1">
+                        <div class="text-sm font-medium text-gray-800">管理员</div>
+                        <div class="text-xs text-gray-500">admin@qq.com</div>
+                    </div>
+                    <i data-lucide="chevron-left" class="w-5 h-5 text-gray-400 cursor-pointer hover:text-gray-600"></i>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="flex-1 flex flex-col bg-gray-50 overflow-hidden">
+            <!-- 顶部导航栏 -->
+            <header class="bg-white border-b border-gray-200 px-6 py-4 flex-shrink-0">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2 text-sm">
+                        <a href="my-applications.html" class="text-gray-500 hover:text-gray-700">申请列表</a>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+                        <span class="text-gray-800 font-medium">发起申请</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <a href="my-applications.html" class="btn-secondary px-4 py-2 rounded-lg text-sm font-medium">
+                            取消
+                        </a>
+                        <button onclick="saveDraft()" class="btn-secondary px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
+                            <i data-lucide="save" class="w-4 h-4"></i>
+                            保存
+                        </button>
+                        <button onclick="submitApplication()" class="btn-primary px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
+                            <i data-lucide="send" class="w-4 h-4"></i>
+                            保存并提交
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 表单内容区 -->
+            <div class="flex-1 overflow-auto p-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 max-w-4xl">
+                    <div class="p-6">
+                        <form id="applicationForm">
+                            <!-- 申请单基本信息 -->
+                            <div class="form-section-title">申请单信息</div>
+
+                            <div class="grid grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <label class="form-label">申请单号</label>
+                                    <input type="text" class="form-input" value="REQ-2026007" disabled>
+                                </div>
+                                <div>
+                                    <label class="form-label form-label-required">申请单名称</label>
+                                    <input type="text" class="form-input" placeholder="请输入申请单名称" required>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <label class="form-label form-label-required">申请类型</label>
+                                    <select class="form-select" id="approvalType" required onchange="togglePermissionConfig()">
+                                        <option value="">请选择申请类型</option>
+                                        <option selected>资源权限申请</option>
+                                        <option>功能权限申请</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label form-label-required">资源类型</label>
+                                    <select class="form-select" id="resourceTypeSelect" required onchange="onResourceTypeChange()">
+                                        <option value="">请选择资源类型</option>
+                                        <option selected>仪表板</option>
+                                        <option>报表分析</option>
+                                        <option>电子表格</option>
+                                        <option>分析报告</option>
+                                        <option>目标管理</option>
+                                        <option>指标分析</option>
+                                        <option>指标列表</option>
+                                        <option>API服务</option>
+                                        <option>数据集</option>
+                                        <option>数据源</option>
+                                        <option>数据填报</option>
+                                        <option>语义模型</option>
+                                        <option>维表管理</option>
+                                        <option>字典管理</option>
+                                        <option>监控预警</option>
+                                        <option>任务管理</option>
+                                        <option>资源迁移</option>
+                                        <option>问答助理</option>
+                                        <option>移动端应用</option>
+                                        <option>PC端应用</option>
+                                    </select>
+                                </div>
+                            </div>
+
+
+                            <div class="grid grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <label class="form-label form-label-required">优先级</label>
+                                    <select class="form-select" required>
+                                        <option value="">请选择优先级</option>
+                                        <option value="low">低</option>
+                                        <option value="normal" selected>普通</option>
+                                        <option value="high">高</option>
+                                        <option value="urgent">紧急</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label form-label-required">影响范围</label>
+                                    <select class="form-select" required>
+                                        <option value="">请选择影响范围</option>
+                                        <option value="department">部门级</option>
+                                        <option value="company">公司级</option>
+                                        <option value="public">对外公开</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-6">
+                                <label class="form-label form-label-required">模板名称</label>
+                                <input type="text" class="form-input" value="权限申请审批模板-默认匹配" disabled>
+                                <div class="text-xs text-gray-500 mt-1">根据申请类型和资源类型自动匹配</div>
+                            </div>
+
+                            <div class="mb-6">
+                                <label class="form-label form-label-required">申请说明</label>
+                                <textarea class="form-input" rows="4" placeholder="请详细描述申请原因、背景、预期效果等信息" required></textarea>
+                            </div>
+
+                            <div class="mb-6">
+                                <label class="form-label">附件</label>
+                                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                                    <i data-lucide="upload-cloud" class="w-10 h-10 text-gray-400 mx-auto mb-2"></i>
+                                    <div class="text-sm text-gray-500 mb-2">
+                                        <span class="text-blue-600 cursor-pointer hover:underline">点击上传</span> 或拖拽文件到此处
+                                    </div>
+                                    <div class="text-xs text-gray-400">支持上传文档、图片等文件，最多10个文件，单个文件不超过10MB</div>
+                                </div>
+                            </div>
+
+                            <!-- 申请内容 -->
+                            <div class="form-section-title mt-8">申请内容</div>
+
+                            <!-- 资源权限模式 -->
+                            <div id="resourcePermSection">
+                                <div class="mb-4 relative">
+                                    <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                                    <input type="text" id="resourcePermSearch" placeholder="搜索资源名称" oninput="filterResourcePermTree()" class="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                                </div>
+                                <div class="border border-gray-200 rounded-lg overflow-hidden mb-4">
+                                    <table class="w-full">
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">资源</th>
+                                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase resource-perm-col">权限</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="resourceListBody" class="divide-y divide-gray-100">
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="text-sm text-gray-500">共 <span id="resourceTotal">0</span> 条资源</div>
+                            </div>
+
+                            <!-- 功能权限模式 -->
+                            <div id="functionPermSection" style="display:none;">
+                                <div class="mb-4 relative">
+                                    <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                                    <input type="text" id="functionPermSearch" placeholder="搜索功能名称" oninput="filterFunctionPermTree()" class="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                                </div>
+                                <div class="border border-gray-200 rounded-lg overflow-hidden mb-4">
+                                    <table class="w-full">
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">菜单名称</th>
+                                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase function-perm-col">权限</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="functionPermBody" class="divide-y divide-gray-100">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 初始化图标
+        lucide.createIcons();
+
+        // 已有资源权限（模拟数据）— key 为资源 path
+        const ownedResourcePerms = {
+            '/财务分析/': { view: true, manage: true, download: false, share: false },
+            '/财务分析/贷款业务/': { view: true, manage: false, download: false, share: true },
+            '/客户关系分析/': { view: true, manage: false, download: true, share: false },
+            '/财务报表/': { view: true, manage: true, download: true, share: true },
+            '/核心指标/': { view: true, manage: false, download: false, share: false },
+        };
+
+        // 已有功能权限（模拟数据）
+        const ownedFunctionPerms = {
+            '数据分析/仪表板': true,
+            '数据分析/报表分析': true,
+            '标签': true,
+        };
+
+        // 已添加资源数据（保留兼容）
+        let addedResources = [];
+
+        // ========== 资源选择弹窗数据 ==========
+        let resourceCounter = 1;
+
+        // 资源类型 -> 目录路径 映射
+        const resourceTypeDirMap = {
+            '仪表板': ['/财务分析/', '/财务分析/贷款业务/', '/财务分析/存款业务/', '/客户关系分析/', '/经营分析/'],
+            '报表分析': ['/财务报表/', '/财务报表/月度报表/', '/运营报表/', '/监管报送/'],
+            '电子表格': ['/业务数据/销售部/', '/风险数据/'],
+            '指标列表': ['/核心指标/', '/业务指标/销售/'],
+            '移动端应用': ['/移动报表/销售部/', '/移动驾驶舱/'],
+            'PC端应用': ['/管理后台/研发部/'],
+            '数据填报': ['/数据采集/运营部/'],
+            '需求管理': ['/产品需求/']
+        };
+
+        // 全部资源数据
+        const allResources = [
+            { name: '财务分析总览仪表板', path: '/财务分析/', icon: 'layout-dashboard', type: '仪表板' },
+            { name: '贷款业务分析仪表板', path: '/财务分析/贷款业务/', icon: 'layout-dashboard', type: '仪表板' },
+            { name: '存款业务分析仪表板', path: '/财务分析/存款业务/', icon: 'layout-dashboard', type: '仪表板' },
+            { name: '客户关系分析仪表板', path: '/客户关系分析/', icon: 'layout-dashboard', type: '仪表板' },
+            { name: '经营分析看板', path: '/经营分析/', icon: 'layout-dashboard', type: '仪表板' },
+            { name: '财务月度报表', path: '/财务报表/月度报表/', icon: 'bar-chart-3', type: '报表分析' },
+            { name: '年度财务报表', path: '/财务报表/', icon: 'bar-chart-3', type: '报表分析' },
+            { name: '运营数据报表', path: '/运营报表/', icon: 'bar-chart-3', type: '报表分析' },
+            { name: '监管报送报表', path: '/监管报送/', icon: 'bar-chart-3', type: '报表分析' },
+            { name: '销售指标集', path: '/业务指标/销售/', icon: 'database', type: '指标列表' },
+            { name: '核心经营指标', path: '/核心指标/', icon: 'database', type: '指标列表' },
+            { name: '移动销售报表', path: '/移动报表/销售部/', icon: 'smartphone', type: '移动端应用' },
+            { name: '移动驾驶舱', path: '/移动驾驶舱/', icon: 'smartphone', type: '移动端应用' },
+            { name: '销售数据表', path: '/业务数据/销售部/', icon: 'file-spreadsheet', type: '电子表格' },
+            { name: '风险数据表', path: '/风险数据/', icon: 'file-spreadsheet', type: '电子表格' },
+            { name: '研发管理后台', path: '/管理后台/研发部/', icon: 'monitor', type: 'PC端应用' },
+            { name: '运营数据采集表', path: '/数据采集/运营部/', icon: 'form-input', type: '数据填报' },
+            { name: 'Q3产品需求文档', path: '/产品需求/', icon: 'file-text', type: '需求管理' }
+        ];
+
+        let currentResourceType = '';       // 当前弹窗的资源类型
+        let expandedDirs = new Set();       // 已展开的目录节点 key
+        let currentTreeSearchTerm = '';     // 搜索关键词
+
+        // 初始化权限列显示状态（在所有数据定义之后调用）
+        togglePermissionConfig();
+
+        // ========== 树状表格渲染 ==========
+        // 将路径数组解析为层级树
+        function buildDirTree(paths) {
+            const root = { name: '所有资源', children: [], level: 0, fullPath: '所有资源' };
+            paths.forEach(p => {
+                const parts = p.split('/').filter(Boolean);
+                let current = root;
+                let accumulated = '';
+                parts.forEach((part, idx) => {
+                    accumulated += '/' + part;
+                    let child = current.children.find(c => c.name === part);
+                    if (!child) {
+                        child = {
+                            name: part,
+                            fullPath: accumulated + '/',
+                            level: idx + 1,
+                            children: [],
+                            isLeaf: false
+                        };
+                        current.children.push(child);
+                    }
+                    if (idx === parts.length - 1) child.isLeaf = true;
+                    current = child;
+                });
+            });
+            return root;
+        }
+
+        // 获取目录节点唯一 key
+        function nodeKey(node) {
+            return node.fullPath;
+        }
+
+        // 获取某个目录下的资源列表（含子目录）
+        function getResourcesForDir(dirNode, type) {
+            let results = [];
+            const res = allResources.filter(r => r.type === type && r.path === dirNode.fullPath);
+            results = results.concat(res);
+            if (dirNode.children) {
+                dirNode.children.forEach(child => {
+                    results = results.concat(getResourcesForDir(child, type));
+                });
+            }
+            return results;
+        }
+
+        // 渲染树状表格到 #treeTableContainer
+        function renderTreeTable(data, searchTerm) {
+            const container = document.getElementById('treeTableContainer');
+            container.innerHTML = '';
+
+            const paths = resourceTypeDirMap[data] || [];
+            const treeRoot = buildDirTree(paths);
+            let rows = [];
+
+            if (searchTerm) {
+                // 搜索模式：展开所有匹配的目录，显示匹配的目录和资源
+                expandedDirs.clear();
+                // 收集所有匹配的资源
+                const matchedResources = allResources.filter(r =>
+                    r.type === data && r.name.includes(searchTerm)
+                );
+                // 收集匹配的目录（目录名包含搜索词）
+                const matchedDirFullPaths = new Set();
+                allResources.filter(r => r.type === data).forEach(r => {
+                    const parts = r.path.split('/').filter(Boolean);
+                    let accumulated = '';
+                    parts.forEach(part => {
+                        accumulated += '/' + part;
+                        if (part.includes(searchTerm)) {
+                            matchedDirFullPaths.add(accumulated + '/');
+                        }
+                    });
+                });
+                // 对于匹配的目录，将其下的资源也加入结果
+                if (matchedDirFullPaths.size > 0) {
+                    allResources.filter(r => r.type === data).forEach(r => {
+                        for (const dirPath of matchedDirFullPaths) {
+                            if (r.path === dirPath || r.path.startsWith(dirPath)) {
+                                if (!matchedResources.find(m => m.name === r.name && m.path === r.path)) {
+                                    matchedResources.push(r);
+                                }
+                                break;
+                            }
+                        }
+                    });
+                }
+                // 构建搜索结果行
+                if (matchedResources.length === 0) {
+                    rows.push(`<tr><td colspan="2" class="px-4 py-8 text-center text-sm text-gray-400">未找到匹配的资源</td></tr>`);
+                } else {
+                    matchedResources.forEach(r => {
+                        rows.push(`<tr class="tree-res-row" data-name="${r.name}" data-path="${r.path}" data-icon="${r.icon}">
+                            <td class="px-4 py-2.5" style="padding-left: ${16}px;">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="w-3.5 inline-block flex-shrink-0"></span>
+                                    <input type="checkbox" class="tree-res-checkbox w-4 h-4 rounded border-gray-300" onchange="updateTreeSelectAll()">
+                                    <i data-lucide="${r.icon}" class="w-4 h-4 text-blue-500"></i>
+                                    <span class="text-sm text-gray-900">${r.name}</span>
+                                    <span class="text-xs text-gray-400 ml-2">${r.path}</span>
+                                </div>
+                            </td>
+                            <td class="px-4 py-2.5 text-right text-xs text-gray-400"></td>
+                        </tr>`);
+                    });
+                }
+            } else {
+                // 正常模式：渲染树状层级
+                const allResourcesForType = allResources.filter(r => r.type === data);
+                const rootExpanded = expandedDirs.has('__root_all__');
+                const rootArrow = rootExpanded ? 'chevron-down' : 'chevron-right';
+
+                // "所有资源" 根节点行
+                rows.push(`<tr class="tree-dir-row cursor-pointer hover:bg-gray-50" data-dirkey="__root_all__">
+                    <td class="px-4 py-2.5" style="padding-left: 12px;" colspan="2">
+                        <div class="flex items-center gap-1.5">
+                            <i data-lucide="${rootArrow}" class="w-3.5 h-3.5 text-gray-400 inline-block flex-shrink-0"></i>
+                            <input type="checkbox" class="tree-dir-checkbox w-4 h-4 rounded border-gray-300">
+                            <i data-lucide="folder-open" class="w-4 h-4 text-blue-500 flex-shrink-0"></i>
+                            <span class="text-sm font-medium text-gray-700">所有资源</span>
+                        </div>
+                    </td>
+                </tr>`);
+
+                if (rootExpanded) {
+                    const sortedDirs = [...treeRoot.children].sort((a, b) => a.name.localeCompare(b.name, 'zh'));
+                    sortedDirs.forEach(dir => {
+                        renderDirRows(dir, 1, rows, data, searchTerm);
+                    });
+                }
+
+            }
+
+            container.innerHTML = rows.join('');
+            document.getElementById('treeTableTotalCount').textContent = container.querySelectorAll('.tree-res-checkbox').length;
+            document.getElementById('selectAllTree').checked = false;
+            updateConfirmBtn();
+            lucide.createIcons();
+
+            // 绑定目录行点击展开/收起事件
+            container.querySelectorAll('.tree-dir-row').forEach(row => {
+                row.addEventListener('click', function(e) {
+                    // 点击复选框时不触发展开/收起
+                    if (e.target.closest('input[type="checkbox"]')) return;
+                    const key = this.dataset.dirkey;
+                    if (!key) return;
+                    if (expandedDirs.has(key)) {
+                        expandedDirs.delete(key);
+                    } else {
+                        expandedDirs.add(key);
+                    }
+                    renderTreeTable(currentResourceType, currentTreeSearchTerm);
+                });
+            });
+
+            let cascadeLock = false; // 防止联动时触发连锁事件
+
+            // 向上联动：勾选所有祖先目录（仅设置 checked，不触发事件）
+            function cascadeUp(path, container) {
+                container.querySelectorAll('.tree-dir-checkbox').forEach(dCb => {
+                    const dPath = dCb.closest('.tree-dir-row').dataset.dirkey;
+                    if (dPath && dPath !== '__root_all__' && path.startsWith(dPath)) {
+                        dCb.checked = true;
+                    }
+                });
+            }
+
+            // 向下联动：勾选所有子孙目录和资源
+            function cascadeDown(dirKey, container) {
+                const dirPath = dirKey === '__root_all__' ? '' : dirKey;
+                container.querySelectorAll('.tree-dir-checkbox').forEach(dCb => {
+                    const dPath = dCb.closest('.tree-dir-row').dataset.dirkey;
+                    if (dPath !== dirKey && (!dirPath || dPath.startsWith(dirPath))) {
+                        dCb.checked = true;
+                    }
+                });
+                container.querySelectorAll('.tree-res-checkbox').forEach(resCb => {
+                    const resPath = resCb.closest('.tree-res-row').dataset.path;
+                    if (!dirPath || resPath === dirPath || resPath.startsWith(dirPath)) {
+                        resCb.checked = true;
+                    }
+                });
+            }
+
+            // 目录复选框：勾选时向下+向上联动，取消时向下联动
+            container.querySelectorAll('.tree-dir-checkbox').forEach(cb => {
+                cb.addEventListener('change', function() {
+                    if (cascadeLock) return;
+                    const dirKey = this.closest('.tree-dir-row').dataset.dirkey;
+                    const checked = this.checked;
+                    cascadeLock = true;
+                    if (checked) {
+                        cascadeDown(dirKey, container);
+                        // 勾选时也向上联动祖先目录
+                        if (dirKey && dirKey !== '__root_all__') cascadeUp(dirKey, container);
+                    } else {
+                        // 取消时也向下联动取消
+                        const dirPath = dirKey === '__root_all__' ? '' : dirKey;
+                        container.querySelectorAll('.tree-dir-checkbox').forEach(dCb => {
+                            const dPath = dCb.closest('.tree-dir-row').dataset.dirkey;
+                            if (dPath !== dirKey && (!dirPath || dPath.startsWith(dirPath))) dCb.checked = false;
+                        });
+                        container.querySelectorAll('.tree-res-checkbox').forEach(resCb => {
+                            const resPath = resCb.closest('.tree-res-row').dataset.path;
+                            if (!dirPath || resPath === dirPath || resPath.startsWith(dirPath)) resCb.checked = false;
+                        });
+                    }
+                    cascadeLock = false;
+                    updateTreeSelectAll();
+                });
+            });
+
+            // 资源复选框：勾选时向上联动，取消时不联动
+            container.querySelectorAll('.tree-res-checkbox').forEach(cb => {
+                cb.addEventListener('change', function() {
+                    if (cascadeLock) return;
+                    if (!this.checked) { updateTreeSelectAll(); return; }
+                    cascadeLock = true;
+                    cascadeUp(this.closest('.tree-res-row').dataset.path, container);
+                    cascadeLock = false;
+                    updateTreeSelectAll();
+                });
+            });
+        }
+
+        // 获取某个目录及其子目录下的所有资源
+        function getAllResourcesUnderDir(dirPath, type) {
+            return allResources.filter(r => r.type === type && (r.path === dirPath || r.path.startsWith(dirPath)));
+        }
+
+        // 点击目录复选框：联动勾选/取消该目录下所有资源
+        function toggleDirCheckbox(event, dirKey) {
+            event.stopPropagation();
+            const checked = event.target.checked;
+            // 暂时不在这里实现，由 renderTreeTable 中的事件代理处理
+        }
+
+        function renderDirRows(dirNode, depth, rows, type, searchTerm) {
+            const key = nodeKey(dirNode);
+            const isExpanded = expandedDirs.has(key);
+            const hasChildren = dirNode.children.length > 0;
+            // 该目录下的资源（不含子目录）
+            const dirResources = allResources.filter(r => r.type === type && r.path === dirNode.fullPath);
+            const hasContent = hasChildren || dirResources.length > 0;
+
+            // 目录行
+            const arrowIcon = hasContent ? (isExpanded ? 'chevron-down' : 'chevron-right') : '';
+            const arrowHtml = hasContent
+                ? `<i data-lucide="${arrowIcon}" class="w-3.5 h-3.5 text-gray-400 inline-block flex-shrink-0"></i>`
+                : `<span class="w-3.5 inline-block flex-shrink-0"></span>`;
+            const paddingLeft = 12 + depth * 20;
+
+            // 该目录及其子目录下所有资源的名称集合，用于勾选联动
+            const allDescendantRes = getAllResourcesUnderDir(dirNode.fullPath, type);
+            rows.push(`<tr class="tree-dir-row cursor-pointer hover:bg-gray-50" data-dirkey="${key}">
+                <td class="px-4 py-2.5" style="padding-left: ${paddingLeft}px;" colspan="2">
+                    <div class="flex items-center gap-1.5">
+                        ${arrowHtml}
+                        <input type="checkbox" class="tree-dir-checkbox w-4 h-4 rounded border-gray-300" >
+                        <i data-lucide="folder" class="w-4 h-4 text-yellow-500 flex-shrink-0"></i>
+                        <span class="text-sm font-medium text-gray-700">${dirNode.name}</span>
+                    </div>
+                </td>
+            </tr>`);
+
+            // 有子目录且有资源时，展开后渲染
+            if ((hasChildren || dirResources.length > 0) && isExpanded) {
+                // 先渲染该目录下的资源行
+                const sortedResources = [...dirResources].sort((a, b) => a.name.localeCompare(b.name, 'zh'));
+                sortedResources.forEach(r => {
+                    const resPaddingLeft = 12 + (depth + 1) * 20;
+                    rows.push(`<tr class="tree-res-row" data-name="${r.name}" data-path="${r.path}" data-icon="${r.icon}">
+                        <td class="px-4 py-2.5" style="padding-left: ${resPaddingLeft}px;">
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-3.5 inline-block flex-shrink-0"></span>
+                                <input type="checkbox" class="tree-res-checkbox w-4 h-4 rounded border-gray-300" onchange="updateTreeSelectAll()">
+                                <i data-lucide="${r.icon}" class="w-4 h-4 text-blue-500 flex-shrink-0"></i>
+                                <span class="text-sm text-gray-900">${r.name}</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-2.5 text-right text-xs text-gray-400"></td>
+                    </tr>`);
+                });
+
+                // 再渲染子目录
+                const sortedSubDirs = [...dirNode.children].sort((a, b) => a.name.localeCompare(b.name, 'zh'));
+                sortedSubDirs.forEach(child => {
+                    renderDirRows(child, depth + 1, rows, type, searchTerm);
+                });
+            }
+        }
+
+        // ========== 树状表格搜索 ==========
+        function filterTreeTable() {
+            const input = document.getElementById('treeTableSearchInput');
+            currentTreeSearchTerm = input.value.trim();
+            renderTreeTable(currentResourceType, currentTreeSearchTerm);
+        }
+
+        // ========== 锁定资源类型 ==========
+        // 切换资源类型时自动重新渲染权限树
+        function onResourceTypeChange() {
+            const typeSelect = document.getElementById('resourceTypeSelect');
+            const approvalType = document.getElementById('approvalType').value;
+            if (typeSelect.value && approvalType === '资源权限申请') {
+                renderResourcePermTree('');
+            }
+        }
+
+        // ========== 打开资源选择弹窗 ==========
+        function openResourceModal() {
+            const typeSelect = document.getElementById('resourceTypeSelect');
+            const selectedType = typeSelect ? typeSelect.value : '';
+
+            if (!selectedType) {
+                alert('请先选择资源类型');
+                return;
+            }
+
+            currentResourceType = selectedType;
+            currentTreeSearchTerm = '';
+            expandedDirs.clear();
+            // 默认展开所有目录（包括根节点）
+            expandedDirs.add('__root_all__');
+            const paths = resourceTypeDirMap[selectedType] || [];
+            paths.forEach(p => {
+                const parts = p.split('/').filter(Boolean);
+                let accumulated = '';
+                parts.forEach(part => {
+                    accumulated += '/' + part;
+                    expandedDirs.add(accumulated + '/');
+                });
+            });
+
+            // 设置资源类型标签
+            document.getElementById('modalResourceTypeTag').textContent = selectedType;
+
+            // 渲染树状表格
+            renderTreeTable(selectedType, '');
+
+            // 清空搜索框
+            const treeSearch = document.getElementById('treeTableSearchInput');
+            if (treeSearch) treeSearch.value = '';
+
+            // 显示弹窗
+            document.getElementById('resourceModalOverlay').classList.add('active');
+            document.getElementById('resourceModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            lucide.createIcons();
+        }
+
+        // ========== 关闭资源选择弹窗 ==========
+        function closeResourceModal() {
+            document.getElementById('resourceModalOverlay').classList.remove('active');
+            document.getElementById('resourceModal').classList.remove('active');
+            document.body.style.overflow = '';
+            // 清空选中状态
+            document.querySelectorAll('.tree-res-checkbox:checked').forEach(cb => {
+                cb.checked = false;
+            });
+            updateTreeSelectAll();
+            currentResourceType = '';
+            currentTreeSearchTerm = '';
+            expandedDirs.clear();
+        }
+
+        // ========== 全选/取消全选（树状表格） ==========
+        function toggleSelectAllTree() {
+            if (suppressSelectAllEvent) return;
+            const selectAll = document.getElementById('selectAllTree');
+            const checked = selectAll.checked;
+            document.querySelectorAll('.tree-res-checkbox').forEach(cb => { cb.checked = checked; });
+            document.querySelectorAll('.tree-dir-checkbox').forEach(cb => { cb.checked = checked; });
+            updateConfirmBtn();
+        }
+
+        // ========== 更新全选复选框状态 ==========
+        let suppressSelectAllEvent = false;
+        function updateTreeSelectAll() {
+            const checkboxes = document.querySelectorAll('.tree-res-checkbox');
+            const dirCbs = document.querySelectorAll('.tree-dir-checkbox');
+            const selectAll = document.getElementById('selectAllTree');
+            const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+            suppressSelectAllEvent = true;
+            selectAll.checked = checkboxes.length > 0 && checkedCount === checkboxes.length;
+            suppressSelectAllEvent = false;
+            updateConfirmBtn();
+        }
+
+        // ========== 更新确认按钮状态 ==========
+        function updateConfirmBtn() {
+            const resChecked = document.querySelectorAll('.tree-res-checkbox:checked').length;
+            const dirChecked = document.querySelectorAll('.tree-dir-checkbox:checked').length;
+            const checkedCount = resChecked + dirChecked;
+            const confirmBtn = document.getElementById('confirmAddResources');
+            document.getElementById('modalSelectedCount').textContent = `(${checkedCount})`;
+            const bottomCount = document.getElementById('modalSelectedCountBottom');
+            if (bottomCount) bottomCount.textContent = `(${checkedCount})`;
+            if (checkedCount > 0) {
+                confirmBtn.disabled = false;
+                confirmBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                confirmBtn.disabled = true;
+                confirmBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        // ========== 确认添加资源 ==========
+        function confirmAddResources() {
+            const toAdd = [];
+            // 处理目录勾选：目录下所有可见资源 + 目录本身（如果无资源则作为目录项加入）
+            document.querySelectorAll('.tree-dir-checkbox:checked').forEach(dirCb => {
+                const dirRow = dirCb.closest('.tree-dir-row');
+                const dirPath = dirRow.dataset.dirkey;
+                const container = document.getElementById('treeTableContainer');
+                const allResRows = container.querySelectorAll('.tree-res-row');
+                let hasResourcesInData = false;
+                // 检查 allResources 数据中是否有该目录下的资源
+                const dirResourcesInData = allResources.filter(r => r.path === dirPath || r.path.startsWith(dirPath));
+                hasResourcesInData = dirResourcesInData.length > 0;
+                // 只收集该目录下已勾选的资源（不是所有资源）
+                allResRows.forEach(resRow => {
+                    const resPath = resRow.dataset.path;
+                    const resCb = resRow.querySelector('.tree-res-checkbox');
+                    if (resCb && resCb.checked && (!dirPath || dirPath === '__root_all__' || resPath === dirPath || resPath.startsWith(dirPath))) {
+                        toAdd.push({ name: resRow.dataset.name, path: resPath, icon: resRow.dataset.icon });
+                    }
+                });
+                // 只有整个数据集中都没有资源时，才将目录本身作为一项加入
+                if (!hasResourcesInData && dirPath && dirPath !== '__root_all__') {
+                    const dirName = dirPath.split('/').filter(Boolean).pop();
+                    toAdd.push({ name: dirName, path: dirPath, icon: 'folder', type: 'dir' });
+                }
+            });
+            // 单独勾选的资源
+            document.querySelectorAll('.tree-res-checkbox:checked').forEach(cb => {
+                const row = cb.closest('.tree-res-row');
+                toAdd.push({ name: row.dataset.name, path: row.dataset.path, icon: row.dataset.icon });
+            });
+            // 去重后加入
+            const seen = new Set();
+            toAdd.forEach(r => {
+                const key = r.name + '|' + r.path;
+                if (!seen.has(key) && !addedResources.find(a => a.name === r.name && a.path === r.path)) {
+                    seen.add(key);
+                    addedResources.push(r);
+                }
+            });
+            closeResourceModal();
+            renderResourcePermTree('');
+        }
+
+        // ========== 资源权限树状表格渲染 ==========
+        function renderResourcePermTree(filterText) {
+            const tbody = document.getElementById('resourceListBody');
+            const typeSelect = document.getElementById('resourceTypeSelect');
+            const selectedType = typeSelect ? typeSelect.value : '';
+
+            if (!selectedType) {
+                tbody.innerHTML = `<tr><td colspan="2" class="px-4 py-8 text-center text-sm text-gray-400">请先选择资源类型</td></tr>`;
+                document.getElementById('resourceTotal').textContent = '0';
+                return;
+            }
+
+            // 过滤出当前类型的资源
+            let resources = allResources.filter(r => r.type === selectedType);
+            if (filterText) {
+                resources = resources.filter(r => r.name.includes(filterText));
+            }
+
+            // 按路径构建目录树
+            const treeRoot = buildDirTree(resources.map(r => r.path));
+            // 展开所有目录
+            expandedDirs.clear();
+            expandedDirs.add('__root_all__');
+            const paths = resourceTypeDirMap[selectedType] || [];
+            paths.forEach(p => {
+                const parts = p.split('/').filter(Boolean);
+                let accumulated = '';
+                parts.forEach(part => {
+                    accumulated += '/' + part;
+                    expandedDirs.add(accumulated + '/');
+                });
+            });
+
+            function renderPermCheckboxes(prefix, owned) {
+                const isAllOwned = owned.view && owned.manage && owned.download && owned.share;
+                return `<div class="flex items-center gap-2">
+                    <label class="flex items-center gap-0.5 cursor-pointer"><input type="checkbox" class="${prefix}perm-all w-3 h-3 rounded border-gray-300 text-blue-600" onchange="handlePermCascade(this, 'all')" ${isAllOwned ? 'checked disabled' : ''}><span class="text-xs text-gray-600 font-medium">全部</span></label>
+                    <label class="flex items-center gap-0.5 cursor-pointer"><input type="checkbox" class="${prefix}perm-view w-3 h-3 rounded border-gray-300 text-blue-600" onchange="handlePermCascade(this, 'view')" ${owned.view ? 'checked disabled' : ''}><span class="text-xs text-gray-600">查看</span></label>
+                    <label class="flex items-center gap-0.5 cursor-pointer"><input type="checkbox" class="${prefix}perm-manage w-3 h-3 rounded border-gray-300 text-blue-600" onchange="handlePermCascade(this, 'manage')" ${owned.manage ? 'checked disabled' : ''}><span class="text-xs text-gray-600">管理</span></label>
+                    <label class="flex items-center gap-0.5 cursor-pointer"><input type="checkbox" class="${prefix}perm-download w-3 h-3 rounded border-gray-300 text-blue-600" onchange="handlePermCascade(this, 'download')" ${owned.download ? 'checked disabled' : ''}><span class="text-xs text-gray-600">下载</span></label>
+                    <label class="flex items-center gap-0.5 cursor-pointer"><input type="checkbox" class="${prefix}perm-share w-3 h-3 rounded border-gray-300 text-blue-600" onchange="handlePermCascade(this, 'share')" ${owned.share ? 'checked disabled' : ''}><span class="text-xs text-gray-600">分享</span></label>
+                </div>`;
+            }
+
+            let rows = [];
+            function renderNodes(dirNode, depth) {
+                const key = nodeKey(dirNode);
+                const isExpanded = expandedDirs.has(key);
+                const hasChildren = dirNode.children.length > 0;
+                const dirResources = resources.filter(r => r.path === dirNode.fullPath);
+                const hasContent = hasChildren || dirResources.length > 0;
+
+                const arrowIcon = hasContent ? (isExpanded ? 'chevron-down' : 'chevron-right') : '';
+                const arrowHtml = hasContent
+                    ? `<i data-lucide="${arrowIcon}" class="w-3.5 h-3.5 text-gray-400 inline-block flex-shrink-0 dir-toggle" data-key="${key}"></i>`
+                    : `<span class="w-3.5 inline-block flex-shrink-0"></span>`;
+                const paddingLeft = 12 + depth * 20;
+
+                // 目录行：显示权限复选框（目录无 owned 状态，全部可操作）
+                rows.push(`<tr class="tree-dir-row" data-dirkey="${key}" data-depth="${depth}">
+                    <td class="px-4 py-2.5" style="padding-left: ${paddingLeft}px;">
+                        <div class="flex items-center gap-1.5">
+                            ${arrowHtml}
+                            <i data-lucide="folder" class="w-4 h-4 text-yellow-500 flex-shrink-0"></i>
+                            <span class="text-sm font-medium text-gray-700">${dirNode.name}</span>
+                        </div>
+                    </td>
+                    <td class="px-4 py-2.5 resource-perm-col">
+                        ${renderPermCheckboxes('dir-', { view: false, manage: false, download: false, share: false })}
+                    </td>
+                </tr>`);
+
+                if (isExpanded) {
+                    // 渲染该目录下的资源行
+                    const sortedResources = [...dirResources].sort((a, b) => a.name.localeCompare(b.name, 'zh'));
+                    sortedResources.forEach(r => {
+                        const rpad = paddingLeft + 20;
+                        const owned = ownedResourcePerms[r.path] || {};
+
+                        rows.push(`<tr class="resource-perm-row" data-name="${r.name}" data-path="${r.path}" data-depth="${depth + 1}">
+                            <td class="px-4 py-2.5" style="padding-left: ${rpad}px;">
+                                <div class="flex items-center gap-1.5">
+                                    <i data-lucide="${r.icon}" class="w-4 h-4 text-blue-500 flex-shrink-0"></i>
+                                    <span class="text-sm text-gray-900">${r.name}</span>
+                                </div>
+                            </td>
+                            <td class="px-4 py-2.5 resource-perm-col">
+                                ${renderPermCheckboxes('', owned)}
+                            </td>
+                        </tr>`);
+                    });
+
+                    // 递归渲染子目录
+                    const sortedSubDirs = [...dirNode.children].sort((a, b) => a.name.localeCompare(b.name, 'zh'));
+                    sortedSubDirs.forEach(child => renderNodes(child, depth + 1));
+                }
+            }
+
+            // "所有资源" 根节点
+            rows.push(`<tr class="tree-dir-row" data-dirkey="__root_all__" data-depth="0">
+                <td class="px-4 py-2.5" style="padding-left: 12px;">
+                    <div class="flex items-center gap-1.5">
+                        <i data-lucide="${expandedDirs.has('__root_all__') ? 'chevron-down' : 'chevron-right'}" class="w-3.5 h-3.5 text-gray-400 inline-block flex-shrink-0 dir-toggle" data-key="__root_all__"></i>
+                        <i data-lucide="folder-open" class="w-4 h-4 text-blue-500 flex-shrink-0"></i>
+                        <span class="text-sm font-medium text-gray-700">所有资源</span>
+                    </div>
+                </td>
+                <td class="px-4 py-2.5 resource-perm-col">
+                    ${renderPermCheckboxes('dir-', { view: false, manage: false, download: false, share: false })}
+                </td>
+            </tr>`);
+
+            if (expandedDirs.has('__root_all__')) {
+                const sortedDirs = [...treeRoot.children].sort((a, b) => a.name.localeCompare(b.name, 'zh'));
+                sortedDirs.forEach(dir => renderNodes(dir, 1));
+            }
+
+            tbody.innerHTML = rows.join('');
+
+            // 计算资源总数（不含目录行）
+            const resCount = tbody.querySelectorAll('.resource-perm-row').length;
+            document.getElementById('resourceTotal').textContent = resCount;
+
+            // 初始化所有目录 checkbox 状态
+            syncAllDirCheckboxes(tbody);
+
+            lucide.createIcons();
+
+            // 绑定目录行点击展开/收起
+            tbody.querySelectorAll('.tree-dir-row').forEach(row => {
+                row.addEventListener('click', function(e) {
+                    if (e.target.closest('input')) return;
+                    const key = this.dataset.dirkey;
+                    if (!key) return;
+                    if (expandedDirs.has(key)) {
+                        expandedDirs.delete(key);
+                    } else {
+                        expandedDirs.add(key);
+                    }
+                    const searchInput = document.getElementById('resourcePermSearch');
+                    renderResourcePermTree(searchInput ? searchInput.value.trim() : '');
+                });
+            });
+        }
+
+        function filterResourcePermTree() {
+            const input = document.getElementById('resourcePermSearch');
+            renderResourcePermTree(input ? input.value.trim() : '');
+        }
+
+        // ========== 权限联动处理 ==========
+
+        // 获取某行的所有子孙行（目录行 + 资源行），直到遇到同级或上级行
+        function getDescendantRows(startRow) {
+            const results = [];
+            const depth = parseInt(startRow.dataset.depth) || 0;
+            let next = startRow.nextElementSibling;
+            while (next) {
+                const nextDepth = parseInt(next.dataset.depth) || 0;
+                if (nextDepth <= depth) break;
+                results.push(next);
+                next = next.nextElementSibling;
+            }
+            return results;
+        }
+
+        // 获取某行的父级目录行
+        function getParentDirRow(row) {
+            const depth = parseInt(row.dataset.depth) || 0;
+            if (depth <= 0) return null;
+            let prev = row.previousElementSibling;
+            while (prev) {
+                const prevDepth = parseInt(prev.dataset.depth) || 0;
+                if (prevDepth < depth && prev.classList.contains('tree-dir-row')) {
+                    return prev;
+                }
+                prev = prev.previousElementSibling;
+            }
+            return null;
+        }
+
+        // 设置行内某个权限 checkbox 的状态
+        function setPermCb(row, permType, checked) {
+            const isDir = row.classList.contains('tree-dir-row');
+            const prefix = isDir ? 'dir-' : '';
+            const cb = row.querySelector('.' + prefix + 'perm-' + permType);
+            if (cb && !cb.disabled) {
+                cb.checked = checked;
+            }
+        }
+
+        // 获取行内某个权限 checkbox 是否勾选（含 disabled 的）
+        function isPermChecked(row, permType) {
+            const isDir = row.classList.contains('tree-dir-row');
+            const prefix = isDir ? 'dir-' : '';
+            const cb = row.querySelector('.' + prefix + 'perm-' + permType);
+            return cb ? cb.checked : false;
+        }
+
+        // 同步单行的"全部" checkbox
+        function syncRowAllCb(row) {
+            const isDir = row.classList.contains('tree-dir-row');
+            const prefix = isDir ? 'dir-' : '';
+            const allCb = row.querySelector('.' + prefix + 'perm-all');
+            if (!allCb || allCb.disabled) return;
+            const perms = ['view', 'manage', 'download', 'share'];
+            const enabledCbs = perms.map(p => row.querySelector('.' + prefix + 'perm-' + p)).filter(c => c && !c.disabled);
+            allCb.checked = enabledCbs.length > 0 && enabledCbs.every(c => c.checked);
+        }
+
+        // 处理权限 checkbox 变更（统一入口）
+        function handlePermCascade(checkbox, permType) {
+            if (checkbox.disabled) return;
+            const row = checkbox.closest('tr');
+            const checked = checkbox.checked;
+            const isDir = row.classList.contains('tree-dir-row');
+
+            if (permType === 'all') {
+                // "全部"：设置所有 4 个子权限
+                const perms = ['view', 'manage', 'download', 'share'];
+                if (isDir) {
+                    perms.forEach(p => setPermCb(row, p, checked));
+                    getDescendantRows(row).forEach(desc => {
+                        perms.forEach(p => setPermCb(desc, p, checked));
+                    });
+                } else {
+                    perms.forEach(p => setPermCb(row, p, checked));
+                }
+            } else {
+                // 向下级联：目录勾选/取消 → 仅级联对应权限至所有子孙
+                if (isDir) {
+                    getDescendantRows(row).forEach(desc => {
+                        setPermCb(desc, permType, checked);
+                    });
+                }
+            }
+
+            // 同步当前行"全部"状态
+            syncRowAllCb(row);
+
+            // 向上级联：仅"查看"勾选时，自动向上勾选所有祖先目录的查看权限
+            if (permType === 'view' && checked) {
+                let parent = getParentDirRow(row);
+                while (parent) {
+                    const dirViewCb = parent.querySelector('.dir-perm-view');
+                    if (dirViewCb && !dirViewCb.disabled) {
+                        dirViewCb.checked = true;
+                        syncRowAllCb(parent);
+                    }
+                    parent = getParentDirRow(parent);
+                }
+            }
+
+            // 向下联动后，同步所有子孙行的"全部"状态
+            if (isDir && permType === 'all') {
+                getDescendantRows(row).forEach(desc => {
+                    if (desc.classList.contains('tree-dir-row')) syncRowAllCb(desc);
+                    else syncRowAllCb(desc);
+                });
+            }
+        }
+
+        // 根据子孙行状态同步一个目录行的 查看 权限（仅用于初始渲染）
+        function syncDirCheckboxFromChildren(dirRow) {
+            const descendants = getDescendantRows(dirRow);
+            const allResRows = descendants.filter(r => r.classList.contains('resource-perm-row'));
+            const dirViewCb = dirRow.querySelector('.dir-perm-view');
+            if (dirViewCb) {
+                if (allResRows.length === 0) {
+                    dirViewCb.checked = false;
+                } else {
+                    dirViewCb.checked = allResRows.every(r => isPermChecked(r, 'view'));
+                }
+            }
+            syncRowAllCb(dirRow);
+        }
+
+        // 同步所有目录行的 checkbox 状态（初始渲染时调用）
+        function syncAllDirCheckboxes(tbody) {
+            tbody.querySelectorAll('.tree-dir-row').forEach(dirRow => {
+                syncDirCheckboxFromChildren(dirRow);
+            });
+        }
+
+        // ========== 权限处理 ==========
+        function togglePermissionConfig() {
+            const approvalType = document.getElementById('approvalType').value;
+            const resourceSec = document.getElementById('resourcePermSection');
+            const functionSec = document.getElementById('functionPermSection');
+            const permCols = document.querySelectorAll('.resource-perm-col');
+            const funcPermCols = document.querySelectorAll('.function-perm-col');
+            const resTypeContainer = document.getElementById('resourceTypeSelect').closest('.grid > div');
+            if (approvalType === '资源权限申请') {
+                resTypeContainer.style.display = '';
+                resourceSec.style.display = '';
+                functionSec.style.display = 'none';
+                permCols.forEach(col => col.style.display = '');
+                funcPermCols.forEach(col => col.style.display = 'none');
+                renderResourcePermTree('');
+            } else {
+                resTypeContainer.style.display = 'none';
+                resourceSec.style.display = 'none';
+                functionSec.style.display = '';
+                permCols.forEach(col => col.style.display = 'none');
+                funcPermCols.forEach(col => col.style.display = '');
+                renderFunctionPermTable('');
+            }
+        }
+
+        // ========== 功能权限菜单数据与渲染 ==========
+        const menuTree = [
+            { name: '数据分析', icon: 'bar-chart-3', children: [
+                { name: '仪表板', icon: 'layout-dashboard' },
+                { name: '报表分析', icon: 'bar-chart-3' },
+                { name: '电子表格', icon: 'file-spreadsheet' }
+            ]},
+            { name: '标签', icon: 'tag', children: [] },
+            { name: '指标', icon: 'trending-up', children: [] },
+            { name: '系统管理', icon: 'settings', children: [] },
+            { name: '流程中心', icon: 'clipboard-list', children: [
+                { name: '申请列表', icon: 'file-text' },
+                { name: '待办列表', icon: 'clock' },
+                { name: '已办列表', icon: 'check-circle' },
+                { name: '模板管理', icon: 'layout-template' }
+            ]},
+            { name: '模板市场', icon: 'store', children: [] },
+            { name: '管理中心', icon: 'archive', children: [] },
+            { name: '审计日志', icon: 'scroll-text', children: [] }
+        ];
+
+        let funcExpandedDirs = new Set(); // 功能权限展开状态，默认全部展开
+
+        function renderFunctionPermTable(filterText) {
+            const tbody = document.getElementById('functionPermBody');
+            filterText = (filterText || '').trim().toLowerCase();
+            let rows = [];
+
+            function nodeMatches(node, key) {
+                if (!filterText) return true;
+                if (node.name.toLowerCase().includes(filterText)) return true;
+                if (node.children && node.children.length > 0) {
+                    return node.children.some(child => {
+                        const ck = key + '/' + child.name;
+                        return child.name.toLowerCase().includes(filterText) || nodeMatches(child, ck);
+                    });
+                }
+                return false;
+            }
+
+            function renderMenuNodes(nodes, depth, parentKey) {
+                nodes.forEach((node, idx) => {
+                    const key = parentKey ? parentKey + '/' + node.name : node.name;
+                    // 过滤时跳过不匹配的节点
+                    if (filterText && !nodeMatches(node, key)) return;
+
+                    const pad = 12 + depth * 20;
+                    const isParent = node.children && node.children.length > 0;
+                    // 有搜索词时自动展开匹配的父节点
+                    const isExpanded = filterText ? nodeMatches(node, key) : funcExpandedDirs.has(key);
+                    const arrow = isParent ? (isExpanded ? 'chevron-down' : 'chevron-right') : '';
+
+                    rows.push(`<tr class="func-menu-row cursor-pointer" data-menukey="${key}" data-depth="${depth}">
+                        <td class="px-4 py-2.5" style="padding-left: ${pad}px;">
+                            <div class="flex items-center gap-1.5">
+                                ${isParent ? `<i data-lucide="${arrow}" class="w-3.5 h-3.5 text-gray-400 flex-shrink-0 func-arrow"></i>` : `<span class="w-3.5 inline-block flex-shrink-0"></span>`}
+                                <i data-lucide="${node.icon || 'file'}" class="w-4 h-4 text-blue-500 flex-shrink-0"></i>
+                                <span class="text-sm font-medium text-gray-700">${node.name}</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-2.5 function-perm-col">
+                            ${(() => {
+                                const isOwned = ownedFunctionPerms[key];
+                                const attrs = isOwned ? 'checked disabled' : '';
+                                const labelStyle = isOwned ? 'style="cursor:default"' : 'style="cursor:pointer"';
+                                const textStyle = isOwned ? 'style="color:#9CA3AF"' : '';
+                                return `<label class="flex items-center gap-1" ${labelStyle}>
+                                    <input type="checkbox" class="func-use-checkbox w-4 h-4 rounded border-gray-300 text-blue-600" onchange="updateFuncSelectAll()" ${attrs}>
+                                    <span class="text-sm text-gray-600" ${textStyle}>使用</span>
+                                </label>`;
+                            })()}
+                        </td>
+                    </tr>`);
+
+                    if (isParent && isExpanded) {
+                        node.children.forEach(child => {
+                            const childKey = key + '/' + child.name;
+                            // 过滤时跳过不匹配的子节点
+                            if (filterText && !child.name.toLowerCase().includes(filterText)) return;
+
+                            const cpad = pad + 20;
+                            const childDepth = depth + 1;
+                            const childOwned = ownedFunctionPerms[childKey];
+                            const childAttrs = childOwned ? 'checked disabled' : '';
+                            const childLabelStyle = childOwned ? 'style="cursor:default"' : 'style="cursor:pointer"';
+                            const childTextStyle = childOwned ? 'style="color:#9CA3AF"' : '';
+                            rows.push(`<tr class="func-menu-row func-child" data-parent="${key}" data-depth="${childDepth}">
+                                <td class="px-4 py-2.5" style="padding-left: ${cpad}px;">
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="w-3.5 inline-block flex-shrink-0"></span>
+                                        <i data-lucide="${child.icon || 'file'}" class="w-4 h-4 text-blue-500 flex-shrink-0"></i>
+                                        <span class="text-sm text-gray-900">${child.name}</span>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-2.5 function-perm-col">
+                                    <label class="flex items-center gap-1" ${childLabelStyle}>
+                                        <input type="checkbox" class="func-use-checkbox w-4 h-4 rounded border-gray-300 text-blue-600" onchange="updateFuncSelectAll()" ${childAttrs}>
+                                        <span class="text-sm text-gray-600" ${childTextStyle}>使用</span>
+                                    </label>
+                                </td>
+                            </tr>`);
+                        });
+                    }
+                });
+            }
+            // 默认全部展开（仅在无过滤时）
+            if (!filterText && funcExpandedDirs.size === 0) {
+                menuTree.forEach(n => {
+                    if (n.children && n.children.length > 0) funcExpandedDirs.add(n.name);
+                });
+            }
+            renderMenuNodes(menuTree, 0, '');
+            tbody.innerHTML = rows.join('');
+            lucide.createIcons();
+
+            // 绑定点击展开/收起
+            tbody.querySelectorAll('.func-menu-row').forEach(row => {
+                row.addEventListener('click', function(e) {
+                    if (e.target.closest('input')) return;
+                    const key = this.dataset.menukey;
+                    if (!key) return;
+                    const node = findMenuNode(menuTree, key);
+                    if (!node || !node.children || node.children.length === 0) return;
+                    if (funcExpandedDirs.has(key)) {
+                        funcExpandedDirs.delete(key);
+                    } else {
+                        funcExpandedDirs.add(key);
+                    }
+                    const searchInput = document.getElementById('functionPermSearch');
+                    renderFunctionPermTable(searchInput ? searchInput.value : '');
+                });
+            });
+
+            // 父级/子级勾选联动 + 半选状态
+            // 同步单个父级 checkbox 的半选/全选状态
+            function syncFuncParentCheckbox(parentRow) {
+                const parentCb = parentRow.querySelector('.func-use-checkbox');
+                if (!parentCb || parentCb.disabled) return;
+                const depth = parseInt(parentRow.dataset.depth) || 0;
+                let next = parentRow.nextElementSibling;
+                const childCheckboxes = [];
+                while (next) {
+                    const nextDepth = parseInt(next.dataset.depth) || 0;
+                    if (nextDepth <= depth) break;
+                    const childCb = next.querySelector('.func-use-checkbox');
+                    if (childCb) childCheckboxes.push(childCb);
+                    next = next.nextElementSibling;
+                }
+                if (childCheckboxes.length === 0) return;
+                const checkedCount = childCheckboxes.filter(c => c.checked).length;
+                if (checkedCount === childCheckboxes.length) {
+                    parentCb.checked = true;
+                    parentCb.indeterminate = false;
+                } else if (checkedCount === 0) {
+                    parentCb.checked = false;
+                    parentCb.indeterminate = false;
+                } else {
+                    parentCb.checked = false;
+                    parentCb.indeterminate = true;
+                }
+            }
+
+            // 同步所有父级 checkbox 状态
+            function syncAllFuncParentCheckboxes() {
+                tbody.querySelectorAll('.func-menu-row').forEach(row => {
+                    if (row.querySelector('.func-arrow')) {
+                        syncFuncParentCheckbox(row);
+                    }
+                });
+            }
+
+            tbody.querySelectorAll('.func-use-checkbox').forEach(cb => {
+                cb.addEventListener('change', function() {
+                    if (this.disabled) return;
+                    const row = this.closest('.func-menu-row');
+                    const depth = parseInt(row.dataset.depth) || 0;
+                    const checked = this.checked;
+
+                    // 判断是否为父级（有子行）
+                    let next = row.nextElementSibling;
+                    const nextDepth = next ? parseInt(next.dataset.depth) || 0 : 0;
+                    const isParent = nextDepth > depth;
+
+                    if (isParent) {
+                        // 父级变更：联动所有子级（非 disabled），清除半选态
+                        this.indeterminate = false;
+                        while (next) {
+                            const nd = parseInt(next.dataset.depth) || 0;
+                            if (nd <= depth) break;
+                            const childCb = next.querySelector('.func-use-checkbox');
+                            if (childCb && !childCb.disabled) {
+                                childCb.checked = checked;
+                            }
+                            next = next.nextElementSibling;
+                        }
+                    } else {
+                        // 子级变更：向上查找父级并同步半选状态
+                        let prev = row.previousElementSibling;
+                        while (prev) {
+                            const pd = parseInt(prev.dataset.depth) || 0;
+                            if (pd < depth) {
+                                // 找到父级行
+                                syncFuncParentCheckbox(prev);
+                                break;
+                            }
+                            prev = prev.previousElementSibling;
+                        }
+                    }
+                });
+            });
+
+            // 初始同步所有父级 checkbox 的半选状态
+            syncAllFuncParentCheckboxes();
+        }
+
+        function findMenuNode(nodes, key) {
+            for (const n of nodes) {
+                if (n.name === key) return n;
+                const found = n.children ? findMenuNode(n.children, key) : null;
+                if (found) return found;
+            }
+            return null;
+        }
+
+        function updateFuncSelectAll() {
+            // 用于更新全选复选框等
+        }
+
+        function filterFunctionPermTree() {
+            const input = document.getElementById('functionPermSearch');
+            renderFunctionPermTable(input ? input.value : '');
+        }
+
+        // 保存草稿
+        function saveDraft() {
+            const form = document.getElementById('applicationForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            alert('草稿已保存');
+            // 这里应该调用API保存草稿
+        }
+
+        // 提交申请
+        function submitApplication() {
+            const form = document.getElementById('applicationForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            if (confirm('确认提交此申请吗？')) {
+                alert('申请已提交');
+                window.location.href = 'my-applications.html';
+                // 这里应该调用API提交申请
+            }
+        }
+    </script>
+
+    <!-- 资源选择弹窗 -->
+    <div id="resourceModalOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" onclick="closeResourceModal()"></div>
+    <div id="resourceModal" class="fixed top-0 right-0 w-[700px] h-full bg-white shadow-xl z-50 transform translate-x-full transition-transform duration-300 hidden">
+        <div class="flex flex-col h-full">
+            <!-- 弹窗头部 -->
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+                <div class="flex items-center gap-3">
+                    <h3 class="text-lg font-semibold text-gray-900">选择资源</h3>
+                    <!-- 资源类型标签 -->
+                    <span id="modalResourceTypeTag" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">仪表板</span>
+                    <span class="text-sm text-gray-500" id="modalSelectedCount">(0)</span>
+                </div>
+                <button onclick="closeResourceModal()" class="text-gray-400 hover:text-gray-600 p-2">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- 搜索栏 -->
+            <div class="px-4 py-3 border-b border-gray-200 bg-white">
+                <div class="relative">
+                    <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                    <input type="text" placeholder="搜索目录或资源名称" oninput="filterTreeTable()" class="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" id="treeTableSearchInput">
+                </div>
+            </div>
+
+            <!-- 树状表格 -->
+            <div class="flex-1 overflow-y-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50 sticky top-0">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">资源</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-12"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100" id="treeTableContainer">
+                        <!-- 由 JS 动态渲染 -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 弹窗底部 -->
+            <div class="px-6 py-3 border-t border-gray-200 flex items-center justify-between bg-white">
+                <div class="flex items-center gap-2">
+                    <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:text-blue-600">
+                        <input type="checkbox" id="selectAllTree" onchange="toggleSelectAllTree()" class="w-4 h-4 rounded border-gray-300 text-blue-600">
+                        <span>全选</span>
+                    </label>
+                    <span class="text-sm text-gray-500 ml-2">共 <span id="treeTableTotalCount">0</span> 条资源</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="closeResourceModal()" class="btn-secondary px-4 py-2 rounded-lg text-sm font-medium">
+                        取消
+                    </button>
+                    <button onclick="confirmAddResources()" id="confirmAddResources" class="btn-primary px-4 py-2 rounded-lg text-sm font-medium opacity-50 cursor-not-allowed" disabled>
+                        确认添加 <span id="modalSelectedCountBottom">(0)</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* 弹窗显示/隐藏 */
+        #resourceModalOverlay.active, #resourceModal.active {
+            display: block;
+        }
+        #resourceModal.active {
+            transform: translateX(0);
+        }
+
+        /* 树状表格样式 */
+        .tree-dir-row td {
+            font-weight: 500;
+        }
+        .tree-dir-row:hover td {
+            color: #1677FF;
+        }
+        .tree-dir-row .text-gray-700:hover {
+            color: #1677FF;
+        }
+
+        .tree-res-row:hover {
+            background-color: #F5F8FF;
+        }
+        .tree-res-row:has(.tree-res-checkbox:checked) {
+            background-color: #EEF3FF;
+        }
+
+        /* 树状表格搜索高亮 */
+        #treeTableSearchInput:focus {
+            box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.15);
+        }
+
+        /* 弹窗内容滚动条 */
+        .flex-1.overflow-y-auto::-webkit-scrollbar {
+            width: 4px;
+        }
+        .flex-1.overflow-y-auto::-webkit-scrollbar-thumb {
+            background-color: #D9D9D9;
+            border-radius: 2px;
+        }
+
+        /* 资源类型标签 */
+        #modalResourceTypeTag {
+            line-height: 1.4;
+        }
+    </style>
+</body>
+</html>

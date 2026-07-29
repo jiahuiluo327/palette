@@ -1,0 +1,3128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>查看审批模板 - 流程中心</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@1.23.0/dist/umd/lucide.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+        .nav-item.active {
+            background-color: #E6F0FF;
+            color: #1677FF;
+        }
+        /* Tab导航样式 */
+        .tab-container {
+            border-bottom: 1px solid #E5E7EB;
+        }
+        .tab-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            color: #6B7280;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        .tab-item:hover {
+            color: #1677FF;
+        }
+        .tab-item.active {
+            color: #1677FF;
+            border-bottom-color: #1677FF;
+        }
+        .tab-content {
+            display: none !important;
+        }
+        #tab1.active {
+            display: block !important;
+            height: 100%;
+            overflow-y: auto;
+            background-color: #F9FAFB;
+        }
+        #tab2 {
+            display: none !important;
+        }
+        #tab2.active {
+            display: flex !important;
+            flex-direction: column;
+        }
+        .form-input {
+            border: 1px solid #D9D9D9;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 14px;
+            width: 100%;
+            transition: all 0.2s;
+        }
+        .form-input:hover {
+            border-color: #1677FF;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #1677FF;
+            box-shadow: 0 0 0 2px rgba(22,119,255,0.1);
+        }
+        .form-select {
+            border: 1px solid #D9D9D9;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 14px;
+            width: 100%;
+            transition: all 0.2s;
+        }
+        .form-select:hover {
+            border-color: #1677FF;
+        }
+        .form-select:focus {
+            outline: none;
+            border-color: #1677FF;
+            box-shadow: 0 0 0 2px rgba(22,119,255,0.1);
+        }
+        .btn-primary {
+            background-color: #1677FF;
+            color: white;
+            transition: all 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #4096FF;
+        }
+        .btn-primary:disabled {
+            background-color: #D9D9D9;
+            color: #8C8C8C;
+            cursor: not-allowed;
+        }
+        .btn-secondary {
+            background-color: white;
+            color: #1677FF;
+            border: 1px solid #D9D9D9;
+            transition: all 0.2s;
+        }
+        .btn-secondary:hover {
+            border-color: #1677FF;
+            color: #1677FF;
+        }
+        .field-card {
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 12px 16px;
+            background: white;
+            transition: all 0.2s;
+        }
+        .field-card:hover {
+            border-color: #1677FF;
+        }
+        .field-card.selected {
+            border-color: #1677FF;
+            background-color: #F0F7FF;
+        }
+        .node-card {
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 16px;
+            background: white;
+            transition: all 0.2s;
+        }
+        .node-card:hover {
+            border-color: #1677FF;
+        }
+        .node-card.selected {
+            border-color: #1677FF;
+            background-color: #F0F7FF;
+        }
+        .flow-toolbar {
+            position: absolute;
+            left: 16px;
+            top: 16px;
+            bottom: 16px;
+            width: 200px;
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            z-index: 10;
+        }
+        .toolbar-section {
+            margin-bottom: 20px;
+        }
+        .toolbar-section:last-child {
+            margin-bottom: 0;
+        }
+        .toolbar-title {
+            font-size: 12px;
+            font-weight: 500;
+            color: #6B7280;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        .toolbar-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border: 1px solid #E5E7EB;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .toolbar-item:hover {
+            border-color: #1677FF;
+            background: #F0F7FF;
+        }
+        .toolbar-item-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .toolbar-item-text {
+            font-size: 13px;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        /* 功能操作区样式 */
+        .function-toolbar {
+            background: white;
+            border-bottom: 1px solid #E5E7EB;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+        .toolbar-btn {
+            padding: 6px 12px;
+            border: 1px solid #E5E7EB;
+            border-radius: 4px;
+            background: white;
+            color: #374151;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .toolbar-btn:hover:not(:disabled) {
+            background: #F3F4F6;
+            border-color: #1677FF;
+            color: #1677FF;
+        }
+        .toolbar-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .toolbar-divider {
+            width: 1px;
+            height: 24px;
+            background: #E5E7EB;
+            margin: 0 8px;
+        }
+        .toolbar-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            margin-top: 4px;
+            background: white;
+            border: 1px solid #E5E7EB;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            min-width: 160px;
+            display: none;
+            z-index: 100;
+        }
+        .dropdown-menu.show {
+            display: block;
+        }
+        .dropdown-item {
+            padding: 8px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #374151;
+            transition: background 0.2s;
+        }
+        .dropdown-item:hover {
+            background: #F3F4F6;
+        }
+
+        /* 流程画布样式 */
+        .flow-workspace {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        .flow-canvas-area {
+            flex: 1;
+            background-color: #F5F7FA;
+            background-image:
+                linear-gradient(rgba(200,200,200,0.15) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(200,200,200,0.15) 1px, transparent 1px);
+            background-size: 20px 20px;
+            position: relative;
+            overflow: auto;
+        }
+        .flow-canvas-inner {
+            width: 1200px;
+            min-height: 1200px;
+            position: relative;
+        }
+
+        /* 流程节点样式 */
+        .flow-node-wrapper {
+            position: absolute;
+            width: 220px;
+            z-index: 10;
+        }
+        .flow-node {
+            background: white;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .flow-node:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+        .flow-node.selected {
+            border-color: #1677FF;
+            box-shadow: 0 0 0 3px rgba(22,119,255,0.15);
+        }
+        .flow-node-start .node-icon {
+            background-color: #52C41A;
+        }
+        .flow-node-end .node-icon {
+            background-color: #8C8C8C;
+        }
+        .flow-node-approval .node-icon {
+            background-color: #1677FF;
+        }
+        .flow-node-gateway .node-icon {
+            background-color: #FA8C16;
+        }
+        /* 连接线样式 */
+        .connection-group {
+            cursor: pointer;
+            pointer-events: auto;
+            transition: transform 0.15s;
+        }
+        .connection-group:hover line,
+        .connection-group:hover path[stroke-width="3"] {
+            stroke: #1677FF;
+        }
+        .connection-group.selected line,
+        .connection-group.selected path[stroke-width="3"] {
+            stroke: #1677FF;
+            stroke-width: 4;
+        }
+        .connection-group.selected {
+            transform: scale(1.05);
+            transform-origin: center;
+        }
+        .node-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-bottom: 8px;
+        }
+        .node-title {
+            font-weight: 500;
+            color: #1F2937;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        .node-desc {
+            font-size: 12px;
+            color: #6B7280;
+            line-height: 1.4;
+        }
+
+        /* 节点添加按钮 */
+        .node-add-btn {
+            position: absolute;
+            top: 8px;
+            right: -36px;
+            width: 28px;
+            height: 28px;
+            padding: 0;
+            border-radius: 50%;
+            background: #1677FF;
+            border: 2px solid white;
+            color: white;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+            transition: all 0.2s;
+            z-index: 10;
+            font-size: 14px;
+            line-height: 1;
+        }
+        .node-add-btn:hover {
+            background: #4096FF;
+            transform: scale(1.1);
+        }
+        .flow-node-wrapper.selected .node-add-btn {
+            display: flex;
+        }
+        .node-delete-btn {
+            position: absolute;
+            top: 42px;
+            right: -36px;
+            width: 28px;
+            height: 28px;
+            padding: 0;
+            border-radius: 50%;
+            background: #FF4D4F;
+            border: 2px solid white;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+            transition: all 0.2s;
+            z-index: 10;
+            color: white;
+            font-size: 14px;
+            line-height: 1;
+        }
+        .flow-node-wrapper.selected .node-delete-btn {
+            display: flex;
+        }
+        .node-delete-btn:hover {
+            background: #FF7875;
+            transform: scale(1.1);
+        }
+        .flow-node-wrapper.dragging {
+            z-index: 50;
+            opacity: 0.85;
+            cursor: grabbing;
+        }
+        .flow-node-wrapper:hover .node-hotspot,
+        .flow-node-wrapper.show-hotspots .node-hotspot {
+            display: block;
+        }
+        .flow-node-wrapper .node-hotspot {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #1677FF;
+            border: 2px solid white;
+            border-radius: 50%;
+            display: none;
+            pointer-events: auto;
+            cursor: crosshair;
+            z-index: 20;
+            box-shadow: 0 0 0 2px rgba(22,119,255,0.2);
+        }
+        .flow-node-wrapper .node-hotspot.hotspot-top {
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .flow-node-wrapper .node-hotspot.hotspot-bottom {
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .flow-node-wrapper .node-hotspot.hotspot-left {
+            left: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .flow-node-wrapper .node-hotspot.hotspot-right {
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .node-hotspot:hover {
+            background: #4096FF;
+            transform: scale(1.3);
+        }
+        .flow-node-wrapper .node-hotspot.hotspot-top:hover { transform: translateX(-50%) scale(1.3); }
+        .flow-node-wrapper .node-hotspot.hotspot-bottom:hover { transform: translateX(-50%) scale(1.3); }
+        .flow-node-wrapper .node-hotspot.hotspot-left:hover { transform: translateY(-50%) scale(1.3); }
+        .flow-node-wrapper .node-hotspot.hotspot-right:hover { transform: translateY(-50%) scale(1.3); }
+
+        /* 拖拽连接线 */
+        .drag-line {
+            position: fixed;
+            pointer-events: none;
+            z-index: 100;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .drag-line line {
+            stroke: #1677FF;
+            stroke-width: 2;
+            stroke-dasharray: 6 4;
+        }
+
+        /* 节点属性面板样式 */
+        .node-property-panel {
+            width: 360px;
+            min-width: 360px;
+            max-width: 360px;
+            background: white;
+            border-left: 1px solid #E5E7EB;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .property-header {
+            padding: 0;
+            border-bottom: 1px solid #E5E7EB;
+            display: flex;
+            align-items: stretch;
+        }
+        .property-tab-btn {
+            flex: 1;
+            padding: 12px 16px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 500;
+            color: #8C8C8C;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.15s;
+            background: none;
+        }
+        .property-tab-btn:hover { color: #1677FF; }
+        .property-tab-btn.active {
+            color: #1677FF;
+            border-bottom-color: #1677FF;
+        }
+        .property-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: #1F2937;
+        }
+        .property-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+        .property-section {
+            margin-bottom: 24px;
+        }
+        .property-section:last-child {
+            margin-bottom: 0;
+        }
+        .section-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .section-content {
+            background: #F9FAFB;
+            border-radius: 6px;
+            padding: 12px;
+        }
+        .form-row {
+            margin-bottom: 12px;
+        }
+        .form-row:last-child {
+            margin-bottom: 0;
+        }
+        .form-label {
+            font-size: 12px;
+            color: #6B7280;
+            margin-bottom: 4px;
+            display: block;
+        }
+        .form-label.required::after {
+            content: '*';
+            color: #F5222D;
+            margin-left: 2px;
+        }
+        .approver-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .approver-item {
+            background: white;
+            border: 1px solid #E5E7EB;
+            border-radius: 6px;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .approver-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .approver-type {
+            font-size: 12px;
+            color: #1677FF;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+        .approver-value {
+            font-size: 13px;
+            color: #374151;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .approver-action {
+            margin-left: 4px;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+        }
+        .approver-action:hover {
+            background: #F5F5F5;
+        }
+        .approver-action.approver-delete { color: #F5222D; }
+        .approver-action.approver-delete:hover { background: #FEF2F2; }
+        .approver-action.approver-edit { color: #1677FF; }
+        .approver-action.approver-edit:hover { background: #E6F0FF; }
+        .add-approver-btn {
+            width: 100%;
+            padding: 8px;
+            border: 1px dashed #D9D9D9;
+            border-radius: 6px;
+            background: white;
+            color: #1677FF;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .add-approver-btn:hover {
+            border-color: #1677FF;
+            background: #F0F7FF;
+        }
+        .empty-property {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9CA3AF;
+        }
+        .empty-property i {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 12px;
+            color: #D1D5DB;
+        }
+        .empty-property p {
+            font-size: 14px;
+        }
+        .connection-line {
+            position: absolute;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .connection-line g {
+            pointer-events: auto;
+        }
+
+        #approverModal.show {
+            display: flex;
+        }
+
+
+        .node-add-btn,.node-delete-btn{display:none!important}
+        .flow-node-wrapper:hover .node-add-btn,.flow-node-wrapper:hover .node-delete-btn,.flow-node-wrapper.selected .node-add-btn,.flow-node-wrapper.selected .node-delete-btn{display:none!important}
+        .toolbar-btn:has(span){display:none!important}
+        .toolbar-btn[title*="添加"],.toolbar-btn[title*="删除"],.toolbar-btn[title*="撤销"],.toolbar-btn[title*="重做"],.toolbar-btn[title*="测试"]{display:none!important}
+        .property-content{opacity:.55;filter:grayscale(30%)}
+        .property-content input:not([disabled]),.property-content select:not([disabled]),.property-content button,.property-content label{pointer-events:none;opacity:.55}
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="flex h-screen">
+        <!-- 左侧导航菜单 -->
+        <aside class="w-56 bg-white border-r border-gray-200 flex flex-col">
+            <div class="p-4 border-b border-gray-200">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <i data-lucide="layout-grid" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <span class="font-semibold text-lg text-gray-800">GienBI</span>
+                </div>
+            </div>
+
+            <nav class="flex-1 py-4 overflow-y-auto">
+                <!-- 其他菜单收起 -->
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                        <span>数据分析</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 ml-auto"></i>
+                    </div>
+                </div>
+
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="tag" class="w-4 h-4"></i>
+                        <span>标签</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 ml-auto"></i>
+                    </div>
+                </div>
+
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="trending-up" class="w-4 h-4"></i>
+                        <span>指标</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 ml-auto"></i>
+                    </div>
+                </div>
+
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="settings" class="w-4 h-4"></i>
+                        <span>系统管理</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 ml-auto"></i>
+                    </div>
+                </div>
+
+                <!-- 流程中心（展开） -->
+                <div class="px-3 mb-2">
+                    <div class="bg-blue-50 rounded-lg p-2">
+                        <div class="flex items-center gap-2 text-gray-700 font-medium text-sm py-2 px-3">
+                            <i data-lucide="clipboard-list" class="w-4 h-4"></i>
+                            <span>流程中心</span>
+                        </div>
+                        <div class="ml-6 mt-1 space-y-1">
+                            <a href="my-applications.html" class="flex items-center gap-2 text-gray-600 text-sm py-2 px-3 rounded-lg cursor-pointer hover:bg-gray-100">
+                                <i data-lucide="file-text" class="w-4 h-4"></i>
+                                <span>申请列表</span>
+                            </a>
+                            <a href="my-pending.html" class="flex items-center gap-2 text-gray-600 text-sm py-2 px-3 rounded-lg cursor-pointer hover:bg-gray-100">
+                                <i data-lucide="clock" class="w-4 h-4"></i>
+                                <span>待办列表</span>
+                                <span class="ml-auto bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">12</span>
+                            </a>
+                            <a href="my-completed.html" class="flex items-center gap-2 text-gray-600 text-sm py-2 px-3 rounded-lg cursor-pointer hover:bg-gray-100">
+                                <i data-lucide="check-circle" class="w-4 h-4"></i>
+                                <span>已办列表</span>
+                            </a>
+                            <a href="template-management.html" class="flex items-center gap-2 text-gray-600 text-sm py-2 px-3 rounded-lg cursor-pointer hover:bg-gray-100">
+                                <i data-lucide="layout-template" class="w-4 h-4"></i>
+                                <span>模板管理</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="store" class="w-4 h-4"></i>
+                        <span>模板市场</span>
+                    </div>
+                </div>
+
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="archive" class="w-4 h-4"></i>
+                        <span>管理中心</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 ml-auto"></i>
+                    </div>
+                </div>
+
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="scroll-text" class="w-4 h-4"></i>
+                        <span>审计日志</span>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="p-4 border-t border-gray-200">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-blue-500 rounded-full flex items-center justify-center text-white font-medium">
+                        A
+                    </div>
+                    <div class="flex-1">
+                        <div class="text-sm font-medium text-gray-800">管理员</div>
+                        <div class="text-xs text-gray-500">admin@qq.com</div>
+                    </div>
+                    <i data-lucide="chevron-left" class="w-5 h-5 text-gray-400 cursor-pointer hover:text-gray-600"></i>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="flex-1 flex flex-col bg-gray-50 overflow-hidden">
+            <!-- 顶部导航 -->
+            <header class="bg-white border-b border-gray-200 px-6 py-4 flex-shrink-0">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2 text-sm">
+                        <a href="template-management.html" class="text-gray-500 hover:text-gray-700">模板管理</a>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+                        <span class="text-gray-800 font-medium">查看模板</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+
+                        <a href="template-management.html" class="btn-secondary px-4 py-2 rounded-lg text-sm font-medium">
+                            编辑
+                        </a>
+                        
+                    </div>
+                </div>
+            </header>
+
+            <div class="flex-1 flex flex-col overflow-hidden">
+                <!-- Tab导航 -->
+                <div class="bg-white border-b border-gray-200 px-6 flex-shrink-0">
+                    <div class="flex items-center gap-8 tab-container">
+                        <div class="tab-item active" data-tab="1">基本信息</div>
+                        <div class="tab-item" data-tab="2">流程设计</div>
+                    </div>
+                </div>
+
+                <!-- Tab内容区 -->
+                <div class="flex-1 overflow-hidden flex flex-col">
+
+                    <!-- Tab1：基本信息 -->
+                    <div class="tab-content active" id="tab1">
+                        <div class="p-6">
+                            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 max-w-4xl mx-auto">
+                                <h3 class="text-lg font-semibold text-gray-800 mb-6">基本信息</h3>
+
+                            <div class="grid grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">模板名称 <span class="text-red-500">*</span></label>
+                                    <input type="text" id="templateName" class="form-input" placeholder="请输入模板名称" value="仪表板发布审批" disabled>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">申请类型 <span class="text-red-500">*</span></label>
+                                    <select class="form-select" id="approvalType" disabled>
+                                        <option value="publish" selected>资源发布</option>
+                                        <option value="offline">资源下架</option>
+                                        <option value="delete">资源删除</option>
+                                        <option value="import">资源导入</option>
+                                        <option value="export">资源导出</option>
+                                        <option value="permission">资源权限申请</option>
+                                        <option value="funcPermission">功能权限申请</option>
+                                        <option value="storage">数据入库</option>
+                                        <option value="dataImport">数据导入</option>
+                                        <option value="dataExport">数据导出</option>
+                                        <option value="dataChange">数据变更</option>
+                                    </select>
+                                </div>
+                                <div id="resourceTypeContainer">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">资源类型 <span class="text-red-500">*</span></label>
+                                    <div class="relative" id="resourceTypeDropdown">
+                                        <div class="form-input flex items-center justify-between cursor-pointer" onclick="toggleResourceTypeDropdown()" id="resourceTypeTrigger">
+                                            <span class="text-sm text-gray-400" id="resourceTypeText">请选择资源类型</span>
+                                            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
+                                        </div>
+                                        <div class="absolute z-20 w-full bg-white border border-gray-200 rounded-lg shadow-lg mt-1 hidden max-h-60 overflow-y-auto" id="resourceTypeMenu">
+                                            <div class="p-2 space-y-0.5">
+                                                <label class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer"><input type="checkbox" value="dashboard" class="res-type-cb w-4 h-4 rounded border-gray-300 text-blue-600" onchange="updateResourceTypeSelection()"> 仪表板</label>
+                                                <label class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer"><input type="checkbox" value="report" class="res-type-cb w-4 h-4 rounded border-gray-300 text-blue-600" onchange="updateResourceTypeSelection()"> 报表分析</label>
+                                                <label class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer"><input type="checkbox" value="spreadsheet" class="res-type-cb w-4 h-4 rounded border-gray-300 text-blue-600" onchange="updateResourceTypeSelection()"> 电子表格</label>
+                                                <label class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer"><input type="checkbox" value="analysisReport" class="res-type-cb w-4 h-4 rounded border-gray-300 text-blue-600" onchange="updateResourceTypeSelection()"> 分析报告</label>
+                                                <label class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer"><input type="checkbox" value="targetMgmt" class="res-type-cb w-4 h-4 rounded border-gray-300 text-blue-600" onchange="updateResourceTypeSelection()"> 目标管理</label>
+                                                <label class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer"><input type="checkbox" value="metricAnalysis" class="res-type-cb w-4 h-4 rounded border-gray-300 text-blue-600" onchange="updateResourceTypeSelection()"> 指标分析</label>
+                                                <label class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer"><input type="checkbox" value="metric" class="res-type-cb w-4 h-4 rounded border-gray-300 text-blue-600" onchange="updateResourceTypeSelection()"> 指标列表</label>
+                                                <label class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer"><input type="checkbox" value="apiService" class="res-type-cb w-4 h-4 rounded border-gray-300 text-blue-600" onchange="updateResourceTypeSelection()"> API服务</label>
+                                                <label class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer"><input type="checkbox" value="dataset" class="res-type-cb w-4 h-4 rounded border-gray-300 text-blue-600" onchange="updateResourceTypeSelection()"> 数据集</label>
+                                                <label class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer"><input type="checkbox" value="datasource" class="res-type-cb w-4 h-4 rounded border-gray-300 text-blue-600" onchange="updateResourceTypeSelection()"> 数据源</label>
+                                                <label class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer"><input type="checkbox" value="entry" class="res-type-cb w-4 h-4 rounded border-gray-300 text-blue-600" onchange="updateResourceTypeSelection()"> 数据填报</label>
+                                                <label class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer"><input type="checkbox" value="semanticModel" class="res-type-cb w-4 h-4 rounded border-gray-300 text-blue-600" onchange="updateResourceTypeSelection()"> 语义模型</label>
+                                                <label class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer"><input type="checkbox" value="dimTable" class="res-type-cb w-4 h-4 rounded border-gray-300 text-blue-600" onchange="updateResourceTypeSelection()"> 维表管理</label>
+                                                <label class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer"><input type="checkbox" value="dictMgmt" class="res-type-cb w-4 h-4 rounded border-gray-300 text-blue-600" onchange="updateResourceTypeSelection()"> 字典管理</label>
+                                                <label class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer"><input type="checkbox" value="monitorAlert" class="res-type-cb w-4 h-4 rounded border-gray-300 text-blue-600" onchange="updateResourceTypeSelection()"> 监控预警</label>
+                                                <label class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer"><input type="checkbox" value="taskMgmt" class="res-type-cb w-4 h-4 rounded border-gray-300 text-blue-600" onchange="updateResourceTypeSelection()"> 任务管理</label>
+                                                <label class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer"><input type="checkbox" value="resourceMigrate" class="res-type-cb w-4 h-4 rounded border-gray-300 text-blue-600" onchange="updateResourceTypeSelection()"> 资源迁移</label>
+                                                <label class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer"><input type="checkbox" value="qaAssistant" class="res-type-cb w-4 h-4 rounded border-gray-300 text-blue-600" onchange="updateResourceTypeSelection()"> 问答助理</label>
+                                                <label class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer"><input type="checkbox" value="mobile" class="res-type-cb w-4 h-4 rounded border-gray-300 text-blue-600" onchange="updateResourceTypeSelection()"> 移动端应用</label>
+                                                <label class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer"><input type="checkbox" value="pc" class="res-type-cb w-4 h-4 rounded border-gray-300 text-blue-600" onchange="updateResourceTypeSelection()"> PC端应用</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">模板描述</label>
+                                    <textarea class="form-input" rows="3" placeholder="请输入模板描述，说明该模板的用途和使用场景" disabled>用于仪表板发布的标准审批流程，包含部门负责人审批和技术验收两个节点。</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab2：流程设计器 -->
+                    <div class="tab-content flex flex-col flex-1 overflow-hidden" id="tab2">
+                        <!-- 功能操作区 -->
+                        <div class="function-toolbar">
+                            <button class="toolbar-btn" onclick="undo()" title="撤销" disabled>
+                                <i data-lucide="undo-2" class="w-4 h-4"></i>
+                            </button>
+                            <button class="toolbar-btn" onclick="redo()" title="重做" disabled>
+                                <i data-lucide="redo-2" class="w-4 h-4"></i>
+                            </button>
+
+                            <div class="toolbar-divider"></div>
+
+                            <button class="toolbar-btn" onclick="addFixedNode('start')" title="添加开始节点" style="color:#52C41A;">
+                                <i data-lucide="play" class="w-4 h-4"></i>
+                                <span>开始节点</span>
+                            </button>
+                            <button class="toolbar-btn" onclick="addFixedNode('end')" title="添加结束节点" style="color:#8C8C8C;">
+                                <i data-lucide="flag" class="w-4 h-4"></i>
+                                <span>结束节点</span>
+                            </button>
+                            <button class="toolbar-btn" onclick="addApprovalNode(null)" title="添加任务节点">
+                                <i data-lucide="user-check" class="w-4 h-4"></i>
+                                <span>任务节点</span>
+                            </button>
+                            <button class="toolbar-btn" onclick="addGatewayNode()" title="添加网关节点" style="color:#FA8C16;">
+                                <i data-lucide="git-branch" class="w-4 h-4"></i>
+                                <span>网关节点</span>
+                            </button>
+
+                            <div class="toolbar-divider"></div>
+
+                            <button class="toolbar-btn" onclick="zoomOut()" title="缩小">
+                                <i data-lucide="zoom-out" class="w-4 h-4"></i>
+                            </button>
+                            <span class="text-xs text-gray-600">100%</span>
+                            <button class="toolbar-btn" onclick="zoomIn()" title="放大">
+                                <i data-lucide="zoom-in" class="w-4 h-4"></i>
+                            </button>
+
+                            <div class="toolbar-divider"></div>
+
+                            <button class="toolbar-btn text-green-600" onclick="validateFlow()" title="校验">
+                                <i data-lucide="check-circle" class="w-4 h-4"></i>
+                                <span>校验</span>
+                            </button>
+
+                            <button class="toolbar-btn text-red-500" onclick="deleteSelectedNodes()" title="删除">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                <span>删除</span>
+                            </button>
+                        </div>
+
+                        <!-- 下方区域 -->
+                        <div class="flow-workspace">
+                            <!-- 左侧：流程画布区 -->
+                            <div class="flow-canvas-area" id="canvasContainer">
+                                <div class="flow-canvas-inner" id="flowCanvas" style="transform-origin: left top; transform: scale(1);">
+                                    <!-- 开始节点 -->
+                                    <div class="flow-node-wrapper" id="node-start" style="left: 300px; top: 40px;">
+                                        <div class="flow-node flow-node-start" onclick="selectNode('start')">
+                                            <div class="node-icon">
+                                                <i data-lucide="play" class="w-5 h-5"></i>
+                                            </div>
+                                            <div class="node-title">开始</div>
+                                        </div>
+                                        <button class="node-add-btn" onclick="event.stopPropagation(); showAddNodeMenu(event, 'start')" title="添加节点">
+                                            <span style="font-size:16px;line-height:1;">+</span>
+                                        </button>
+                                        <button class="node-delete-btn" onclick="event.stopPropagation(); deleteNode('start')" title="删除节点"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+                                    </div>
+
+                                    <!-- 任务节点：直接主管审批 -->
+                                    <div class="flow-node-wrapper" id="node-1" style="left: 300px; top: 230px;">
+                                        <div class="flow-node flow-node-approval" onclick="selectNode('1')">
+                                            <div class="node-icon">
+                                                <i data-lucide="user-check" class="w-5 h-5"></i>
+                                            </div>
+                                            <div class="node-title">直接主管审批</div>
+                                        </div>
+                                        <button class="node-add-btn" onclick="event.stopPropagation(); showAddNodeMenu(event, '1')" title="添加节点">
+                                            <span style="font-size:16px;line-height:1;">+</span>
+                                        </button>
+                                        <button class="node-delete-btn" onclick="event.stopPropagation(); deleteNode('1')" title="删除节点"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+                                    </div>
+
+                                    <!-- 任务节点：部门负责人审批 -->
+                                    <div class="flow-node-wrapper" id="node-2" style="left: 300px; top: 420px;">
+                                        <div class="flow-node flow-node-approval" onclick="selectNode('2')">
+                                            <div class="node-icon">
+                                                <i data-lucide="user-check" class="w-5 h-5"></i>
+                                            </div>
+                                            <div class="node-title">部门负责人审批</div>
+                                        </div>
+                                        <button class="node-add-btn" onclick="event.stopPropagation(); showAddNodeMenu(event, '2')" title="添加节点">
+                                            <span style="font-size:16px;line-height:1;">+</span>
+                                        </button>
+                                        <button class="node-delete-btn" onclick="event.stopPropagation(); deleteNode('2')" title="删除节点"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+                                    </div>
+
+                                    <!-- 网关节点：影响范围判断 -->
+                                    <div class="flow-node-wrapper" id="node-5" style="left: 300px; top: 610px;">
+                                        <div class="flow-node flow-node-gateway" onclick="selectNode('5')">
+                                            <div class="node-icon">
+                                                <i data-lucide="git-branch" class="w-5 h-5"></i>
+                                            </div>
+                                            <div class="node-title">影响范围判断</div>
+                                        </div>
+                                        <button class="node-add-btn" onclick="event.stopPropagation(); showAddNodeMenu(event, '5')" title="添加节点">
+                                            <span style="font-size:16px;line-height:1;">+</span>
+                                        </button>
+                                        <button class="node-delete-btn" onclick="event.stopPropagation(); deleteNode('5')" title="删除节点"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+                                    </div>
+
+                                    <!-- 任务节点：高管审批（右分支） -->
+                                    <div class="flow-node-wrapper" id="node-4" style="left: 640px; top: 800px;">
+                                        <div class="flow-node flow-node-approval" onclick="selectNode('4')">
+                                            <div class="node-icon">
+                                                <i data-lucide="user-check" class="w-5 h-5"></i>
+                                            </div>
+                                            <div class="node-title">高管审批</div>
+                                        </div>
+                                        <button class="node-add-btn" onclick="event.stopPropagation(); showAddNodeMenu(event, '4')" title="添加节点">
+                                            <span style="font-size:16px;line-height:1;">+</span>
+                                        </button>
+                                        <button class="node-delete-btn" onclick="event.stopPropagation(); deleteNode('4')" title="删除节点"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+                                    </div>
+
+                                    <!-- 任务节点：数据治理审批（左分支：优先级=高，汇合点） -->
+                                    <div class="flow-node-wrapper" id="node-3" style="left: 300px; top: 800px;">
+                                        <div class="flow-node flow-node-approval" onclick="selectNode('3')">
+                                            <div class="node-icon">
+                                                <i data-lucide="user-check" class="w-5 h-5"></i>
+                                            </div>
+                                            <div class="node-title">数据治理审批</div>
+                                        </div>
+                                        <button class="node-add-btn" onclick="event.stopPropagation(); showAddNodeMenu(event, '3')" title="添加节点">
+                                            <span style="font-size:16px;line-height:1;">+</span>
+                                        </button>
+                                        <button class="node-delete-btn" onclick="event.stopPropagation(); deleteNode('3')" title="删除节点"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+                                    </div>
+
+                                    <!-- 结束节点 -->
+                                    <div class="flow-node-wrapper" id="node-end" style="left: 300px; top: 990px;">
+                                        <div class="flow-node flow-node-end" onclick="selectNode('end')">
+                                            <div class="node-icon">
+                                                <i data-lucide="flag" class="w-5 h-5"></i>
+                                            </div>
+                                            <div class="node-title">结束</div>
+                                        </div>
+                                        <button class="node-delete-btn" onclick="event.stopPropagation(); deleteNode('end')" title="删除节点"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+                                    </div>
+
+                                    <!-- 连接线 SVG -->
+                                    <svg class="connection-line" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
+                                        <defs>
+                                            <marker id="arrowhead-gray" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                                <polygon points="0 0, 10 3, 0 6" fill="#8C8C8C"/>
+                                            </marker>
+                                            <marker id="arrowhead-blue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                                <polygon points="0 0, 10 3, 0 6" fill="#1677FF"/>
+                                            </marker>
+                                        </defs>
+                                        <!-- 开始 -> 直接主管审批 -->
+                                        <g class="connection-group" id="conn-start-1" onclick="selectConnection('start-1')" style="cursor:pointer; pointer-events: auto;">
+                                            <line id="line-start-1" x1="410" y1="140" x2="410" y2="203" stroke="#8C8C8C" stroke-width="3" marker-end="url(#arrowhead-gray)"/>
+                                            <line x1="410" y1="140" x2="410" y2="203" stroke="transparent" stroke-width="24"/>
+                                            <text x="416" y="175" fill="#8C8C8C" font-size="11" class="conn-label"></text>
+                                        </g>
+                                        <!-- 部门负责人审批 -> 高管审批 -->
+                                        <g class="connection-group" id="conn-1-2" onclick="selectConnection('1-2')" style="cursor:pointer; pointer-events: auto;">
+                                            <line id="line-1-2" x1="410" y1="310" x2="410" y2="373" stroke="#8C8C8C" stroke-width="3" marker-end="url(#arrowhead-gray)"/>
+                                            <line x1="410" y1="310" x2="410" y2="373" stroke="transparent" stroke-width="24"/>
+                                            <text x="416" y="345" fill="#8C8C8C" font-size="11" class="conn-label"></text>
+                                        </g>
+                                        <!-- 部门负责人审批 -> 影响范围判断 -->
+                                        <g class="connection-group" id="conn-2-5" onclick="selectConnection('2-5')" style="cursor:pointer; pointer-events: auto;">
+                                            <line id="line-2-5" x1="410" y1="520" x2="410" y2="603" stroke="#8C8C8C" stroke-width="3" marker-end="url(#arrowhead-gray)"/>
+                                            <line x1="410" y1="520" x2="410" y2="603" stroke="transparent" stroke-width="24"/>
+                                            <text x="416" y="565" fill="#8C8C8C" font-size="11" class="conn-label"></text>
+                                        </g>
+                                        <!-- 影响范围判断 -> 数据治理审批 -->
+                                        <g class="connection-group" id="conn-5-3" onclick="selectConnection('5-3')" style="cursor:pointer; pointer-events: auto;">
+                                            <line id="line-5-3" x1="410" y1="710" x2="410" y2="793" stroke="#8C8C8C" stroke-width="3" marker-end="url(#arrowhead-gray)"/>
+                                            <line x1="410" y1="710" x2="410" y2="793" stroke="transparent" stroke-width="24"/>
+                                            <text x="416" y="755" fill="#8C8C8C" font-size="11" class="conn-label"></text>
+                                        </g>
+                                        <!-- 影响范围判断 -> 高管审批（右侧水平连接） -->
+                                        <g class="connection-group" id="conn-5-4" onclick="selectConnection('5-4')" style="cursor:pointer; pointer-events: auto;">
+                                            <line id="line-5-4" x1="520" y1="850" x2="640" y2="850" stroke="#8C8C8C" stroke-width="3" marker-end="url(#arrowhead-gray)"/>
+                                            <line x1="520" y1="850" x2="640" y2="850" stroke="transparent" stroke-width="24"/>
+                                            <text x="555" y="844" fill="#8C8C8C" font-size="11" class="conn-label"></text>
+                                        </g>
+<!-- 数据治理审批 -> 结束 -->
+                                        <g class="connection-group" id="conn-3-end" onclick="selectConnection('3-end')" style="cursor:pointer; pointer-events: auto;">
+                                            <line id="line-3-end" x1="410" y1="680" x2="410" y2="753" stroke="#8C8C8C" stroke-width="3" marker-end="url(#arrowhead-gray)"/>
+                                            <line x1="410" y1="680" x2="410" y2="753" stroke="transparent" stroke-width="24"/>
+                                            <text x="416" y="720" fill="#8C8C8C" font-size="11" class="conn-label"></text>
+                                        </g>
+                                        <!-- 高管审批 -> 结束 -->
+                                        <g class="connection-group" id="conn-4-end" onclick="selectConnection('4-end')" style="cursor:pointer; pointer-events: auto;">
+                                            <line id="line-4-end" x1="750" y1="900" x2="526" y2="960" stroke="#8C8C8C" stroke-width="3" marker-end="url(#arrowhead-gray)"/>
+                                            <line x1="750" y1="486" x2="526" y2="810" stroke="transparent" stroke-width="24"/>
+                                            <text x="600" y="640" fill="#8C8C8C" font-size="11" class="conn-label"></text>
+                                        </g>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- 右侧：节点属性配置 -->
+                            <div class="node-property-panel">
+                                <div class="property-header">
+                                    <button class="property-tab-btn active" id="propTabNode" onclick="switchPropertyTab('node')">节点属性</button>
+                                </div>
+                                <div class="property-content" id="propertyContent">
+                                    <div class="empty-property">
+                                        <i data-lucide="mouse-pointer-2" class="w-12 h-12"></i>
+                                        <p>请选择画布上的节点或连接线查看属性</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 处理人配置弹窗 -->
+    <div id="approverModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-2xl w-[500px] max-h-[80vh] overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-gray-800">添加处理人</h3>
+                <button onclick="closeApproverModal()" class="text-gray-400 hover:text-gray-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto max-h-[60vh]">
+                <!-- 来源类型选择 -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-3">来源类型</label>
+                    <div class="flex gap-3">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="approverType" value="role" class="w-4 h-4 text-blue-600">
+                            <span class="text-sm text-gray-700">指定角色</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="approverType" value="member" class="w-4 h-4 text-blue-600">
+                            <span class="text-sm text-gray-700">指定成员</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="approverType" value="dynamic" checked class="w-4 h-4 text-blue-600">
+                            <span class="text-sm text-gray-700">动态计算</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 指定角色 -->
+                <div id="roleConfig" class="mb-6 hidden">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">选择角色</label>
+                    <div class="border border-gray-200 rounded-lg p-3">
+                        <div class="flex items-center gap-2 mb-2 pb-2 border-b border-gray-100">
+                            <input type="text" placeholder="搜索角色" class="form-input flex-1 text-sm">
+                        </div>
+                        <div class="space-y-1 max-h-48 overflow-y-auto">
+                            <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
+                                <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0">
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm font-medium text-gray-800">系统管理员</div>
+                                    <div class="text-xs text-gray-500 mt-0.5">拥有系统全部管理权限</div>
+                                </div>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
+                                <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0">
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm font-medium text-gray-800">部门负责人</div>
+                                    <div class="text-xs text-gray-500 mt-0.5">负责本部门资源审批与管理</div>
+                                </div>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
+                                <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0">
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm font-medium text-gray-800">数据治理委员</div>
+                                    <div class="text-xs text-gray-500 mt-0.5">负责数据质量和数据安全审核</div>
+                                </div>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
+                                <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0">
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm font-medium text-gray-800">审计员</div>
+                                    <div class="text-xs text-gray-500 mt-0.5">负责操作审计与合规检查</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 指定成员 -->
+                <div id="memberConfig" class="mb-6 hidden">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">选择成员</label>
+                    <div class="border border-gray-200 rounded-lg p-3 mb-3">
+                        <div class="flex items-center gap-2 mb-2 pb-2 border-b border-gray-100">
+                            <input type="text" placeholder="搜索成员" class="form-input flex-1 text-sm">
+                            <button class="text-blue-600 text-sm hover:text-blue-700">搜索</button>
+                        </div>
+                        <div class="space-y-1 max-h-48 overflow-y-auto">
+                            <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
+                                <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0">
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm font-medium text-gray-800">张三（zhangsan）</div>
+                                    <div class="text-xs text-gray-500 mt-0.5">zhangsan@example.com · 系统管理员 · GienBI</div>
+                                </div>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
+                                <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0">
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm font-medium text-gray-800">李四（lisi）</div>
+                                    <div class="text-xs text-gray-500 mt-0.5">lisi@example.com · 部门负责人 · 数据分析部</div>
+                                </div>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
+                                <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0">
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm font-medium text-gray-800">王五（wangwu）</div>
+                                    <div class="text-xs text-gray-500 mt-0.5">wangwu@example.com · 财务经理 · 财务部</div>
+                                </div>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
+                                <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0">
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm font-medium text-gray-800">赵六（zhaoliu）</div>
+                                    <div class="text-xs text-gray-500 mt-0.5">zhaoliu@example.com · 高级分析师 · 研发中心</div>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="flex items-center justify-between pt-2 border-t border-gray-100 mt-2">
+                            <span class="text-xs text-gray-500">共 48 名成员</span>
+                            <div class="flex items-center gap-1">
+                                <button class="w-7 h-7 border border-gray-300 rounded text-xs text-gray-400 cursor-not-allowed" disabled>
+                                    <i data-lucide="chevron-left" class="w-3 h-3"></i>
+                                </button>
+                                <button class="w-7 h-7 bg-blue-600 text-white rounded text-xs font-medium">1</button>
+                                <button class="w-7 h-7 border border-gray-300 rounded text-xs text-gray-600 hover:bg-gray-50">2</button>
+                                <button class="w-7 h-7 border border-gray-300 rounded text-xs text-gray-600 hover:bg-gray-50">3</button>
+                                <button class="w-7 h-7 border border-gray-300 rounded text-xs text-gray-600 hover:bg-gray-50">4</button>
+                                <button class="w-7 h-7 border border-gray-300 rounded text-xs text-gray-600 hover:bg-gray-50">
+                                    <i data-lucide="chevron-right" class="w-3 h-3"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 动态计算 -->
+                <div id="dynamicConfig" class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">选择动态规则</label>
+                    <div class="border border-gray-200 rounded-lg p-3">
+                        <div class="flex items-center gap-2 mb-2 pb-2 border-b border-gray-100">
+                            <input type="text" placeholder="搜索规则" class="form-input flex-1 text-sm">
+                        </div>
+                        <div class="space-y-1 max-h-48 overflow-y-auto">
+                            <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
+                                <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0">
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm font-medium text-gray-800">资源负责人</div>
+                                    <div class="text-xs text-gray-500 mt-0.5">取被申请资源的负责人</div>
+                                </div>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
+                                <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0">
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm font-medium text-gray-800">资源管理者</div>
+                                    <div class="text-xs text-gray-500 mt-0.5">处理人将自动设置为拥有资源管理权限的用户</div>
+                                </div>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
+                                <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0">
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm font-medium text-gray-800">申请人所属组织管理员</div>
+                                    <div class="text-xs text-gray-500 mt-0.5">取申请人所有组织的次级管理员</div>
+                                </div>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
+                                <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0">
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm font-medium text-gray-800">申请人上级组织管理员</div>
+                                    <div class="text-xs text-gray-500 mt-0.5">取申请人所有组织的上级组织中最高级的次级管理员</div>
+                                </div>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
+                                <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0">
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm font-medium text-gray-800">申请人上上级组织管理员</div>
+                                    <div class="text-xs text-gray-500 mt-0.5">取申请人所有组织的上上级组织中最高级的次级管理员</div>
+                                </div>
+                            </label>
+<label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
+                                <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0">
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm font-medium text-gray-800">租户管理员</div>
+                                    <div class="text-xs text-gray-500 mt-0.5">处理人将自动设置为当前租户的租户管理员</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-end gap-3">
+                <button onclick="closeApproverModal()" class="btn-secondary px-4 py-2 rounded-lg text-sm font-medium">
+                    取消
+                </button>
+                <button onclick="saveApprover()" class="btn-primary px-4 py-2 rounded-lg text-sm font-medium">
+                    确定
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 初始化图标
+        lucide.createIcons();
+
+        // 申请类型切换时控制资源类型显示
+        function toggleResourceType() {
+            const approvalType = document.getElementById('approvalType');
+            const resourceContainer = document.getElementById('resourceTypeContainer');
+            if (approvalType && resourceContainer) {
+                resourceContainer.style.display = approvalType.value === 'funcPermission' ? 'none' : '';
+            }
+        }
+
+        // 资源类型多选下拉
+        function toggleResourceTypeDropdown() {
+            const menu = document.getElementById('resourceTypeMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        function updateResourceTypeSelection() {
+            const checked = document.querySelectorAll('.res-type-cb:checked');
+            const names = Array.from(checked).map(cb => cb.parentElement.textContent.trim());
+            const textEl = document.getElementById('resourceTypeText');
+            if (names.length > 0) {
+                textEl.textContent = names.join('、');
+                textEl.className = 'text-sm text-gray-800';
+            } else {
+                textEl.textContent = '请选择资源类型';
+                textEl.className = 'text-sm text-gray-400';
+            }
+        }
+
+        // 点击其他地方关闭下拉
+        document.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('resourceTypeDropdown');
+            if (dropdown && !dropdown.contains(e.target)) {
+                document.getElementById('resourceTypeMenu').classList.add('hidden');
+            }
+        });
+
+        // ===== Tab切换功能（放最前面，确保不被其他JS错误影响） =====
+        function switchTab(tabNum) {
+            document.querySelectorAll('.tab-item').forEach(item => item.classList.remove('active'));
+            document.querySelector(`.tab-item[data-tab="${tabNum}"]`).classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById('tab' + tabNum).classList.add('active');
+            if (tabNum === 2) {
+                setTimeout(() => { try { updateAllConnectionLines(); } catch(e) {} }, 100);
+            }
+            lucide.createIcons();
+        }
+
+        document.querySelectorAll('.tab-item').forEach(item => {
+            item.addEventListener('click', function() {
+                switchTab(parseInt(this.dataset.tab));
+            });
+        });
+
+        // ===== HOTSPOTS 注入 =====
+        function injectHotspots(wrapper) {
+            if (wrapper.querySelector('.node-hotspot')) return;
+            const positions = ['top', 'bottom', 'left', 'right'];
+            positions.forEach(pos => {
+                const dot = document.createElement('div');
+                dot.className = `node-hotspot hotspot-${pos}`;
+                dot.addEventListener('mouseup', (e) => {
+                    e.stopPropagation();
+                    finishConnectionDraw(wrapper.id.replace('node-', ''));
+                });
+                wrapper.appendChild(dot);
+            });
+        }
+        document.querySelectorAll('.flow-node-wrapper').forEach(injectHotspots);
+
+        // ===== 连接线拖拽绘制 =====
+        let drawConnFrom = null;
+        let drawLineSvg = null;
+        let isDrawingConn = false;
+        let drawStartTimer = null;
+        let dragState = null;
+        let hasMovedDuringPress = false;
+
+        function startConnectionDraw(fromNodeId) {
+            if (nodes[fromNodeId] && nodes[fromNodeId].type === 'end') return;
+            isDrawingConn = true;
+            drawConnFrom = fromNodeId;
+            // 显示其他节点热点
+            document.querySelectorAll('#flowCanvas .flow-node-wrapper').forEach(w => {
+                if (w.id.replace('node-', '') !== fromNodeId) {
+                    w.classList.add('show-hotspots');
+                }
+            });
+            // 创建拖拽线 SVG
+            const svgNS = 'http://www.w3.org/2000/svg';
+            drawLineSvg = document.createElementNS(svgNS, 'svg');
+            drawLineSvg.setAttribute('class', 'drag-line');
+            const line = document.createElementNS(svgNS, 'line');
+            line.setAttribute('id', 'drag-preview-line');
+            const fromWrapper = document.getElementById('node-' + fromNodeId);
+            const fromRect = fromWrapper.getBoundingClientRect();
+            const startX = fromRect.left + fromRect.width / 2;
+            const startY = fromRect.top + fromRect.height;
+            line.setAttribute('x1', startX);
+            line.setAttribute('y1', startY);
+            line.setAttribute('x2', startX);
+            line.setAttribute('y2', startY);
+            drawLineSvg.appendChild(line);
+            document.body.appendChild(drawLineSvg);
+        }
+
+        function finishConnectionDraw(toNodeId) {
+            if (drawLineSvg) { drawLineSvg.remove(); drawLineSvg = null; }
+            document.querySelectorAll('#flowCanvas .flow-node-wrapper').forEach(w => w.classList.remove('show-hotspots'));
+            isDrawingConn = false;
+            if (!drawConnFrom || drawConnFrom === toNodeId || (nodes[toNodeId] && nodes[toNodeId].type === 'start')) { drawConnFrom = null; return; }
+
+            const connId = `${drawConnFrom}-${toNodeId}`;
+            if (connections[connId]) { drawConnFrom = null; return; }
+
+            connections[connId] = { type: 'default', conditions: [], logicOperator: 'and' };
+            const fromNode = document.getElementById('node-' + drawConnFrom);
+            const toNode = document.getElementById('node-' + toNodeId);
+            const fromRect = fromNode.getBoundingClientRect();
+            const toRect = toNode.getBoundingClientRect();
+            const canvasRect = document.getElementById('flowCanvas').getBoundingClientRect();
+
+            const x1 = fromRect.left + fromRect.width / 2 - canvasRect.left;
+            const y1 = fromRect.top + fromRect.height - canvasRect.top;
+            const x2 = toRect.left + toRect.width / 2 - canvasRect.left;
+            const y2 = toRect.top - canvasRect.top;
+
+            const svg = document.querySelector('#flowCanvas .connection-line');
+            const svgNS = 'http://www.w3.org/2000/svg';
+            const g = document.createElementNS(svgNS, 'g');
+            g.setAttribute('class', 'connection-group');
+            g.setAttribute('id', 'conn-' + connId);
+            g.setAttribute('onclick', `selectConnection('${connId}')`);
+            g.setAttribute('style', 'cursor:pointer; pointer-events: auto;');
+
+            const line = document.createElementNS(svgNS, 'line');
+            line.setAttribute('id', 'line-' + connId);
+            line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+            line.setAttribute('stroke', '#8C8C8C');
+            line.setAttribute('stroke-width', '3');
+            line.setAttribute('marker-end', 'url(#arrowhead-gray)');
+
+            const hit = document.createElementNS(svgNS, 'line');
+            hit.setAttribute('x1', x1); hit.setAttribute('y1', y1);
+            hit.setAttribute('x2', x2); hit.setAttribute('y2', y2);
+            hit.setAttribute('stroke', 'transparent');
+            hit.setAttribute('stroke-width', '24');
+
+            g.appendChild(line); g.appendChild(hit);
+            svg.appendChild(g);
+            drawConnFrom = null;
+            selectConnection(connId);
+        }
+
+        function updateAllConnectionLines() {
+            try {
+            const canvasRect = document.getElementById('flowCanvas').getBoundingClientRect();
+            if (canvasRect.width === 0 || canvasRect.height === 0) return;
+            Object.keys(connections).forEach(connId => {
+                const parts = connId.split('-');
+                if (parts.length < 2) return;
+                const fromId = parts[0];
+                const toId = parts[1];
+                const fromNode = document.getElementById('node-' + fromId);
+                const toNode = document.getElementById('node-' + toId);
+                if (!fromNode || !toNode) return;
+                const fromRect = fromNode.getBoundingClientRect();
+                const toRect = toNode.getBoundingClientRect();
+                let x1, y1, x2, y2;
+                if (connId === '2-4') {
+                    // 右侧热点 → 左侧热点
+                    x1 = fromRect.right - canvasRect.left;
+                    y1 = fromRect.top + fromRect.height / 2 - canvasRect.top;
+                    x2 = toRect.left - canvasRect.left;
+                    y2 = toRect.top + toRect.height / 2 - canvasRect.top;
+                } else if (connId === '4-end') {
+                    // 下方热点 → 右侧热点
+                    x1 = fromRect.left + fromRect.width / 2 - canvasRect.left;
+                    y1 = fromRect.bottom - canvasRect.top;
+                    x2 = toRect.right - canvasRect.left;
+                    y2 = toRect.top + toRect.height / 2 - canvasRect.top;
+                } else {
+                    // 垂直连接：底部中心 → 顶部中心
+                    x1 = fromRect.left + fromRect.width / 2 - canvasRect.left;
+                    y1 = fromRect.top + fromRect.height - canvasRect.top;
+                    x2 = toRect.left + toRect.width / 2 - canvasRect.left;
+                    y2 = toRect.top - canvasRect.top;
+                }
+                const line = document.getElementById('line-' + connId);
+                if (line) {
+                    line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+                    line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+                }
+                const group = document.getElementById('conn-' + connId);
+                if (group) {
+                    const hitArea = group.querySelector('line[stroke="transparent"]');
+                    if (hitArea) {
+                        hitArea.setAttribute('x1', x1); hitArea.setAttribute('y1', y1);
+                        hitArea.setAttribute('x2', x2); hitArea.setAttribute('y2', y2);
+                    }
+                    // 更新连接线标签位置
+                    const labelEl = group.querySelector('.conn-label');
+                    if (labelEl) {
+                        const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+                        labelEl.setAttribute('x', x2 > x1 ? mx + 6 : mx);
+                        labelEl.setAttribute('y', y2 > y1 ? my + 4 : my - 4);
+                    }
+                }
+            });
+            } catch(e) {}
+        }
+
+        function getNodeIdAtPoint(x, y) {
+            const wrappers = document.querySelectorAll('#flowCanvas .flow-node-wrapper');
+            for (const w of wrappers) {
+                const r = w.getBoundingClientRect();
+                if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) {
+                    return w.id.replace('node-', '');
+                }
+            }
+            return null;
+        }
+
+        // ===== 节点鼠标事件：hover 热点 / 短按选中+拖拽 / 长按连线 =====
+        document.querySelectorAll('#flowCanvas .flow-node-wrapper').forEach(wrapper => {
+            const nodeEl = wrapper.querySelector('.flow-node');
+            if (!nodeEl) return;
+
+            nodeEl.addEventListener('mousedown', (e) => {
+                if (e.target.closest('.node-add-btn') || e.target.closest('.node-hotspot')) return;
+                pressStartX = e.clientX;
+                pressStartY = e.clientY;
+                hasMovedDuringPress = false;
+                const nodeId = wrapper.id.replace('node-', '');
+                drawStartTimer = setTimeout(() => {
+                    if (!hasMovedDuringPress) {
+                        e.preventDefault();
+                        startConnectionDraw(nodeId);
+                    }
+                }, 300);
+
+                const rect = wrapper.getBoundingClientRect();
+                dragState = {
+                    wrapper,
+                    startX: e.clientX,
+                    startY: e.clientY,
+                    origLeft: parseInt(wrapper.style.left),
+                    origTop: parseInt(wrapper.style.top),
+                    activated: false
+                };
+            });
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            // 连线绘制中：更新虚线
+            if (isDrawingConn && drawLineSvg) {
+                const line = drawLineSvg.querySelector('#drag-preview-line');
+                if (line) {
+                    line.setAttribute('x2', e.clientX);
+                    line.setAttribute('y2', e.clientY);
+                }
+                return;
+            }
+
+            if (!dragState) return;
+            const dx = e.clientX - dragState.startX;
+            const dy = e.clientY - dragState.startY;
+            if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+                hasMovedDuringPress = true;
+                clearTimeout(drawStartTimer);
+                drawStartTimer = null;
+                e.preventDefault();
+            }
+
+            // 如果连线模式已激活
+            if (isDrawingConn) return;
+
+            // 如果还没拖够阈值，不移动
+            if (!hasMovedDuringPress) return;
+
+            // 拖拽节点
+            dragState.activated = true;
+            const newLeft = Math.max(0, dragState.origLeft + dx);
+            const newTop = Math.max(0, dragState.origTop + dy);
+            dragState.wrapper.style.left = newLeft + 'px';
+            dragState.wrapper.style.top = newTop + 'px';
+            dragState.wrapper.classList.add('dragging');
+            updateAllConnectionLines();
+        });
+
+        document.addEventListener('mouseup', (e) => {
+            clearTimeout(drawStartTimer);
+            drawStartTimer = null;
+
+            // 连线绘制中释放：找到目标节点
+            if (isDrawingConn) {
+                const targetId = getNodeIdAtPoint(e.clientX, e.clientY);
+                if (targetId) finishConnectionDraw(targetId);
+                else {
+                    if (drawLineSvg) { drawLineSvg.remove(); drawLineSvg = null; }
+                    document.querySelectorAll('#flowCanvas .flow-node-wrapper').forEach(w => w.classList.remove('show-hotspots'));
+                    isDrawingConn = false;
+                    drawConnFrom = null;
+                }
+                return;
+            }
+
+            // 拖拽结束
+            if (dragState) {
+                dragState.wrapper.classList.remove('dragging');
+                const activated = dragState.activated;
+                dragState = null;
+                hasMovedDuringPress = false;
+            }
+
+            updateAllConnectionLines();
+        });
+
+        // 全局 esc 取消连线模式
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && isDrawingConn) {
+                if (drawLineSvg) { drawLineSvg.remove(); drawLineSvg = null; }
+                document.querySelectorAll('#flowCanvas .flow-node-wrapper').forEach(w => w.classList.remove('show-hotspots'));
+                isDrawingConn = false;
+                drawConnFrom = null;
+            }
+        });
+
+        // 流程设计器变量
+        let selectedNode = null;
+        let selectedConnection = null;
+        let zoomScale = 1;
+        let nodeCount = 5;
+        const nodes = {
+            'start': { name: '开始', type: 'start', desc: '系统自动触发，申请人提交申请后进入流程' },
+            'end': { name: '结束', type: 'end', desc: '流程结束，触发回调：执行资源发布操作' },
+            '1': {
+                name: '直接主管审批',
+                approvers: [{ type: 'dynamic', value: '申请人直接主管' }],
+                approvalMethod: 'parallel',
+                timeout: { enabled: false, time: 24, unit: 'hour', action: 'autoApprove' },
+                fallback: 'reject'
+            },
+            '2': {
+                name: '部门负责人审批',
+                approvers: [{ type: 'role', value: '部门负责人' }],
+                approvalMethod: 'parallel',
+                timeout: { enabled: false, time: 24, unit: 'hour', action: 'autoApprove' },
+                fallback: 'reject'
+            },
+            '3': {
+                name: '数据治理审批',
+                approvers: [{ type: 'role', value: '数据治理专员' }],
+                approvalMethod: 'parallel',
+                timeout: { enabled: false, time: 24, unit: 'hour', action: 'autoApprove' },
+                fallback: 'reject'
+            },
+            '4': {
+                name: '高管审批',
+                approvers: [{ type: 'role', value: '高管' }],
+                approvalMethod: 'parallel',
+                timeout: { enabled: false, time: 24, unit: 'hour', action: 'autoApprove' },
+                fallback: 'reject'
+            },
+            '5': {
+                name: '影响范围判断',
+                type: 'gateway',
+                gatewayType: 'exclusive',
+                desc: ''
+            }
+        };
+        // 连接线数据
+        const connections = {
+            'start-1': {},
+            '1-2': {},
+            '2-5': {},
+            '5-3': { type: 'custom', conditions: [{ field: 'impact_scope', operator: 'equals', value: '部门级' }], logicOperator: 'and' },
+            '5-4': { type: 'custom', conditions: [{ field: 'impact_scope', operator: 'equals', value: '公司级' }], logicOperator: 'and' },
+            '3-end': {},
+            '4-end': {}
+        };
+
+        // 下拉菜单切换
+        function toggleDropdown(menuId) {
+            const menu = document.getElementById(menuId);
+            const allMenus = document.querySelectorAll('.dropdown-menu');
+            allMenus.forEach(m => {
+                if (m.id !== menuId) m.classList.remove('show');
+            });
+            menu.classList.toggle('show');
+
+            // 点击外部关闭
+            setTimeout(() => {
+                document.addEventListener('click', function closeMenu(e) {
+                    if (!e.target.closest('.toolbar-dropdown')) {
+                        menu.classList.remove('show');
+                        document.removeEventListener('click', closeMenu);
+                    }
+                });
+            }, 0);
+        }
+
+        // 撤销
+        function undo() {
+            alert('撤销操作');
+        }
+
+        // 重做
+        function redo() {
+            alert('重做操作');
+        }
+
+        // 放大
+        function zoomIn() {
+            if (zoomScale < 2) {
+                zoomScale += 0.1;
+                updateZoom();
+            }
+        }
+
+        // 缩小
+        function zoomOut() {
+            if (zoomScale > 0.5) {
+                zoomScale -= 0.1;
+                updateZoom();
+            }
+        }
+
+        // 更新缩放
+        function updateZoom() {
+            const canvas = document.getElementById('flowCanvas');
+            canvas.style.transform = `scale(${zoomScale})`;
+            document.querySelector('.function-toolbar span').textContent = Math.round(zoomScale * 100) + '%';
+        }
+
+        // 对齐节点
+        function alignNodes(type) {
+            alert('对齐节点：' + type);
+            document.getElementById('alignMenu').classList.remove('show');
+        }
+
+        // 排列节点
+        function distributeNodes(type) {
+            alert('排列节点：' + type);
+            document.getElementById('distributeMenu').classList.remove('show');
+        }
+
+        // 删除选中节点
+        function deleteSelectedNodes() {
+            const selNodeType = nodes[selectedNode] && nodes[selectedNode].type;
+            if (selectedNode && selNodeType !== 'start' && selNodeType !== 'end') {
+                if (confirm('确认删除选中的节点吗？')) {
+                    const node = document.getElementById('node-' + selectedNode);
+                    if (node) {
+                        node.remove();
+                        selectedNode = null;
+                        showEmptyProperty();
+                    }
+                }
+            } else {
+                alert('请先选择要删除的任务节点');
+            }
+        }
+
+        // 流程校验
+        function clearValidationHighlights() {
+            document.querySelectorAll('#flowCanvas .flow-node-wrapper').forEach(w => {
+                w.style.border = '';
+                w.style.boxShadow = '';
+                w.style.borderRadius = '';
+            });
+        }
+
+        function validateFlow() {
+            clearValidationHighlights();
+
+            const issues = [];
+            const errorNodeIds = new Set();
+            const nodeIds = new Set();
+            const startIds = [];
+            const endIds = [];
+            const taskIds = [];
+
+            document.querySelectorAll('#flowCanvas .flow-node-wrapper').forEach(w => {
+                const nid = w.id.replace('node-', '');
+                nodeIds.add(nid);
+                if (nodes[nid] && nodes[nid].type === 'start') startIds.push(nid);
+                if (nodes[nid] && nodes[nid].type === 'end') endIds.push(nid);
+                if (nodes[nid] && nodes[nid].type !== 'start' && nodes[nid].type !== 'end' && nodes[nid].type !== 'gateway') taskIds.push(nid);
+            });
+
+            const forward = {};
+            const reverse = {};
+            nodeIds.forEach(id => { forward[id] = []; reverse[id] = []; });
+            Object.keys(connections).forEach(k => {
+                const [f, t] = k.split('-');
+                if (forward[f]) forward[f].push(t);
+                if (reverse[t]) reverse[t].push(f);
+            });
+
+            // 1. 从 start 可达
+            const fromStartReachable = new Set();
+            function bfsForward(startSet, visited) {
+                const queue = [...startSet];
+                queue.forEach(id => visited.add(id));
+                while (queue.length > 0) {
+                    const cur = queue.shift();
+                    (forward[cur] || []).forEach(next => {
+                        if (!visited.has(next)) { visited.add(next); queue.push(next); }
+                    });
+                }
+            }
+            if (startIds.length > 0) bfsForward(startIds, fromStartReachable);
+
+            nodeIds.forEach(id => {
+                if (!fromStartReachable.has(id)) {
+                    errorNodeIds.add(id);
+                    issues.push('节点「' + (nodes[id] ? nodes[id].name : id) + '」无法从开始节点到达');
+                }
+            });
+
+            // 2. 可达 end
+            const canReachEnd = new Set();
+            function bfsReverse(startSet, visited) {
+                const queue = [...startSet];
+                queue.forEach(id => visited.add(id));
+                while (queue.length > 0) {
+                    const cur = queue.shift();
+                    (reverse[cur] || []).forEach(prev => {
+                        if (!visited.has(prev)) { visited.add(prev); queue.push(prev); }
+                    });
+                }
+            }
+            if (endIds.length > 0) bfsReverse(endIds, canReachEnd);
+
+            nodeIds.forEach(id => {
+                if (!canReachEnd.has(id)) {
+                    errorNodeIds.add(id);
+                    issues.push('节点「' + (nodes[id] ? nodes[id].name : id) + '」无法到达结束节点');
+                }
+            });
+
+            // 3. 无孤立节点
+            nodeIds.forEach(id => {
+                const hasIn = (reverse[id] || []).length > 0;
+                const hasOut = (forward[id] || []).length > 0;
+                if (!hasIn && !hasOut) {
+                    errorNodeIds.add(id);
+                    issues.push('节点「' + (nodes[id] ? nodes[id].name : id) + '」未连接到流程中');
+                }
+            });
+
+            // 4. 任务节点数量
+            if (taskIds.length === 0) {
+                issues.push('流程设计缺少任务节点，请添加至少一个');
+            }
+
+            // 5. 流程必填项
+            nodeIds.forEach(id => {
+                const n = nodes[id];
+                if (!n) return;
+                const missing = [];
+
+                if (n.type !== 'start' && n.type !== 'end' && n.type !== 'gateway') {
+                    if (!n.approvers || n.approvers.length === 0) missing.push('处理人配置');
+                    if (!n.approvalMethod) missing.push('处理方式');
+                    if (!n.fallback) missing.push('兜底策略');
+                } else if (n.type === 'gateway') {
+                    if (!n.gatewayType) missing.push('网关类型');
+                }
+
+                if (missing.length > 0) {
+                    errorNodeIds.add(id);
+                    issues.push('节点「' + n.name + '」存在必填项缺失：' + missing.join('、'));
+                }
+            });
+
+            // 标红
+            errorNodeIds.forEach(id => {
+                const wrapper = document.getElementById('node-' + id);
+                if (wrapper) {
+                    wrapper.style.border = '2px solid #F5222D';
+                    wrapper.style.borderRadius = '8px';
+                    wrapper.style.boxShadow = '0 0 0 3px rgba(245,34,45,0.15)';
+                }
+            });
+
+            let r = '流程校验报告\n\n节点：' + nodeIds.size + '  连接线：' + Object.keys(connections).length + '\n\n';
+            r += issues.length ? '❌ 发现 ' + issues.length + ' 个问题：\n' + issues.map((x, i) => '  ' + (i + 1) + '. ' + x).join('\n') : '✅ 流程设计通过校验';
+            alert(r);
+        }
+
+        // 选择节点
+        function selectNode(nodeId) {
+            // 取消之前所有高亮
+            selectedConnection = null;
+            document.querySelectorAll('.connection-group').forEach(g => g.classList.remove('selected'));
+            document.querySelectorAll('.flow-node').forEach(n => n.classList.remove('selected'));
+            document.querySelectorAll('.flow-node-wrapper').forEach(w => w.classList.remove('selected'));
+            resetAllLines();
+
+            // 添加节点选中状态
+            const wrapper = document.getElementById('node-' + nodeId);
+            if (wrapper) {
+                wrapper.querySelector('.flow-node').classList.add('selected');
+                wrapper.classList.add('selected');
+                selectedNode = nodeId;
+
+                // 高亮前后连接线
+                Object.keys(connections).forEach(connId => {
+                    const [fromId, toId] = connId.split('-');
+                    if (fromId === nodeId || toId === nodeId) {
+                        const connGroup = document.getElementById('conn-' + connId);
+                        if (connGroup) {
+                            connGroup.classList.add('selected');
+                            const line = document.getElementById('line-' + connId);
+                            if (line) {
+                                line.setAttribute('stroke', '#1677FF');
+                                line.setAttribute('stroke-width', '4');
+                                line.setAttribute('marker-end', 'url(#arrowhead-blue)');
+                            }
+                        }
+                    }
+                });
+
+                // 显示属性
+                document.getElementById('propTabNode').textContent = '节点属性';
+                const nType = nodes[nodeId] && nodes[nodeId].type;
+                if (nType === 'start' || nType === 'end') {
+                    showFixedNodeProperty(nodeId);
+                } else if (nodes[nodeId] && nodes[nodeId].type === 'gateway') {
+                    showGatewayNodeProperty(nodeId);
+                } else {
+                    showApprovalNodeProperty(nodeId);
+                }
+            }
+
+            // 默认激活节点属性tab
+            switchPropertyTab('node');
+            lucide.createIcons();
+        }
+
+        // ===== 连接线选择及属性展示 =====
+        function switchPropertyTab(tab) {
+            document.getElementById('propertyContent').style.display = '';
+        }
+
+        // 选择连接线
+        function selectConnection(connectionId) {
+            // 取消之前所有高亮
+            selectedNode = null;
+            document.querySelectorAll('.flow-node').forEach(n => n.classList.remove('selected'));
+            document.querySelectorAll('.flow-node-wrapper').forEach(w => w.classList.remove('selected'));
+            document.querySelectorAll('.connection-group').forEach(g => g.classList.remove('selected'));
+            resetAllLines();
+
+            // 高亮选中连接线
+            const connGroup = document.getElementById('conn-' + connectionId);
+            if (connGroup) {
+                connGroup.classList.add('selected');
+                const line = document.getElementById('line-' + connectionId);
+                if (line) {
+                    line.setAttribute('stroke', '#1677FF');
+                    line.setAttribute('stroke-width', '4');
+                    line.setAttribute('marker-end', 'url(#arrowhead-blue)');
+                }
+                selectedConnection = connectionId;
+                document.getElementById('propTabNode').textContent = '连接线属性';
+                switchPropertyTab('node');
+                showConnectionProperty(connectionId);
+            }
+
+            lucide.createIcons();
+        }
+
+        // 重置所有连接线为默认灰色
+        function resetAllLines() {
+            document.querySelectorAll('line[id^="line-"]').forEach(l => {
+                l.setAttribute('stroke', '#8C8C8C');
+                l.setAttribute('stroke-width', '3');
+                l.setAttribute('marker-end', 'url(#arrowhead-gray)');
+            });
+            document.querySelectorAll('.connection-group').forEach(g => g.classList.remove('selected'));
+        }
+
+        // 删除连接线
+        function deleteConnection(connectionId) {
+            if (confirm('确认删除此连接线吗？删除后，流程将无法流转到目标节点。')) {
+                alert('连接线已删除：' + connectionId);
+            }
+        }
+
+
+        // 显示空属性面板
+        function showEmptyProperty() {
+            // 更新标题
+            void 0; var _pt = document.getElementById('propertyTitle'); if (_pt) _pt.textContent =
+ '节点属性';
+
+            const content = document.getElementById('propertyContent');
+            content.innerHTML = `
+                <div class="empty-property">
+                    <i data-lucide="mouse-pointer-2" class="w-12 h-12"></i>
+                    <p>请选择画布上的节点或连接线查看属性</p>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        // 显示连接线属性面板
+        function getFieldLabel(field) {
+            const cfg = conditionFieldConfig[field];
+            return cfg ? cfg.label : (field || '-');
+        }
+
+        function getOperatorLabel(op) {
+            const map = { equals: '等于', notEquals: '不等于', in: '包含', notIn: '不包含', gt: '大于', lt: '小于', gte: '大于等于', lte: '小于等于', between: '介于' };
+            return map[op] || (op || '-');
+        }
+
+        function getNodeName(nodeId) {
+            const nameMap = { start: '开始', end: '结束', '1': '部门负责人审批', '2': '高管审批', '3': '技术审批', '4': '数据治理审批' };
+            return nameMap[nodeId] || nodeId;
+        }
+
+        function showConnectionProperty(connectionId) {
+            void 0; var _pt = document.getElementById('propertyTitle'); if (_pt) _pt.textContent = '连接线属性';
+            const conn = connections[connectionId] || { type: 'default', conditions: [], logicOperator: 'and' };
+            const parts = connectionId.split('-');
+            const defaultName = conn.name || (getNodeName(parts[0]) + ' → ' + getNodeName(parts[1]));
+            const content = document.getElementById('propertyContent');
+            content.innerHTML = `
+                <div class="property-section">
+                    <div class="section-title"><i data-lucide="git-branch" class="w-4 h-4"></i>基本信息</div>
+                    <div class="section-content">
+                        <div class="form-row">
+                            <label class="form-label">连接线名称</label>
+                            <input type="text" class="form-input text-sm" id="connectionName_${connectionId}" value="${conn.name || ''}" placeholder="请输入连接线名称" onchange="saveConnectionName('${connectionId}')">
+                        </div>
+                    </div>
+                </div>
+                <div class="property-section">
+                    <div class="section-title"><i data-lucide="settings" class="w-4 h-4"></i>流转条件类型<span class="text-red-500 ml-0.5">*</span></div>
+                    <div class="section-content">
+                        <div class="form-row">
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="radio" name="conditionType_${connectionId}" value="none" ${(conn.type === 'none' || !conn.type) ? 'checked' : ''} onchange="toggleConditionType('${connectionId}', 'none')">
+                                <span class="text-sm text-gray-700">不使用条件</span>
+                            </label>
+                        </div>
+                        <div class="form-row">
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="radio" name="conditionType_${connectionId}" value="custom" ${conn.type === 'custom' ? 'checked' : ''} onchange="toggleConditionType('${connectionId}', 'custom')">
+                                <span class="text-sm text-gray-700">使用自定义流转条件</span>
+                            </label>
+                        </div>
+                        <div class="form-row">
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="radio" name="conditionType_${connectionId}" value="else" ${conn.type === 'else' ? 'checked' : ''} onchange="toggleConditionType('${connectionId}', 'else')">
+                                <span class="text-sm text-gray-700">使用Else条件</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div id="conditionConfig_${connectionId}" ${conn.type !== 'custom' ? 'style="display:none;"' : ''}>
+                    <div class="property-section">
+                        <div class="section-title"><i data-lucide="filter" class="w-4 h-4"></i>流转条件配置<span class="text-red-500 ml-0.5">*</span></div>
+                        <div class="section-content">
+                            <div id="conditionList_${connectionId}" class="space-y-3">
+                                ${conn.conditions.map((cond, index) => `
+                                    <div class="condition-item bg-gray-50 rounded-lg p-3">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="text-xs font-medium text-gray-500">条件 ${index + 1}</span>
+                                            <div class="flex items-center gap-2">
+                                                <button onclick="editCondition('${connectionId}', ${index})" class="text-blue-500 hover:text-blue-700 text-xs">
+                                                    <i data-lucide="edit-2" class="w-3 h-3 inline"></i>编辑
+                                                </button>
+                                                <button onclick="removeCondition('${connectionId}', ${index})" class="text-red-500 hover:text-red-700 text-xs">
+                                                    <i data-lucide="trash-2" class="w-3 h-3 inline"></i>删除
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="text-sm text-gray-700">
+                                            <span class="inline-block px-2 py-0.5 bg-blue-100 text-blue-700 rounded mr-2">${getFieldLabel(cond.field)}</span>
+                                            <span class="inline-block px-2 py-0.5 bg-gray-200 text-gray-700 rounded mr-2">${getOperatorLabel(cond.operator)}</span>
+                                            <span class="inline-block px-2 py-0.5 bg-green-100 text-green-700 rounded">${cond.value || '-'}</span>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <button onclick="addCondition('${connectionId}')" class="add-approver-btn w-full mt-3">
+                                <span style="font-size:16px;line-height:1;">+</span><span>添加条件</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="property-section">
+                        <div class="section-title"><i data-lucide="logic" class="w-4 h-4"></i>条件关系<span class="text-red-500 ml-0.5">*</span></div>
+                        <div class="section-content">
+                            <div class="flex gap-4">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="logicOp_${connectionId}" value="and" ${conn.logicOperator === 'and' ? 'checked' : ''}>
+                                    <span class="text-sm text-gray-700">且（AND）</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="logicOp_${connectionId}" value="or" ${conn.logicOperator === 'or' ? 'checked' : ''}>
+                                    <span class="text-sm text-gray-700">或（OR）</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="elseInfo_${connectionId}" ${conn.type !== 'else' ? 'style="display:none;"' : ''}>
+                    <div class="property-section">
+                        <div class="section-title"><i data-lucide="info" class="w-4 h-4"></i>Else条件说明</div>
+                        <div class="section-content">
+                            <div class="text-xs text-gray-500">
+                                <p>当数据不满足同级的其他流转条件时，进入这条连接线下的节点。</p>
+                                <p class="mt-2">Else条件通常作为最后一条连接线，确保流程有默认的流转路径。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex gap-2 mt-4">
+                    <button onclick="deleteConnection('${connectionId}')" class="btn-secondary flex-1 py-2 text-sm">
+                        <i data-lucide="trash-2" class="w-4 h-4 inline mr-1"></i>删除连接线
+                    </button>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        function toggleConditionType(connectionId, type) {
+            connections[connectionId] = connections[connectionId] || {};
+            connections[connectionId].type = type;
+            showConnectionProperty(connectionId);
+            lucide.createIcons();
+        }
+
+        function addCondition(connectionId) {
+            openConditionModal(connectionId);
+        }
+
+        function removeCondition(connectionId, index) {
+            if (confirm('确认删除此条件吗？')) {
+                if (connections[connectionId] && connections[connectionId].conditions) {
+                    connections[connectionId].conditions.splice(index, 1);
+                    showConnectionProperty(connectionId);
+                }
+            }
+        }
+
+        // 条件字段配置
+        const conditionFieldConfig = {
+            'applicant_role': { label: '申请人角色', operators: ['equals','notEquals','in','notIn'], inputType: 'roleSelect' },
+            'applicant_org': { label: '申请人所属组织', operators: ['equals','notEquals','in','notIn'], inputType: 'orgTreeSelect' },
+            'applicant': { label: '申请人', operators: ['equals','notEquals','in','notIn'], inputType: 'userSelect' },
+            'priority': { label: '优先级', operators: ['equals','notEquals','in','notIn'], inputType: 'select', options: ['紧急','高','普通','低'] },
+            'impact_scope': { label: '影响范围', operators: ['equals','notEquals','in','notIn'], inputType: 'select', options: ['部门级','公司级','对外公开'] },
+            'create_time': { label: '申请时间', operators: ['gt','lt','equals','notEquals','gte','lte','between'], inputType: 'datetime' },
+            'perm_type': { label: '申请权限类型', operators: ['equals','notEquals','in','notIn'], inputType: 'select', options: ['查看','管理','下载','分享'] },
+            'data_volume': { label: '数据量', operators: ['gt','gte','lt','lte','equals','notEquals','between'], inputType: 'number' },
+            'data_change_type': { label: '数据变更类型', operators: ['equals','notEquals','in','notIn'], inputType: 'select', options: ['编辑数据','删除数据','批量删除','清空数据'] }
+        };
+
+        function renderConditionValueInput(cond, isEdit) {
+            const field = cond ? cond.field : 'priority';
+            const cfg = conditionFieldConfig[field];
+            const value = cond ? (cond.value || '') : '';
+            const op = cond ? (cond.operator || 'equals') : 'equals';
+            if (!cfg) return `<input type="text" id="conditionValue" class="form-input w-full" value="${value}" placeholder="请输入条件值">`;
+            if (cfg.inputType === 'select' && cfg.options) {
+                return `<select class="form-select w-full" id="conditionValue">${cfg.options.map(o => `<option value="${o}" ${value === o ? 'selected' : ''}>${o}</option>`).join('')}</select>`;
+            }
+            if (cfg.inputType === 'number') {
+                return op === 'between'
+                    ? `<div class="flex items-center gap-2"><input type="number" id="conditionValue1" class="form-input w-full" value="${value.split(',')[0] || ''}" placeholder="最小值"><span class="text-gray-400">至</span><input type="number" id="conditionValue2" class="form-input w-full" value="${value.split(',')[1] || ''}" placeholder="最大值"></div>`
+                    : `<input type="number" id="conditionValue" class="form-input w-full" value="${value}" placeholder="请输入数值">`;
+            }
+            if (cfg.inputType === 'datetime') {
+                return op === 'between'
+                    ? `<div class="flex items-center gap-2"><input type="datetime-local" id="conditionValue1" class="form-input w-full" value="${value.split(',')[0] || ''}"><span class="text-gray-400">至</span><input type="datetime-local" id="conditionValue2" class="form-input w-full" value="${value.split(',')[1] || ''}"></div>`
+                    : `<input type="datetime-local" id="conditionValue" class="form-input w-full" value="${value}">`;
+            }
+            return `<input type="text" id="conditionValue" class="form-input w-full" value="${value}" placeholder="请输入条件值">`;
+        }
+
+        function getFieldOperators(field) {
+            const cfg = conditionFieldConfig[field];
+            if (!cfg) return [{ v: 'equals', l: '等于' },{ v: 'notEquals', l: '不等于' },{ v: 'in', l: '包含' },{ v: 'notIn', l: '不包含' }];
+            const opMap = { equals: '等于', notEquals: '不等于', in: '包含', notIn: '不包含', gt: '大于', lt: '小于', gte: '大于等于', lte: '小于等于', between: '介于' };
+            return cfg.operators.map(o => ({ v: o, l: opMap[o] || o }));
+        }
+
+        function buildConditionModal(title, connectionId, cond, index) {
+            const field = cond ? cond.field : 'priority';
+            const op = cond ? cond.operator : 'equals';
+            const opOptions = getFieldOperators(field).map(o => `<option value="${o.v}" ${op === o.v ? 'selected' : ''}>${o.l}</option>`).join('');
+            return `
+                <div id="conditionModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div class="bg-white rounded-xl shadow-2xl w-[500px] max-h-[80vh] overflow-hidden">
+                        <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-gray-800">${title}</h3>
+                            <button onclick="closeConditionModal()" class="text-gray-400 hover:text-gray-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+                        </div>
+                        <div class="p-6 overflow-y-auto max-h-[60vh]">
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">选择字段</label>
+                                <select class="form-select w-full" id="conditionField" onchange="updateConditionField()">
+                                    ${Object.entries(conditionFieldConfig).map(([k, v]) => `<option value="${k}" ${field === k ? 'selected' : ''}>${v.label}</option>`).join('')}
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">运算符</label>
+                                <select class="form-select w-full" id="conditionOperator" onchange="updateConditionOperator()">${opOptions}</select>
+                            </div>
+                            <div class="mb-4" id="conditionValueContainer">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">条件值</label>
+                                ${renderConditionValueInput(cond, true)}
+                            </div>
+                        </div>
+                        <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-end gap-3">
+                            <button onclick="closeConditionModal()" class="btn-secondary px-4 py-2 rounded-lg text-sm font-medium">取消</button>
+                            <button onclick="confirmCondition('${connectionId}', ${index !== undefined ? index : -1})" class="btn-primary px-4 py-2 rounded-lg text-sm font-medium">确定</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function editCondition(connectionId, index) {
+            const cond = connections[connectionId].conditions[index];
+            if (!cond) return;
+            document.getElementById('conditionModal')?.remove();
+            document.body.insertAdjacentHTML('beforeend', buildConditionModal('编辑流转条件', connectionId, cond, index));
+            lucide.createIcons();
+        }
+
+        function openConditionModal(connectionId) {
+            document.getElementById('conditionModal')?.remove();
+            document.body.insertAdjacentHTML('beforeend', buildConditionModal('添加流转条件', connectionId, null, undefined));
+            lucide.createIcons();
+        }
+
+        function updateConditionField() {
+            const field = document.getElementById('conditionField')?.value;
+            const cfg = conditionFieldConfig[field];
+            if (!cfg) return;
+            const opSelect = document.getElementById('conditionOperator');
+            if (opSelect) {
+                const opMap = { equals: '等于', notEquals: '不等于', in: '包含', notIn: '不包含', gt: '大于', lt: '小于', gte: '大于等于', lte: '小于等于', between: '介于' };
+                opSelect.innerHTML = cfg.operators.map(o => `<option value="${o}">${opMap[o] || o}</option>`).join('');
+            }
+            const valContainer = document.getElementById('conditionValueContainer');
+            if (valContainer) {
+                valContainer.innerHTML = `<label class="block text-sm font-medium text-gray-700 mb-2">条件值</label>${renderConditionValueInput({ field, operator: opSelect?.value || 'equals', value: '' }, false)}`;
+            }
+        }
+
+        function updateConditionOperator() {
+            const field = document.getElementById('conditionField')?.value;
+            const op = document.getElementById('conditionOperator')?.value;
+            const valContainer = document.getElementById('conditionValueContainer');
+            if (valContainer) {
+                valContainer.innerHTML = `<label class="block text-sm font-medium text-gray-700 mb-2">条件值</label>${renderConditionValueInput({ field, operator: op, value: '' }, false)}`;
+            }
+        }
+
+        function confirmCondition(connectionId, index) {
+            const field = document.getElementById('conditionField')?.value;
+            const operator = document.getElementById('conditionOperator')?.value;
+            let value;
+            if (operator === 'between') {
+                const v1 = document.getElementById('conditionValue1')?.value;
+                const v2 = document.getElementById('conditionValue2')?.value;
+                if (!v1 || !v2) { alert('请填写条件的起始和结束值'); return; }
+                value = v1 + ',' + v2;
+            } else {
+                value = document.getElementById('conditionValue')?.value;
+            }
+            if (!field || !value) { alert('请填写字段和条件值'); return; }
+            connections[connectionId] = connections[connectionId] || {};
+            connections[connectionId].conditions = connections[connectionId].conditions || [];
+            if (index >= 0) {
+                connections[connectionId].conditions[index] = { field, operator, value };
+            } else {
+                connections[connectionId].conditions.push({ field, operator, value });
+            }
+            closeConditionModal();
+            showConnectionProperty(connectionId);
+        }
+
+        function closeConditionModal() {
+            document.getElementById('conditionModal')?.remove();
+        }
+
+        function closeConditionModal() {
+            document.getElementById('conditionModal')?.remove();
+        }
+
+
+        function saveConnectionName(connectionId) {
+            const nameInput = document.getElementById('connectionName_' + connectionId);
+            connections[connectionId].name = nameInput ? nameInput.value.trim() : '';
+            const labelEl = document.querySelector(`#conn-${connectionId} .conn-label`);
+            if (labelEl) labelEl.textContent = connections[connectionId].name || '';
+        }
+
+        function saveConnection(connectionId) {
+            const logicOp = document.querySelector(`input[name="logicOp_${connectionId}"]:checked`)?.value || 'and';
+            connections[connectionId].logicOperator = logicOp;
+            const nameInput = document.getElementById('connectionName_' + connectionId);
+            if (nameInput) connections[connectionId].name = nameInput.value.trim();
+            // 更新连接线上的标签文字
+            const labelEl = document.querySelector(`#conn-${connectionId} .conn-label`);
+            if (labelEl) labelEl.textContent = connections[connectionId].name || '';
+            updateAllConnectionLines();
+        }
+
+        // 显示固定节点属性
+        function showFixedNodeProperty(nodeId) {
+            // 更新标题
+            void 0; var _pt = document.getElementById('propertyTitle'); if (_pt) _pt.textContent =
+ '节点属性';
+
+            const content = document.getElementById('propertyContent');
+            const nodeData = nodes[nodeId] || { name: '开始', desc: '' };
+            const isStart = (nodeData.type === 'start');
+            content.innerHTML = `
+                <div class="property-section">
+                    <div class="section-title">
+                        <i data-lucide="${isStart ? 'play' : 'flag'}" class="w-4 h-4"></i>
+                        基本信息
+                    </div>
+                    <div class="section-content">
+                        <div class="form-row">
+                            <label class="form-label">节点名称</label>
+                            <div class="text-sm text-gray-800">${isStart ? '开始' : '结束'}</div>
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label">节点说明</label>
+                            <div class="text-sm text-gray-600">${isStart ? '系统自动触发，申请人提交申请后进入流程' : '流程结束，触发回调：执行资源发布操作'}</div>
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label">节点类型</label>
+                            <span class="inline-block px-2 py-1 text-xs rounded ${isStart ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}">
+                                ${isStart ? '开始节点' : '结束节点'}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="property-section">
+                    <div class="section-title">
+                        <i data-lucide="info" class="w-4 h-4"></i>
+                        提示
+                    </div>
+                    <div class="section-content">
+                        <div class="text-xs text-gray-500">
+                            ${isStart ? '开始节点为系统固定节点，不可编辑或删除' : '结束节点为系统固定节点，不可编辑或删除'}
+                        </div>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        // 显示决策节点属性
+        function showDecisionNodeProperty(nodeId) {
+            void 0; var _pt = document.getElementById('propertyTitle'); if (_pt) _pt.textContent =
+ '节点属性';
+
+            const content = document.getElementById('propertyContent');
+            content.innerHTML = `
+                <div class="property-section">
+                    <div class="section-title">
+                        <i data-lucide="info" class="w-4 h-4"></i>
+                        基本信息
+                    </div>
+                    <div class="section-content">
+                        <div class="form-row">
+                            <label class="form-label required">节点名称</label>
+                            <input type="text" class="form-input text-sm" value="按优先级路由" placeholder="请输入节点名称">
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label">节点说明</label>
+                            <input type="text" class="form-input text-sm" value="根据优先级自动选择审批分支" placeholder="请输入节点说明">
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label">节点类型</label>
+                            <span class="inline-block px-2 py-1 text-xs rounded bg-purple-100 text-purple-700">决策节点</span>
+                        </div>
+                    </div>
+                </div>
+
+            `;
+            lucide.createIcons();
+        }
+
+        // 显示任务节点属性
+        function showApprovalNodeProperty(nodeId) {
+            // 更新标题
+            void 0; var _pt = document.getElementById('propertyTitle'); if (_pt) _pt.textContent =
+ '节点属性';
+
+            const nodeData = nodes[nodeId] || {
+                name: '任务节点',
+                approvers: [{ type: 'dynamic', value: '申请人直接主管' }],
+                approvalMethod: 'parallel',
+                timeout: { enabled: false, time: 24, unit: 'hour', action: 'autoApprove' },
+                fallback: 'reject'
+            };
+
+            const content = document.getElementById('propertyContent');
+            content.innerHTML = `
+                <div class="property-section">
+                    <div class="section-title">
+                        <i data-lucide="settings" class="w-4 h-4"></i>
+                        基本信息
+                    </div>
+                    <div class="section-content">
+                        <div class="form-row">
+                            <label class="form-label required">节点名称</label>
+                            <input type="text" class="form-input text-sm" value="${nodeData.name}" placeholder="请输入节点名称">
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label">节点说明</label>
+                            <input type="text" class="form-input text-sm" value="${nodeData.desc || ''}" placeholder="请输入节点说明">
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label required">节点类型</label>
+                            <span class="inline-block px-2 py-1 text-xs rounded bg-blue-100 text-blue-700">任务节点</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="property-section">
+                    <div class="section-title">
+                        <i data-lucide="users" class="w-4 h-4"></i>
+                        处理人配置<span class="text-red-500 ml-0.5">*</span>
+                    </div>
+                    <div class="section-content">
+                        <div class="approver-list" id="approverList-${nodeId}">
+                            ${nodeData.approvers.map((app, index) => `
+                                <div class="approver-item">
+                                    <div class="approver-info">
+                                        <div class="approver-type">${getApproverTypeText(app.type)}</div>
+                                        <div class="approver-value">${app.value}</div>
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <div class="approver-action approver-edit" onclick="editApprover('${nodeId}', ${index})" title="编辑">
+                                            <i data-lucide="edit-2" class="w-3 h-3"></i>
+                                        </div>
+                                        <div class="approver-action approver-delete" onclick="removeApprover('${nodeId}', ${index})" title="删除">
+                                            <i data-lucide="x" class="w-4 h-4"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <button class="add-approver-btn mt-3" onclick="addApprover('${nodeId}')">
+                            <span style="font-size:16px;line-height:1;">+</span>
+                            <span>添加处理人</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="property-section">
+                    <div class="section-title">
+                        <i data-lucide="check-circle" class="w-4 h-4"></i>
+                        处理方式<span class="text-red-500 ml-0.5">*</span>
+                    </div>
+                    <div class="section-content">
+                        <div class="form-row">
+                            <label class="form-label">多处理人时的处理方式</label>
+                            <select class="form-select text-sm">
+                                <option value="parallel" ${nodeData.approvalMethod === 'parallel' ? 'selected' : ''}>会签（需所有处理人通过）</option>
+                                <option value="or" ${nodeData.approvalMethod === 'or' ? 'selected' : ''}>或签（任意一人通过即可）</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="property-section">
+                    <div class="section-title">
+                        <i data-lucide="clock" class="w-4 h-4"></i>
+                        超时设置
+                    </div>
+                    <div class="section-content">
+                        <div class="form-row">
+                            <label class="form-label">启用超时处理</label>
+                            <div class="flex items-center gap-2">
+                                <input type="checkbox" ${nodeData.timeout.enabled ? 'checked' : ''} onchange="toggleTimeout(this)">
+                                <span class="text-sm text-gray-600">${nodeData.timeout.enabled ? '已启用' : '未启用'}</span>
+                            </div>
+                        </div>
+                        ${nodeData.timeout.enabled ? `
+                        <div class="form-row">
+                            <label class="form-label">超时时间</label>
+                            <div class="flex items-center gap-2">
+                                <input type="number" class="form-input text-sm w-20" value="${nodeData.timeout.time}">
+                                <select class="form-select text-sm w-20">
+                                    <option value="hour" ${(nodeData.timeout.unit || 'hour') === 'hour' ? 'selected' : ''}>小时</option>
+                                    <option value="day" ${nodeData.timeout.unit === 'day' ? 'selected' : ''}>天</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label">超时处理</label>
+                            <select class="form-select text-sm">
+                                <option value="autoApprove" ${nodeData.timeout.action === 'autoApprove' ? 'selected' : ''}>自动通过</option>
+                                <option value="autoReject" ${nodeData.timeout.action === 'autoReject' ? 'selected' : ''}>自动驳回</option>
+                            </select>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+
+                <div class="property-section">
+                    <div class="section-title">
+                        <i data-lucide="shield" class="w-4 h-4"></i>
+                        兜底策略<span class="text-red-500 ml-0.5">*</span>
+                    </div>
+                    <div class="section-content">
+                        <div class="form-row">
+                            <label class="form-label">处理人为空时的处理</label>
+                            <select class="form-select text-sm">
+                                <option value="reject" ${nodeData.fallback === 'reject' ? 'selected' : ''}>自动驳回</option>
+                                <option value="autoApprove" ${nodeData.fallback === 'autoApprove' ? 'selected' : ''}>自动通过</option>
+                                <option value="transfer" ${nodeData.fallback === 'transfer' ? 'selected' : ''}>转交管理员</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-2 mt-4">
+                    <button class="btn-secondary flex-1 py-2 text-sm" onclick="deleteNode('${nodeId}')">
+                        <i data-lucide="trash-2" class="w-4 h-4 inline mr-1"></i>
+                        删除节点
+                    </button>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        // 获取处理人类型文本
+        function getApproverTypeText(type) {
+            const types = {
+                'role': '指定角色',
+                'member': '指定成员',
+                'dynamic': '动态计算'
+            };
+            return types[type] || '未知类型';
+        }
+
+        // 添加处理人
+        function addApprover(nodeId) {
+            // 保存当前操作的节点ID
+            const modal = document.getElementById('approverModal');
+            modal.dataset.currentNodeId = nodeId;
+            modal.removeAttribute('data-edit-index');
+
+            // 重置弹窗状态
+            document.querySelector('input[name="approverType"][value="dynamic"]').checked = true;
+            // 清空所有复选框
+            modal.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            // 清空搜索框
+            modal.querySelectorAll('input[type="text"]').forEach(input => input.value = '');
+
+            // 显示弹窗
+            document.getElementById('approverModal').classList.add('show');
+            updateApproverConfig();
+            lucide.createIcons();
+        }
+
+        // 关闭处理人弹窗
+        function closeApproverModal() {
+            document.getElementById('approverModal').classList.remove('show');
+        }
+
+        // 更新处理人配置区域
+        function updateApproverConfig() {
+            const type = document.querySelector('input[name="approverType"]:checked').value;
+
+            // 隐藏所有配置区域
+            document.getElementById('roleConfig').classList.add('hidden');
+            document.getElementById('memberConfig').classList.add('hidden');
+            document.getElementById('dynamicConfig').classList.remove('hidden');
+
+            // 根据类型显示对应配置
+            if (type === 'role') {
+                document.getElementById('roleConfig').classList.remove('hidden');
+                document.getElementById('dynamicConfig').classList.add('hidden');
+            } else if (type === 'member') {
+                document.getElementById('memberConfig').classList.remove('hidden');
+                document.getElementById('dynamicConfig').classList.add('hidden');
+            }
+        }
+
+        // 保存处理人
+        function saveApprover() {
+            const nodeId = document.getElementById('approverModal').dataset.currentNodeId;
+            const type = document.querySelector('input[name="approverType"]:checked').value;
+            const configDivs = { role: 'roleConfig', member: 'memberConfig', dynamic: 'dynamicConfig' };
+            const divId = configDivs[type];
+            if (!divId) return;
+
+            // 收集选中的复选框
+            const checkboxes = document.querySelectorAll(`#${divId} input[type="checkbox"]:checked`);
+            if (checkboxes.length === 0) {
+                alert('请至少选择一项');
+                return;
+            }
+            const selected = Array.from(checkboxes).map(cb => {
+                const label = cb.closest('label');
+                return {
+                    name: label.querySelector('.font-medium')?.textContent || '',
+                    desc: label.querySelector('.text-xs')?.textContent || ''
+                };
+            });
+
+            const displayName = selected.map(s => s.name).join('、');
+            const value = selected.map(s => s.name).join(',');
+
+            // 更新节点数据
+            if (nodes[nodeId] && nodes[nodeId].approvers) {
+                const editIndex = parseInt(document.getElementById('approverModal').dataset.editIndex);
+                const newApprover = { type, value: displayName, ruleValue: value, selected };
+
+                if (!isNaN(editIndex)) {
+                    nodes[nodeId].approvers[editIndex] = newApprover;
+                    document.getElementById('approverModal').removeAttribute('data-edit-index');
+                } else {
+                    nodes[nodeId].approvers.push(newApprover);
+                }
+
+                showApprovalNodeProperty(nodeId);
+                closeApproverModal();
+            }
+        }
+
+        // 编辑处理人
+        function editApprover(nodeId, index) {
+            const approver = nodes[nodeId]?.approvers?.[index];
+            if (!approver) return;
+
+            const modal = document.getElementById('approverModal');
+            modal.dataset.currentNodeId = nodeId;
+            modal.dataset.editIndex = index;
+
+            // 清空所有复选框
+            modal.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+
+            // 预填申请类型
+            const type = approver.type || 'dynamic';
+            document.querySelector(`input[name="approverType"][value="${type}"]`).checked = true;
+            updateApproverConfig();
+
+            // 预选复选框（根据之前保存的值）
+            const names = (approver.ruleValue || '').split(',').map(s => s.trim());
+            const configDivs = { role: 'roleConfig', member: 'memberConfig', dynamic: 'dynamicConfig' };
+            const divId = configDivs[type];
+            if (divId) {
+                document.querySelectorAll(`#${divId} input[type="checkbox"]`).forEach(cb => {
+                    const label = cb.closest('label');
+                    const nameEl = label?.querySelector('.font-medium');
+                    if (nameEl && names.includes(nameEl.textContent.trim())) {
+                        cb.checked = true;
+                    }
+                });
+            }
+
+            modal.classList.add('show');
+            lucide.createIcons();
+        }
+
+        // 删除处理人
+        function removeApprover(nodeId, index) {
+            if (confirm('确认删除此处理人吗？')) {
+                if (nodes[nodeId] && nodes[nodeId].approvers) {
+                    nodes[nodeId].approvers.splice(index, 1);
+                    showApprovalNodeProperty(nodeId);
+                }
+            }
+        }
+
+        // 切换超时设置
+        function toggleTimeout(checkbox) {
+            const nodeData = nodes[selectedNode];
+            if (nodeData) {
+                nodeData.timeout.enabled = checkbox.checked;
+                showApprovalNodeProperty(selectedNode);
+            }
+        }
+
+        // 显示添加节点菜单
+        function showAddNodeMenu(event, afterNodeId) {
+            event.stopPropagation();
+            document.getElementById('addNodeMenu')?.remove();
+            const menu = document.createElement('div');
+            menu.id = 'addNodeMenu';
+            menu.className = 'fixed bg-white rounded-xl shadow-2xl border border-gray-200 z-50 py-1 min-w-[160px]';
+            menu.style.left = event.clientX + 'px';
+            menu.style.top = event.clientY + 'px';
+            menu.innerHTML = `
+                <div class="px-3 py-2 text-xs text-gray-400 border-b border-gray-100">选择要添加的节点类型</div>
+                <button class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 flex items-center gap-2" onclick="document.getElementById('addNodeMenu')?.remove(); addApprovalNode('${afterNodeId}')">
+                    <i data-lucide="user-check" class="w-4 h-4 text-blue-500"></i>任务节点
+                </button>
+                <button class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 flex items-center gap-2" onclick="document.getElementById('addNodeMenu')?.remove(); addGatewayNodeAt('${afterNodeId}')">
+                    <i data-lucide="git-branch" class="w-4 h-4 text-orange-500"></i>网关节点
+                </button>
+                <div class="border-t border-gray-100"></div>
+                <button class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 flex items-center gap-2" onclick="document.getElementById('addNodeMenu')?.remove(); addFixedNode('start')">
+                    <i data-lucide="play" class="w-4 h-4 text-green-500"></i>开始节点
+                </button>
+                <button class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 flex items-center gap-2" onclick="document.getElementById('addNodeMenu')?.remove(); addFixedNode('end')">
+                    <i data-lucide="flag" class="w-4 h-4 text-gray-500"></i>结束节点
+                </button>
+            `;
+            document.body.appendChild(menu);
+            lucide.createIcons();
+            setTimeout(() => document.addEventListener('click', function closeMenu() { document.getElementById('addNodeMenu')?.remove(); document.removeEventListener('click', closeMenu); }), 10);
+        }
+
+        // 添加网关节点(指定位置)
+        function addGatewayNodeAt(afterNodeId) {
+            nodeCount++;
+            const canvas = document.getElementById('flowCanvas');
+            const afterNode = document.getElementById('node-' + afterNodeId);
+            const afterLeft = parseInt(afterNode.style.left);
+            const afterTop = parseInt(afterNode.style.top);
+            const newNodeLeft = afterLeft;
+            const newNodeTop = afterTop + 170;
+
+            const newNode = document.createElement('div');
+            newNode.id = 'node-' + nodeCount;
+            newNode.className = 'flow-node-wrapper';
+            newNode.style.left = newNodeLeft + 'px';
+            newNode.style.top = newNodeTop + 'px';
+            nodes[nodeCount] = { name: '网关节点', type: 'gateway', gatewayType: 'exclusive', desc: '' };
+            newNode.innerHTML = `
+                <div class="flow-node flow-node-gateway" onclick="selectNode('${nodeCount}')">
+                    <div class="node-icon"><i data-lucide="git-branch" class="w-5 h-5"></i></div>
+                    <div class="node-title">网关节点</div>
+                </div>
+                <button class="node-add-btn" onclick="event.stopPropagation(); showAddNodeMenu(event, '${nodeCount}')" title="添加节点">
+                    <span style="font-size:16px;line-height:1;">+</span>
+                </button>
+            `;
+            canvas.appendChild(newNode);
+            injectHotspots(newNode);
+            const nodeEl = newNode.querySelector('.flow-node');
+            nodeEl.addEventListener('mousedown', (e) => {
+                if (e.target.closest('.node-add-btn') || e.target.closest('.node-hotspot')) return;
+                pressStartX = e.clientX; pressStartY = e.clientY; hasMovedDuringPress = false;
+                const nid = newNode.id.replace('node-', '');
+                drawStartTimer = setTimeout(() => { if (!hasMovedDuringPress) { e.preventDefault(); startConnectionDraw(nid); } }, 300);
+                const onMove = () => { hasMovedDuringPress = true; clearTimeout(drawStartTimer); document.removeEventListener('mousemove', onMove); };
+                document.addEventListener('mousemove', onMove, { once: true });
+            });
+            nodeEl.addEventListener('click', () => { if (!hasMovedDuringPress) { clearTimeout(drawStartTimer); selectNode(nodeCount.toString()); } });
+            const wrapper = newNode;
+            let dragState = null;
+            wrapper.addEventListener('mousedown', (e) => {
+                if (e.target.closest('.node-hotspot') || e.target.closest('.node-add-btn')) return;
+                const rect = wrapper.getBoundingClientRect();
+                dragState = { wrapper, startX: e.clientX, startY: e.clientY, origLeft: parseInt(wrapper.style.left), origTop: parseInt(wrapper.style.top) };
+                const onMouseMove = (ev) => { if (!dragState) return; wrapper.style.left = (dragState.origLeft + ev.clientX - dragState.startX) + 'px'; wrapper.style.top = (dragState.origTop + ev.clientY - dragState.startY) + 'px'; updateAllConnectionLines(); };
+                const onMouseUp = () => { dragState = null; document.removeEventListener('mousemove', onMouseMove); document.removeEventListener('mouseup', onMouseUp); };
+                document.addEventListener('mousemove', onMouseMove); document.addEventListener('mouseup', onMouseUp);
+            });
+            lucide.createIcons();
+        }
+
+        // 添加固定节点(开始/结束)
+        function addFixedNode(type) {
+            nodeCount++;
+            const newNodeId = nodeCount;
+            const canvas = document.getElementById('flowCanvas');
+            const nw = document.createElement('div');
+            nw.id = 'node-' + newNodeId;
+            nw.className = 'flow-node-wrapper';
+            nw.style.left = '310px';
+            nw.style.top = type === 'start' ? '40px' : '760px';
+
+            // 存储在 nodes 对象中标记类型
+            nodes[newNodeId] = { name: type === 'start' ? '开始' : '结束', type: type, desc: type === 'start' ? '系统自动触发，申请人提交申请后进入流程' : '流程结束，触发回调' };
+
+            nw.innerHTML = `<div class="flow-node flow-node-${type}" onclick="selectNode('${newNodeId}')">
+                <div class="node-icon"><i data-lucide="${type === 'start' ? 'play' : 'flag'}" class="w-5 h-5"></i></div>
+                <div class="node-title">${type === 'start' ? '开始' : '结束'}</div>
+            </div>
+            ${type === 'start' ? '<button class="node-add-btn" onclick="event.stopPropagation(); showAddNodeMenu(event, \'' + newNodeId + '\')" title="添加节点"><span style="font-size:16px;line-height:1;">+</span></button>' : ''}
+            <button class="node-delete-btn" onclick="event.stopPropagation(); deleteNode(\'' + newNodeId + '\')" title="删除节点"><i data-lucide="trash-2" class="w-3 h-3"></i></button>`;
+            canvas.appendChild(nw);
+            if (type === 'start') injectHotspots(nw);
+            lucide.createIcons();
+        }
+
+        // 添加任务节点
+        function addApprovalNode(afterNodeId) {
+            if (!afterNodeId) {
+                const startNodes = Object.keys(nodes).filter(k => nodes[k].type === 'start');
+                afterNodeId = startNodes.length > 0 ? startNodes[0] : 'start';
+            }
+            nodeCount++;
+            const canvas = document.getElementById('flowCanvas');
+            const afterNode = document.getElementById('node-' + afterNodeId);
+            const afterLeft = parseInt(afterNode.style.left);
+            const afterTop = parseInt(afterNode.style.top);
+
+            // 新节点放在当前节点下方
+            const newNodeLeft = afterLeft;
+            const newNodeTop = afterTop + 170;
+
+            const newNode = document.createElement('div');
+            newNode.id = 'node-' + nodeCount;
+            newNode.className = 'flow-node-wrapper';
+            newNode.style.left = newNodeLeft + 'px';
+            newNode.style.top = newNodeTop + 'px';
+
+            // 初始化节点数据
+            nodes[nodeCount] = {
+                name: '任务节点',
+                approvers: [{ type: 'dynamic', value: '申请人直接主管' }],
+                approvalMethod: 'parallel',
+                timeout: { enabled: false, time: 24, unit: 'hour', action: 'autoApprove' },
+                fallback: 'reject'
+            };
+
+            newNode.innerHTML = `
+                <div class="flow-node flow-node-approval" onclick="selectNode('${nodeCount}')">
+                    <div class="node-icon">
+                        <i data-lucide="user-check" class="w-5 h-5"></i>
+                    </div>
+                    <div class="node-title">任务节点</div>
+                </div>
+                <button class="node-add-btn" onclick="event.stopPropagation(); showAddNodeMenu(event, '${nodeCount}')" title="添加节点">
+                    <span style="font-size:16px;line-height:1;">+</span>
+                </button>
+            `;
+
+            canvas.appendChild(newNode);
+
+            // 创建连接线
+            const connId = `${afterNodeId}-${nodeCount}`;
+            connections[connId] = { type: 'default', conditions: [], logicOperator: 'and' };
+
+            // 计算坐标
+            const afterCenterX = afterLeft + 110; // node width 220, center at 110
+            const afterBottom = afterTop + 100;
+            const newTop = newNodeTop;
+            const x1 = afterCenterX;
+            const y1 = afterBottom;
+            const x2 = afterCenterX;
+            const y2 = newTop;
+
+            // 添加 SVG 连接线
+            const svg = canvas.querySelector('.connection-line');
+            const connGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            connGroup.setAttribute('class', 'connection-group');
+            connGroup.setAttribute('id', 'conn-' + connId);
+            connGroup.setAttribute('onclick', `selectConnection('${connId}')`);
+            connGroup.setAttribute('style', 'cursor:pointer; pointer-events: auto;');
+
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('id', 'line-' + connId);
+            line.setAttribute('x1', x1);
+            line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2);
+            line.setAttribute('y2', y2);
+            line.setAttribute('stroke', '#8C8C8C');
+            line.setAttribute('stroke-width', '3');
+            line.setAttribute('marker-end', 'url(#arrowhead-gray)');
+
+            const hitArea = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            hitArea.setAttribute('x1', x1);
+            hitArea.setAttribute('y1', y1);
+            hitArea.setAttribute('x2', x2);
+            hitArea.setAttribute('y2', y2);
+            hitArea.setAttribute('stroke', 'transparent');
+            hitArea.setAttribute('stroke-width', '24');
+
+            connGroup.appendChild(line);
+            connGroup.appendChild(hitArea);
+            svg.appendChild(connGroup);
+
+            // 注入热点
+            injectHotspots(newNode);
+
+            // 设置统一 mousedown：短按拖拽 / 长按连线
+            const nodeEl = newNode.querySelector('.flow-node');
+            nodeEl.addEventListener('mousedown', (e) => {
+                if (e.target.closest('.node-add-btn') || e.target.closest('.node-hotspot')) return;
+                pressStartX = e.clientX;
+                pressStartY = e.clientY;
+                hasMovedDuringPress = false;
+                const nid = newNode.id.replace('node-', '');
+                drawStartTimer = setTimeout(() => {
+                    if (!hasMovedDuringPress) {
+                        e.preventDefault();
+                        startConnectionDraw(nid);
+                    }
+                }, 300);
+
+                const rect = newNode.getBoundingClientRect();
+                dragState = {
+                    wrapper: newNode,
+                    startX: e.clientX,
+                    startY: e.clientY,
+                    origLeft: parseInt(newNode.style.left),
+                    origTop: parseInt(newNode.style.top),
+                    activated: false
+                };
+            });
+
+            // 自动选中新节点
+            selectNode(nodeCount.toString());
+        }
+
+        // 保存节点属性
+        function saveNodeProperty(nodeId) {
+            alert('保存节点配置\n\n节点ID：' + nodeId);
+        }
+
+        // 添加网关节点
+        function addGatewayNode() {
+            nodeCount++;
+            const canvas = document.getElementById('flowCanvas');
+            const canvasRect = canvas.getBoundingClientRect();
+            const cx = canvas.scrollLeft + canvasRect.width / 2 - 110;
+            const cy = canvas.scrollTop + 200;
+
+            const newNode = document.createElement('div');
+            newNode.id = 'node-' + nodeCount;
+            newNode.className = 'flow-node-wrapper';
+            newNode.style.left = cx + 'px';
+            newNode.style.top = cy + 'px';
+
+            nodes[nodeCount] = {
+                name: '网关节点',
+                type: 'gateway',
+                gatewayType: 'exclusive',
+                desc: ''
+            };
+
+            newNode.innerHTML = `
+                <div class="flow-node flow-node-gateway" onclick="selectNode('${nodeCount}')">
+                    <div class="node-icon"><i data-lucide="git-branch" class="w-5 h-5"></i></div>
+                    <div class="node-title">网关节点</div>
+                </div>
+                <button class="node-add-btn" onclick="event.stopPropagation(); showAddNodeMenu(event, '${nodeCount}')" title="添加节点">
+                    <span style="font-size:16px;line-height:1;">+</span>
+                </button>
+            `;
+
+            canvas.appendChild(newNode);
+            injectHotspots(newNode);
+
+            const nodeEl = newNode.querySelector('.flow-node');
+            nodeEl.addEventListener('mousedown', (e) => {
+                if (e.target.closest('.node-add-btn') || e.target.closest('.node-hotspot')) return;
+                pressStartX = e.clientX; pressStartY = e.clientY; hasMovedDuringPress = false;
+                const nid = newNode.id.replace('node-', '');
+                drawStartTimer = setTimeout(() => { if (!hasMovedDuringPress) { e.preventDefault(); startConnectionDraw(nid); } }, 300);
+                const onMove = () => { hasMovedDuringPress = true; clearTimeout(drawStartTimer); document.removeEventListener('mousemove', onMove); };
+                document.addEventListener('mousemove', onMove, { once: true });
+            });
+            nodeEl.addEventListener('click', () => { if (!hasMovedDuringPress) { clearTimeout(drawStartTimer); selectNode(nodeCount.toString()); } });
+
+            const wrapper = newNode;
+            let dragState = null;
+            wrapper.addEventListener('mousedown', (e) => {
+                if (e.target.closest('.node-hotspot') || e.target.closest('.node-add-btn')) return;
+                const rect = wrapper.getBoundingClientRect();
+                dragState = { wrapper, startX: e.clientX, startY: e.clientY, origLeft: parseInt(wrapper.style.left), origTop: parseInt(wrapper.style.top) };
+                const onMouseMove = (ev) => {
+                    if (!dragState) return;
+                    const dx = ev.clientX - dragState.startX, dy = ev.clientY - dragState.startY;
+                    wrapper.style.left = (dragState.origLeft + dx) + 'px';
+                    wrapper.style.top = (dragState.origTop + dy) + 'px';
+                    updateAllConnectionLines();
+                };
+                const onMouseUp = () => { dragState = null; document.removeEventListener('mousemove', onMouseMove); document.removeEventListener('mouseup', onMouseUp); };
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
+            });
+
+            lucide.createIcons();
+        }
+
+        // 显示网关节点属性
+        function showGatewayNodeProperty(nodeId) {
+            void 0; var _pt = document.getElementById('propertyTitle'); if (_pt) _pt.textContent = '节点属性';
+            const gd = nodes[nodeId] || { name: '网关节点', gatewayType: 'exclusive', desc: '' };
+            const content = document.getElementById('propertyContent');
+            content.innerHTML = `
+                <div class="property-section">
+                    <div class="section-title"><i data-lucide="git-branch" class="w-4 h-4"></i>基本信息</div>
+                    <div class="section-content">
+                        <div class="form-row">
+                            <label class="form-label required">节点名称</label>
+                            <input type="text" class="form-input text-sm" value="${gd.name}" placeholder="请输入节点名称">
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label">节点说明</label>
+                            <input type="text" class="form-input text-sm" value="${gd.desc || ''}" placeholder="请输入节点说明">
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label">节点类型</label>
+                            <span class="inline-block px-2 py-1 text-xs rounded bg-orange-100 text-orange-700">网关节点</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="property-section">
+                    <div class="section-title"><i data-lucide="sliders" class="w-4 h-4"></i>网关类型<span class="text-red-500 ml-0.5">*</span></div>
+                    <div class="section-content">
+                        <div class="form-row">
+                            <label class="flex items-center gap-3 cursor-pointer mb-2">
+                                <input type="radio" name="gatewayType_${nodeId}" value="exclusive" ${gd.gatewayType === 'exclusive' ? 'checked' : ''}>
+                                <div><span class="text-sm text-gray-700 font-medium">互斥网关</span><span class="text-xs text-gray-400 ml-2">只执行第一个条件为true的分支</span></div>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer mb-2">
+                                <input type="radio" name="gatewayType_${nodeId}" value="inclusive" ${gd.gatewayType === 'inclusive' ? 'checked' : ''}>
+                                <div><span class="text-sm text-gray-700 font-medium">包容网关</span><span class="text-xs text-gray-400 ml-2">执行所有条件为true的分支</span></div>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="radio" name="gatewayType_${nodeId}" value="parallel" ${gd.gatewayType === 'parallel' ? 'checked' : ''}>
+                                <div><span class="text-sm text-gray-700 font-medium">并行网关</span><span class="text-xs text-gray-400 ml-2">无条件执行所有分支</span></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex gap-2 mt-4">
+                    <button class="btn-secondary flex-1 py-2 text-sm" onclick="deleteNode('${nodeId}')">
+                        <i data-lucide="trash-2" class="w-4 h-4 inline mr-1"></i>删除节点
+                    </button>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        // 删除节点
+        function deleteNode(nodeId) {
+            if (confirm('确认删除此节点吗？')) {
+                const node = document.getElementById('node-' + nodeId);
+                if (node) {
+                    node.remove();
+                    selectedNode = null;
+                    showEmptyProperty();
+                    updateConnections();
+                }
+            }
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化预置连接线数据
+            ['start-1', '1-2', '3-end', '4-end'].forEach(id => {
+                connections[id] = { type: 'default', conditions: [], logicOperator: 'and' };
+            });
+            connections['5-3'] = { type: 'custom', conditions: [{ field: 'impact_scope', operator: 'equals', value: '部门级' }], logicOperator: 'and' };
+            connections['5-4'] = { type: 'custom', conditions: [{ field: 'impact_scope', operator: 'equals', value: '公司级' }], logicOperator: 'and' };
+
+            // 点击画布空白处取消选择
+            document.getElementById('canvasContainer')?.addEventListener('click', function(e) {
+                if (e.target === this || e.target.id === 'flowCanvas') {
+                    selectedNode = null;
+                    selectedConnection = null;
+                    document.querySelectorAll('.flow-node').forEach(n => n.classList.remove('selected'));
+                    document.querySelectorAll('.flow-node-wrapper').forEach(w => w.classList.remove('selected'));
+                    document.querySelectorAll('.connection-group').forEach(g => g.classList.remove('selected'));
+                    resetAllLines();
+                    document.getElementById('propTabNode').textContent = '节点属性';
+                    switchPropertyTab('node');
+                    showEmptyProperty();
+                }
+            });
+
+            // 处理人类型切换事件
+            document.querySelectorAll('input[name="approverType"]').forEach(radio => {
+                radio.addEventListener('change', updateApproverConfig);
+            });
+
+            // 动态规则切换事件
+            document.getElementById('dynamicRule')?.addEventListener('change', function() {
+                const descriptions = {
+                    'org_admin': '处理人将自动设置为申请人所属组织的管理员',
+                    'parent_org_admin': '处理人将自动设置为申请人上级组织的管理员',
+                    'parent_parent_org_admin': '处理人将自动设置为申请人上上级组织的管理员',
+                    'root_org_admin': '处理人将自动设置为申请人根组织的管理员',
+                    'resource_owner': '处理人将自动设置为资源的Owner',
+                    'resource_creator': '处理人将自动设置为资源的创建者',
+                    'resource_manager': '处理人将自动设置为资源的管理者'
+                };
+                document.getElementById('dynamicRuleDesc').textContent = descriptions[this.value] || '';
+            });
+        });
+
+        // 保存草稿
+        function saveDraft() {
+            const name = document.getElementById('templateName')?.value || '';
+            if (!name) {
+                alert('请至少填写模板名称后再保存草稿');
+                return;
+            }
+            alert('草稿已保存\n\n模板名称：' + name);
+        }
+
+        // 发布模板
+        function publishTemplate() {
+            const name = document.getElementById('templateName')?.value || '';
+            if (!name) {
+                alert('请填写模板名称后再保存并启用');
+                return;
+            }
+
+            if (confirm('确认保存并启用此模板吗？\n\n启用后即可使用该模板创建审批流程。')) {
+                alert('模板已保存并启用！\n\n正在跳转到模板管理页面...');
+                setTimeout(() => {
+                    window.location.href = 'template-management.html';
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>
