@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>申请列表 - 流程中心</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@1.23.0/dist/umd/lucide.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+        .nav-item.active {
+            background-color: #E6F0FF;
+            color: #1677FF;
+        }
+        .tab-item.active {
+            background-color: #1677FF;
+            color: white;
+        }
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .status-draft {
+            background-color: #F0F7FF;
+            color: #1677FF;
+            border: 1px solid #91CAFF;
+        }
+        .status-processing {
+            background-color: #FFF7E6;
+            color: #FA8C16;
+            border: 1px solid #FFD591;
+        }
+        .status-approved {
+            background-color: #F6FFED;
+            color: #52C41A;
+            border: 1px solid #B7EB8F;
+        }
+        .status-rejected {
+            background-color: #FFF2F0;
+            color: #F5222D;
+            border: 1px solid #FFCCC7;
+        }
+        .status-cancelled {
+            background-color: #F5F5F5;
+            color: #8C8C8C;
+            border: 1px solid #D9D9D9;
+        }
+        .priority-badge {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .priority-urgent {
+            background-color: #FFF1F0;
+            color: #F5222D;
+            border: 1px solid #FFCCC7;
+        }
+        .priority-high {
+            background-color: #FFF7E6;
+            color: #FA8C16;
+            border: 1px solid #FFD591;
+        }
+        .priority-normal {
+            background-color: #F0F7FF;
+            color: #1677FF;
+            border: 1px solid #91CAFF;
+        }
+        .priority-low {
+            background-color: #F5F5F5;
+            color: #8C8C8C;
+            border: 1px solid #D9D9D9;
+        }
+        .table-row:hover {
+            background-color: #F5F5F5;
+        }
+        .table-row.selected {
+            background-color: #E6F0FF;
+        }
+        .timeout-text {
+            color: #F5222D;
+            font-weight: 500;
+        }
+        .timeout-text::before {
+            content: '⚠️ ';
+            margin-right: 2px;
+        }
+        .btn-primary {
+            background-color: #1677FF;
+            color: white;
+            transition: all 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #4096FF;
+        }
+        .btn-primary:disabled {
+            background-color: #D9D9D9;
+            color: #8C8C8C;
+            cursor: not-allowed;
+        }
+        .btn-secondary {
+            background-color: white;
+            color: #1677FF;
+            border: 1px solid #D9D9D9;
+            transition: all 0.2s;
+        }
+        .btn-secondary:hover {
+            border-color: #1677FF;
+            color: #1677FF;
+        }
+        .filter-select {
+            border: 1px solid #D9D9D9;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .filter-select:hover {
+            border-color: #1677FF;
+        }
+        .filter-select:focus {
+            outline: none;
+            border-color: #1677FF;
+            box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.1);
+        }
+        .batch-bar {
+            transition: all 0.3s ease;
+        }
+        .batch-bar.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        /* 表格冻结列样式 */
+        .sticky-col {
+            position: sticky;
+            background: white;
+            z-index: 10;
+        }
+        .sticky-col-left {
+            position: sticky;
+            left: 0;
+            background: white;
+            z-index: 10;
+        }
+        .sticky-col-left::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 1px;
+            background-color: #E5E7EB;
+        }
+        .sticky-col-right {
+            position: sticky;
+            right: 0;
+            background: white;
+            z-index: 10;
+        }
+        .sticky-col-right::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 1px;
+            background-color: #E5E7EB;
+        }
+        .thead-sticky {
+            position: sticky;
+            top: 0;
+            background: #F9FAFB;
+            z-index: 20;
+        }
+        .thead-sticky th {
+            background: #F9FAFB;
+        }
+        /* 表格列宽 */
+        .col-checkbox {
+            width: 50px;
+            min-width: 50px;
+        }
+        .col-id {
+            width: 140px;
+            min-width: 140px;
+        }
+        .col-name {
+            width: 250px;
+            min-width: 200px;
+        }
+        .col-type {
+            width: 120px;
+            min-width: 100px;
+        }
+        .col-action-type {
+            width: 150px;
+            min-width: 150px;
+        }
+        .col-priority {
+            width: 100px;
+            min-width: 80px;
+        }
+        .col-status {
+            width: 110px;
+            min-width: 110px;
+        }
+        .applications-table {
+            min-width: 1810px;
+            table-layout: fixed;
+        }
+        .applications-table th,
+        .applications-table td {
+            vertical-align: middle;
+        }
+        .applications-table .col-action-type,
+        .applications-table .col-status {
+            white-space: nowrap;
+        }
+        .col-handler {
+            width: 140px;
+            min-width: 120px;
+        }
+        .col-wait-time {
+            width: 160px;
+            min-width: 140px;
+        }
+        .col-applicant {
+            width: 100px;
+            min-width: 80px;
+        }
+        .col-time {
+            width: 160px;
+            min-width: 140px;
+        }
+        .col-action {
+            width: 150px;
+            min-width: 130px;
+        }
+        /* 弹窗遮罩 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-overlay.hidden {
+            display: none;
+        }
+        .modal-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            width: 560px;
+            max-height: 80vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .result-summary {
+            padding: 16px 24px;
+            font-size: 15px;
+            font-weight: 500;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+        .result-summary.success-partial {
+            background-color: #FFF7E6;
+            color: #D46B08;
+        }
+        .result-summary.all-success {
+            background-color: #F6FFED;
+            color: #389E0D;
+        }
+        .result-summary.all-fail {
+            background-color: #FFF2F0;
+            color: #CF1322;
+        }
+        .failure-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .failure-table th {
+            padding: 8px 12px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: #8C8C8C;
+            background: #FAFAFA;
+            border-bottom: 1px solid #F0F0F0;
+        }
+        .failure-table td {
+            padding: 10px 12px;
+            font-size: 13px;
+            color: #595959;
+            border-bottom: 1px solid #F5F5F5;
+        }
+        .failure-table .req-id {
+            font-family: monospace;
+            color: #1677FF;
+            white-space: nowrap;
+        }
+        .page-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #D9D9D9;
+            border-radius: 6px;
+            background: white;
+            color: #595959;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .page-btn:hover {
+            border-color: #1677FF;
+            color: #1677FF;
+        }
+        .page-btn.active {
+            background: #1677FF;
+            border-color: #1677FF;
+            color: white;
+        }
+        .page-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.4;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="flex h-screen">
+        <!-- 左侧导航菜单 -->
+        <aside class="w-56 bg-white border-r border-gray-200 flex flex-col">
+            <!-- Logo区 -->
+            <div class="p-4 border-b border-gray-200">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <i data-lucide="layout-grid" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <span class="font-semibold text-lg text-gray-800">GienBI</span>
+                </div>
+            </div>
+
+            <!-- 菜单列表 -->
+            <nav class="flex-1 py-4 overflow-y-auto">
+                <!-- 其他菜单收起 -->
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                        <span>数据分析</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 ml-auto"></i>
+                    </div>
+                </div>
+
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="tag" class="w-4 h-4"></i>
+                        <span>标签</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 ml-auto"></i>
+                    </div>
+                </div>
+
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="trending-up" class="w-4 h-4"></i>
+                        <span>指标</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 ml-auto"></i>
+                    </div>
+                </div>
+
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="settings" class="w-4 h-4"></i>
+                        <span>系统管理</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 ml-auto"></i>
+                    </div>
+                </div>
+
+                <!-- 流程中心（展开） -->
+                <div class="px-3 mb-2">
+                    <div class="bg-blue-50 rounded-lg p-2">
+                        <div class="flex items-center gap-2 text-gray-700 font-medium text-sm py-2 px-3">
+                            <i data-lucide="clipboard-list" class="w-4 h-4"></i>
+                            <span>流程中心</span>
+                        </div>
+                        <div class="ml-6 mt-1 space-y-1">
+                            <a href="my-applications2.html" class="nav-item active flex items-center gap-2 text-sm py-2 px-3 rounded-lg cursor-pointer">
+                                <i data-lucide="file-text" class="w-4 h-4"></i>
+                                <span>申请列表</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="store" class="w-4 h-4"></i>
+                        <span>模板市场</span>
+                    </div>
+                </div>
+
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="archive" class="w-4 h-4"></i>
+                        <span>管理中心</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 ml-auto"></i>
+                    </div>
+                </div>
+
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="scroll-text" class="w-4 h-4"></i>
+                        <span>审计日志</span>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- 用户信息 -->
+            <div class="p-4 border-t border-gray-200">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-blue-500 rounded-full flex items-center justify-center text-white font-medium">
+                        A
+                    </div>
+                    <div class="flex-1">
+                        <div class="text-sm font-medium text-gray-800">管理员</div>
+                        <div class="text-xs text-gray-500">admin@qq.com</div>
+                    </div>
+                    <i data-lucide="chevron-left" class="w-5 h-5 text-gray-400 cursor-pointer hover:text-gray-600"></i>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="flex-1 flex flex-col bg-gray-50 overflow-hidden">
+            <!-- 顶部导航栏 -->
+            <header class="bg-white border-b border-gray-200 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2 text-sm">
+                        <a href="#" class="text-gray-500 hover:text-gray-700">流程中心</a>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+                        <span class="text-gray-800 font-medium">申请列表</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <a href="application-create.html" class="btn-primary flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                            <span>发起申请</span>
+                        </a>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 内容区 -->
+            <div class="flex-1 overflow-auto p-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200">
+                    <!-- Tab筛选区 -->
+                    <div class="px-6 pt-6">
+                        <div class="flex items-center gap-2">
+                            <button class="tab-item active px-4 py-2 rounded-lg text-sm font-medium transition" data-tab="all">
+                                全部 <span class="ml-1">(7)</span>
+                            </button>
+                            <button class="tab-item px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition" data-tab="draft">
+                                草稿 <span class="ml-1">(2)</span>
+                            </button>
+                            <button class="tab-item px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition" data-tab="processing">
+                                审批中 <span class="ml-1">(2)</span>
+                            </button>
+                            <button class="tab-item px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition" data-tab="approved">
+                                已通过 <span class="ml-1">(1)</span>
+                            </button>
+                            <button class="tab-item px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition" data-tab="rejected">
+                                已驳回 <span class="ml-1">(1)</span>
+                            </button>
+                            <button class="tab-item px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition" data-tab="cancelled">
+                                已撤销 <span class="ml-1">(1)</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 批量操作栏 -->
+                    <div id="batchBar" class="batch-bar hidden mx-6 mt-4 px-4 py-3 bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <span class="text-sm text-gray-700">已选择 <span id="selectedCount" class="font-semibold text-blue-600">0</span> 项</span>
+                            <button onclick="clearSelection()" class="text-sm text-gray-500 hover:text-gray-700">清空选择</button>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button id="batchSubmitBtn" onclick="batchSubmit()" class="btn-primary px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2" disabled>
+                                <i data-lucide="send" class="w-4 h-4"></i>
+                                批量提交
+                            </button>
+                            <button id="batchDeleteBtn" onclick="batchDelete()" class="btn-secondary px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2" disabled>
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                批量删除
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 筛选区 -->
+                    <div class="px-6 py-4 border-b border-gray-100">
+                        <div class="flex items-center gap-3 flex-wrap">
+                            <div class="w-48">
+                                <input type="text" placeholder="搜索申请单号或申请单名称" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                            </div>
+                            <select class="filter-select">
+                                <option>全部申请类型</option>
+                                <option>资源发布</option>
+                                <option>资源下架</option>
+                                <option>资源删除</option>
+                                <option>资源导入</option>
+                                <option>资源导出</option>
+                                <option>资源权限申请</option>
+                                <option>功能权限申请</option>
+                                <option>数据入库</option>
+                                <option>数据导入</option>
+                                <option>数据导出</option>
+                                <option>数据变更</option>
+                            </select>
+                            <select class="filter-select">
+                                <option>全部资源类型</option>
+                                <option>仪表板</option>
+                                <option>报表分析</option>
+                                <option>电子表格</option>
+                                <option>分析报告</option>
+                                <option>目标管理</option>
+                                <option>指标分析</option>
+                                <option>指标列表</option>
+                                <option>API服务</option>
+                                <option>数据集</option>
+                                <option>数据源</option>
+                                <option>数据填报</option>
+                                <option>语义模型</option>
+                                <option>维表管理</option>
+                                <option>字典管理</option>
+                                <option>监控预警</option>
+                                <option>任务管理</option>
+                                <option>资源迁移</option>
+                                <option>问答助理</option>
+                                <option>移动端应用</option>
+                                <option>PC端应用</option>
+                            </select>
+                            <select class="filter-select">
+                                <option>全部优先级</option>
+                                <option>紧急</option>
+                                <option>高</option>
+                                <option>普通</option>
+                                <option>低</option>
+                            </select>
+                            <select class="filter-select" id="timeFilter" onchange="toggleCustomDateRange()">
+                                <option>全部时间</option>
+                                <option>今天</option>
+                                <option>本周</option>
+                                <option>本月</option>
+                                <option>近三月</option>
+                                <option>自定义</option>
+                            </select>
+                            <!-- 自定义日期范围选择器 -->
+                            <div id="customDateRange" class="hidden flex items-center gap-2">
+                                <input type="datetime-local" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                                <span class="text-gray-500">至</span>
+                                <input type="datetime-local" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 数据表格 -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full applications-table">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="thead-sticky sticky-col-left col-checkbox px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="left: 0;">
+                                        <input type="checkbox" id="selectAll" onchange="toggleSelectAll()" class="w-4 h-4 rounded border-gray-300">
+                                    </th>
+                                    <th class="thead-sticky sticky-col-left col-id px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="left: 50px;">申请单号</th>
+                                    <th class="thead-sticky col-name px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">申请单名称</th>
+                                    <th class="thead-sticky col-action-type px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">申请类型</th>
+                                    <th class="thead-sticky col-type px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">资源类型</th>
+                                    <th class="thead-sticky col-priority px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">优先级</th>
+                                    <th class="thead-sticky col-status px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">当前状态</th>
+                                    <th class="thead-sticky col-handler px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">当前节点处理人</th>
+                                    <th class="thead-sticky col-wait-time px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">当前节点等待时长</th>
+                                    <th class="thead-sticky col-applicant px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">申请人</th>
+                                    <th class="thead-sticky col-time px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">申请时间</th>
+                                    <th class="thead-sticky col-time px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">更新时间</th>
+                                    <th class="thead-sticky sticky-col-right col-action px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="applicationTableBody" class="divide-y divide-gray-100">
+                                <!-- 草稿状态1 -->
+                                <tr class="table-row transition" data-status="draft" data-can-check="true">
+                                    <td class="sticky-col-left col-checkbox px-4 py-3" style="left: 0;">
+                                        <input type="checkbox" class="row-checkbox w-4 h-4 rounded border-gray-300" onchange="updateBatchBar()">
+                                    </td>
+                                    <td class="sticky-col-left col-id px-4 py-3" style="left: 50px;">
+                                        <span class="text-sm font-medium text-blue-600">REQ-2026006</span>
+                                    </td>
+                                    <td class="col-name px-4 py-3">
+                                        <div class="text-sm text-gray-900">移动端应用C发布申请</div>
+                                    </td>
+                                    <td class="col-action-type px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        资源发布
+                                    </td>
+                                    <td class="col-type px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        移动端应用
+                                    </td>
+                                    <td class="col-priority px-4 py-3 whitespace-nowrap">
+                                        <span class="priority-badge priority-normal">普通</span>
+                                    </td>
+                                    <td class="col-status px-4 py-3 whitespace-nowrap">
+                                        <span class="status-badge status-draft">草稿</span>
+                                    </td>
+                                    <td class="col-handler px-4 py-3 whitespace-nowrap text-sm text-gray-400">
+                                        -
+                                    </td>
+                                    <td class="col-wait-time px-4 py-3 whitespace-nowrap text-sm text-gray-400">
+                                        -
+                                    </td>
+                                    <td class="col-applicant px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        张三（zhangsan）
+                                    </td>
+                                    <td class="col-time px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        2026-07-01 16:00
+                                    </td>
+                                    <td class="col-time px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        2026-07-01 16:00
+                                    </td>
+                                    <td class="sticky-col-right col-action px-4 py-3 whitespace-nowrap text-right">
+                                        <a href="detail2.html?id=REQ-2026006" class="text-blue-600 hover:text-blue-800 text-sm font-medium">详情</a>
+                                        <button onclick="submitDraft('REQ-2026006')" class="ml-3 text-green-600 hover:text-green-800 text-sm font-medium">提交</button>
+                                        <button class="ml-3 text-red-600 hover:text-red-800 text-sm font-medium">删除</button>
+                                    </td>
+                                </tr>
+                                <!-- 草稿状态2 -->
+                                <tr class="table-row transition" data-status="draft" data-can-check="true">
+                                    <td class="sticky-col-left col-checkbox px-4 py-3" style="left: 0;">
+                                        <input type="checkbox" class="row-checkbox w-4 h-4 rounded border-gray-300" onchange="updateBatchBar()">
+                                    </td>
+                                    <td class="sticky-col-left col-id px-4 py-3" style="left: 50px;">
+                                        <span class="text-sm font-medium text-blue-600">REQ-2026007</span>
+                                    </td>
+                                    <td class="col-name px-4 py-3">
+                                        <div class="text-sm text-gray-900">数据变更申请</div>
+                                    </td>
+                                    <td class="col-action-type px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        数据变更
+                                    </td>
+                                    <td class="col-type px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        电子表格
+                                    </td>
+                                    <td class="col-priority px-4 py-3 whitespace-nowrap">
+                                        <span class="priority-badge priority-low">低</span>
+                                    </td>
+                                    <td class="col-status px-4 py-3 whitespace-nowrap">
+                                        <span class="status-badge status-draft">草稿</span>
+                                    </td>
+                                    <td class="col-handler px-4 py-3 whitespace-nowrap text-sm text-gray-400">
+                                        -
+                                    </td>
+                                    <td class="col-wait-time px-4 py-3 whitespace-nowrap text-sm text-gray-400">
+                                        -
+                                    </td>
+                                    <td class="col-applicant px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        李四海（lisihai）
+                                    </td>
+                                    <td class="col-time px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        2026-07-01 17:30
+                                    </td>
+                                    <td class="col-time px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        2026-07-01 17:30
+                                    </td>
+                                    <td class="sticky-col-right col-action px-4 py-3 whitespace-nowrap text-right">
+                                        <a href="detail2.html?id=REQ-2026007" class="text-blue-600 hover:text-blue-800 text-sm font-medium">详情</a>
+                                        <button onclick="submitDraft('REQ-2026007')" class="ml-3 text-green-600 hover:text-green-800 text-sm font-medium">提交</button>
+                                        <button class="ml-3 text-red-600 hover:text-red-800 text-sm font-medium">删除</button>
+                                    </td>
+                                </tr>
+                                <!-- 审批中1 - 超时 -->
+                                <tr class="table-row transition" data-status="processing">
+                                    <td class="sticky-col-left col-checkbox px-4 py-3" style="left: 0;"></td>
+                                    <td class="sticky-col-left col-id px-4 py-3" style="left: 50px;">
+                                        <span class="text-sm font-medium text-blue-600">REQ-2026001</span>
+                                    </td>
+                                    <td class="col-name px-4 py-3">
+                                        <div class="text-sm text-gray-900">仪表板A发布审批</div>
+                                    </td>
+                                    <td class="col-action-type px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        资源发布
+                                    </td>
+                                    <td class="col-type px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        仪表板
+                                    </td>
+                                    <td class="col-priority px-4 py-3 whitespace-nowrap">
+                                        <span class="priority-badge priority-high">高</span>
+                                    </td>
+                                    <td class="col-status px-4 py-3 whitespace-nowrap">
+                                        <span class="status-badge status-processing">审批中</span>
+                                    </td>
+                                    <td class="col-handler px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        李四海（lisihai）
+                                    </td>
+                                    <td class="col-wait-time px-4 py-3 whitespace-nowrap">
+                                        <span class="timeout-text">25小时</span>
+                                    </td>
+                                    <td class="col-applicant px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        张三（zhangsan）
+                                    </td>
+                                    <td class="col-time px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        2026-06-30 09:00
+                                    </td>
+                                    <td class="col-time px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        2026-06-30 10:30
+                                    </td>
+                                    <td class="sticky-col-right col-action px-4 py-3 whitespace-nowrap text-right">
+                                        <a href="detail2.html?id=REQ-2026001" class="text-blue-600 hover:text-blue-800 text-sm font-medium">详情</a>
+                                        <button class="ml-3 text-orange-600 hover:text-orange-800 text-sm font-medium">撤销</button>
+                                    </td>
+                                </tr>
+                                <!-- 审批中2 -->
+                                <tr class="table-row transition" data-status="processing">
+                                    <td class="sticky-col-left col-checkbox px-4 py-3" style="left: 0;"></td>
+                                    <td class="sticky-col-left col-id px-4 py-3" style="left: 50px;">
+                                        <span class="text-sm font-medium text-blue-600">REQ-2026005</span>
+                                    </td>
+                                    <td class="col-name px-4 py-3">
+                                        <div class="text-sm text-gray-900">报表B导出申请</div>
+                                    </td>
+                                    <td class="col-action-type px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        资源导出
+                                    </td>
+                                    <td class="col-type px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        报表分析
+                                    </td>
+                                    <td class="col-priority px-4 py-3 whitespace-nowrap">
+                                        <span class="priority-badge priority-urgent">紧急</span>
+                                    </td>
+                                    <td class="col-status px-4 py-3 whitespace-nowrap">
+                                        <span class="status-badge status-processing">审批中</span>
+                                    </td>
+                                    <td class="col-handler px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        王建国（wangjianguo）
+                                    </td>
+                                    <td class="col-wait-time px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        2小时30分
+                                    </td>
+                                    <td class="col-applicant px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        赵小明（zhaoxiaoming）
+                                    </td>
+                                    <td class="col-time px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        2026-07-01 11:30
+                                    </td>
+                                    <td class="col-time px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        2026-07-01 11:30
+                                    </td>
+                                    <td class="sticky-col-right col-action px-4 py-3 whitespace-nowrap text-right">
+                                        <a href="detail2.html?id=REQ-2026005" class="text-blue-600 hover:text-blue-800 text-sm font-medium">详情</a>
+                                        <button class="ml-3 text-orange-600 hover:text-orange-800 text-sm font-medium">撤销</button>
+                                    </td>
+                                </tr>
+                                <!-- 已通过 -->
+                                <tr class="table-row transition" data-status="approved">
+                                    <td class="sticky-col-left col-checkbox px-4 py-3" style="left: 0;"></td>
+                                    <td class="sticky-col-left col-id px-4 py-3" style="left: 50px;">
+                                        <span class="text-sm font-medium text-blue-600">REQ-2026002</span>
+                                    </td>
+                                    <td class="col-name px-4 py-3">
+                                        <div class="text-sm text-gray-900">指标列表导出</div>
+                                    </td>
+                                    <td class="col-action-type px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        资源导出
+                                    </td>
+                                    <td class="col-type px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        指标列表
+                                    </td>
+                                    <td class="col-priority px-4 py-3 whitespace-nowrap">
+                                        <span class="priority-badge priority-normal">普通</span>
+                                    </td>
+                                    <td class="col-status px-4 py-3 whitespace-nowrap">
+                                        <span class="status-badge status-approved">已通过</span>
+                                    </td>
+                                    <td class="col-handler px-4 py-3 whitespace-nowrap text-sm text-gray-400">
+                                        -
+                                    </td>
+                                    <td class="col-wait-time px-4 py-3 whitespace-nowrap text-sm text-gray-400">
+                                        -
+                                    </td>
+                                    <td class="col-applicant px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        张三（zhangsan）
+                                    </td>
+                                    <td class="col-time px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        2026-06-30 15:00
+                                    </td>
+                                    <td class="col-time px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        2026-06-30 16:20
+                                    </td>
+                                    <td class="sticky-col-right col-action px-4 py-3 whitespace-nowrap text-right">
+                                        <a href="detail2.html?id=REQ-2026002" class="text-blue-600 hover:text-blue-800 text-sm font-medium">详情</a>
+                                    </td>
+                                </tr>
+                                <!-- 已驳回 -->
+                                <tr class="table-row transition" data-status="rejected" data-can-check="true">
+                                    <td class="sticky-col-left col-checkbox px-4 py-3" style="left: 0;">
+                                        <input type="checkbox" class="row-checkbox w-4 h-4 rounded border-gray-300" onchange="updateBatchBar()">
+                                    </td>
+                                    <td class="sticky-col-left col-id px-4 py-3" style="left: 50px;">
+                                        <span class="text-sm font-medium text-blue-600">REQ-2026003</span>
+                                    </td>
+                                    <td class="col-name px-4 py-3">
+                                        <div class="text-sm text-gray-900">仪表板B权限申请</div>
+                                    </td>
+                                    <td class="col-action-type px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        资源权限申请
+                                    </td>
+                                    <td class="col-type px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        仪表板
+                                    </td>
+                                    <td class="col-priority px-4 py-3 whitespace-nowrap">
+                                        <span class="priority-badge priority-low">低</span>
+                                    </td>
+                                    <td class="col-status px-4 py-3 whitespace-nowrap">
+                                        <span class="status-badge status-rejected">已驳回</span>
+                                    </td>
+                                    <td class="col-handler px-4 py-3 whitespace-nowrap text-sm text-gray-400">
+                                        -
+                                    </td>
+                                    <td class="col-wait-time px-4 py-3 whitespace-nowrap text-sm text-gray-400">
+                                        -
+                                    </td>
+                                    <td class="col-applicant px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        李四海（lisihai）
+                                    </td>
+                                    <td class="col-time px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        2026-06-29 10:00
+                                    </td>
+                                    <td class="col-time px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        2026-06-29 14:30
+                                    </td>
+                                    <td class="sticky-col-right col-action px-4 py-3 whitespace-nowrap text-right">
+                                        <a href="detail2.html?id=REQ-2026003" class="text-blue-600 hover:text-blue-800 text-sm font-medium">详情</a>
+                                        <a href="application-edit.html?id=REQ-2026003" class="ml-3 text-blue-600 hover:text-blue-800 text-sm font-medium">编辑</a>
+                                        <button onclick="resubmit('REQ-2026003')" class="ml-3 text-green-600 hover:text-green-800 text-sm font-medium">重新提交</button>
+                                    </td>
+                                </tr>
+                                <!-- 已撤销 -->
+                                <tr class="table-row transition" data-status="cancelled" data-can-check="true">
+                                    <td class="sticky-col-left col-checkbox px-4 py-3" style="left: 0;">
+                                        <input type="checkbox" class="row-checkbox w-4 h-4 rounded border-gray-300" onchange="updateBatchBar()">
+                                    </td>
+                                    <td class="sticky-col-left col-id px-4 py-3" style="left: 50px;">
+                                        <span class="text-sm font-medium text-blue-600">REQ-2026004</span>
+                                    </td>
+                                    <td class="col-name px-4 py-3">
+                                        <div class="text-sm text-gray-900">数据填报入库申请</div>
+                                    </td>
+                                    <td class="col-action-type px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        数据入库
+                                    </td>
+                                    <td class="col-type px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        数据填报
+                                    </td>
+                                    <td class="col-priority px-4 py-3 whitespace-nowrap">
+                                        <span class="priority-badge priority-normal">普通</span>
+                                    </td>
+                                    <td class="col-status px-4 py-3 whitespace-nowrap">
+                                        <span class="status-badge status-cancelled">已撤销</span>
+                                    </td>
+                                    <td class="col-handler px-4 py-3 whitespace-nowrap text-sm text-gray-400">
+                                        -
+                                    </td>
+                                    <td class="col-wait-time px-4 py-3 whitespace-nowrap text-sm text-gray-400">
+                                        -
+                                    </td>
+                                    <td class="col-applicant px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        王建国（wangjianguo）
+                                    </td>
+                                    <td class="col-time px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        2026-06-28 14:00
+                                    </td>
+                                    <td class="col-time px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        2026-06-28 18:00
+                                    </td>
+                                    <td class="sticky-col-right col-action px-4 py-3 whitespace-nowrap text-right">
+                                        <a href="detail2.html?id=REQ-2026004" class="text-blue-600 hover:text-blue-800 text-sm font-medium">详情</a>
+                                        <button onclick="resubmit('REQ-2026004')" class="ml-3 text-green-600 hover:text-green-800 text-sm font-medium">重新提交</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- 分页区 -->
+                    <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+                        <div class="text-sm text-gray-500">
+                            共 7 条
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button class="px-3 py-1 border border-gray-300 rounded text-sm text-gray-400 cursor-not-allowed" disabled>
+                                <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                            </button>
+                            <button class="w-8 h-8 bg-blue-600 text-white rounded text-sm font-medium">1</button>
+                            <button class="w-8 h-8 border border-gray-300 rounded text-sm text-gray-600 hover:bg-gray-50">2</button>
+                            <button class="w-8 h-8 border border-gray-300 rounded text-sm text-gray-600 hover:bg-gray-50">3</button>
+                            <button class="px-3 py-1 border border-gray-300 rounded text-sm text-gray-600 hover:bg-gray-50">
+                                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                            </button>
+                            <select class="ml-2 border border-gray-300 rounded text-sm py-1 px-2">
+                                <option>10 条/页</option>
+                                <option>20 条/页</option>
+                                <option>50 条/页</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 初始化图标
+        lucide.createIcons();
+
+        // 更新批量操作栏
+        function updateBatchBar() {
+            const checkboxes = document.querySelectorAll('.row-checkbox');
+            const checked = document.querySelectorAll('.row-checkbox:checked');
+            const batchBar = document.getElementById('batchBar');
+            const selectedCount = document.getElementById('selectedCount');
+            const batchSubmitBtn = document.getElementById('batchSubmitBtn');
+            const batchDeleteBtn = document.getElementById('batchDeleteBtn');
+            const selectAll = document.getElementById('selectAll');
+
+            selectedCount.textContent = checked.length;
+
+            if (checked.length > 0) {
+                batchBar.classList.remove('hidden');
+                batchSubmitBtn.disabled = false;
+                batchDeleteBtn.disabled = false;
+            } else {
+                batchBar.classList.add('hidden');
+                batchSubmitBtn.disabled = true;
+                batchDeleteBtn.disabled = true;
+            }
+
+            // 更新全选复选框状态
+            const visibleCheckboxes = Array.from(checkboxes).filter(cb => {
+                const row = cb.closest('.table-row');
+                return row.style.display !== 'none';
+            });
+            const visibleChecked = Array.from(checked).filter(cb => {
+                const row = cb.closest('.table-row');
+                return row.style.display !== 'none';
+            });
+
+            if (visibleCheckboxes.length > 0 && visibleChecked.length === visibleCheckboxes.length) {
+                selectAll.checked = true;
+                selectAll.indeterminate = false;
+            } else if (visibleChecked.length > 0) {
+                selectAll.checked = false;
+                selectAll.indeterminate = true;
+            } else {
+                selectAll.checked = false;
+                selectAll.indeterminate = false;
+            }
+
+            // 更新行的选中样式
+            document.querySelectorAll('.table-row').forEach(row => {
+                const checkbox = row.querySelector('.row-checkbox');
+                if (checkbox && checkbox.checked) {
+                    row.classList.add('selected');
+                } else {
+                    row.classList.remove('selected');
+                }
+            });
+
+            lucide.createIcons();
+        }
+
+        // 全选/取消全选
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.row-checkbox');
+
+            checkboxes.forEach(checkbox => {
+                const row = checkbox.closest('.table-row');
+                // 只选择可见的且可勾选的行
+                if (row.style.display !== 'none' && row.dataset.canCheck === 'true') {
+                    checkbox.checked = selectAll.checked;
+                }
+            });
+
+            updateBatchBar();
+        }
+
+        // 清空选择
+        function clearSelection() {
+            document.querySelectorAll('.row-checkbox').forEach(cb => {
+                cb.checked = false;
+            });
+            document.getElementById('selectAll').checked = false;
+            updateBatchBar();
+        }
+
+        // 批量提交（带校验）
+        function batchSubmit() {
+            const checked = document.querySelectorAll('.row-checkbox:checked');
+
+            if (checked.length === 0) {
+                alert('请先选择要提交的申请单');
+                return;
+            }
+
+            // 收集选中申请单数据
+            const items = Array.from(checked).map(cb => {
+                const row = cb.closest('.table-row');
+                const cells = row.querySelectorAll('td');
+                const idSpan = cells[1] ? cells[1].querySelector('span') : null;
+                const nameDiv = row.querySelector('.col-name .text-sm');
+                const typeCell = row.querySelector('.col-type');
+                const actionTypeCell = row.querySelector('.col-action-type');
+                return {
+                    id: idSpan ? idSpan.textContent : '',
+                    name: nameDiv ? nameDiv.textContent : '',
+                    resourceType: typeCell ? typeCell.textContent.trim() : '',
+                    approvalType: actionTypeCell ? actionTypeCell.textContent.trim() : ''
+                };
+            });
+
+            // 模拟后端校验
+            const successItems = [];
+            const failureItems = [];
+
+            items.forEach((item) => {
+                // 模拟校验规则
+                if (item.id === 'REQ-2026007') {
+                    // 已有权限校验 - 可能一个申请单包含多个资源
+                    failureItems.push({
+                        id: item.id,
+                        resName: '电子表格E',
+                        resPath: '/数据填报/财务报表/',
+                        reason: `您已拥有电子表格E的${item.approvalType}权限，无需再次申请`
+                    });
+                    failureItems.push({
+                        id: item.id,
+                        resName: '数据填报F',
+                        resPath: '/数据填报/业务数据/',
+                        reason: `该资源已提交了${item.approvalType}权限申请，请等待原申请完成后再提交`
+                    });
+                } else if (item.id === 'REQ-2026003') {
+                    failureItems.push({
+                        id: item.id,
+                        resName: '仪表板B',
+                        resPath: '/数据分析/销售部/2026年Q2/',
+                        reason: `该资源已提交了${item.approvalType}权限申请（申请单号：REQ-2026001），请等待原申请完成后再提交`
+                    });
+                } else {
+                    successItems.push(item);
+                }
+            });
+
+            // 成功项执行提交（跳过校验不通过的）
+            if (successItems.length > 0) {
+                const successIds = successItems.map(i => i.id);
+                console.log('提交成功：', successIds);
+                // 这里应该调用API提交
+            }
+
+            // 显示结果弹窗
+            showBatchResultModal(successItems.length, failureItems.length, failureItems);
+
+            // 清空选择
+            clearSelection();
+        }
+
+        // 弹窗分页状态
+        let failurePageData = [];
+        let failurePageSize = 10;
+        let failureCurrentPage = 1;
+
+        // 渲染失败明细当前页
+        function renderFailurePage(tableBody, buildRowFn) {
+            const start = (failureCurrentPage - 1) * failurePageSize;
+            const end = start + failurePageSize;
+            const pageItems = failurePageData.slice(start, end);
+            tableBody.innerHTML = pageItems.map(buildRowFn).join('');
+        }
+
+        // 设置分页器
+        function setupFailurePagination() {
+            const total = failurePageData.length;
+            const totalPages = Math.ceil(total / failurePageSize);
+            const pagination = document.getElementById('failurePagination');
+            const infoEl = document.getElementById('failurePaginationInfo');
+            const btnsEl = document.getElementById('failurePaginationBtns');
+
+            if (total <= failurePageSize) {
+                infoEl.innerHTML = `共 <span id="failureTotalCount">${total}</span> 条`;
+                btnsEl.innerHTML = '';
+                pagination.classList.add('hidden');
+                return;
+            }
+
+            pagination.classList.remove('hidden');
+            infoEl.innerHTML = `共 <span id="failureTotalCount">${total}</span> 条`;
+
+            let html = '';
+            html += `<button class="page-btn" onclick="goFailurePage(${failureCurrentPage - 1})" ${failureCurrentPage === 1 ? 'disabled' : ''}><i data-lucide="chevron-left" class="w-4 h-4"></i></button>`;
+
+            for (let i = 1; i <= totalPages; i++) {
+                if (totalPages <= 7 || i === 1 || i === totalPages || (i >= failureCurrentPage - 1 && i <= failureCurrentPage + 1)) {
+                    html += `<button class="page-btn ${i === failureCurrentPage ? 'active' : ''}" onclick="goFailurePage(${i})">${i}</button>`;
+                } else if (i === failureCurrentPage - 2 || i === failureCurrentPage + 2) {
+                    html += `<button class="page-btn" disabled>...</button>`;
+                }
+            }
+
+            html += `<button class="page-btn" onclick="goFailurePage(${failureCurrentPage + 1})" ${failureCurrentPage === totalPages ? 'disabled' : ''}><i data-lucide="chevron-right" class="w-4 h-4"></i></button>`;
+            btnsEl.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        // 翻页
+        function goFailurePage(page) {
+            const totalPages = Math.ceil(failurePageData.length / failurePageSize);
+            if (page < 1 || page > totalPages) return;
+            failureCurrentPage = page;
+            setupFailurePagination();
+            renderFailurePage(document.getElementById('failureTableBody'), window._failureBuildRowFn);
+        }
+
+        // 显示批量提交结果弹窗
+        function showBatchResultModal(successCount, failCount, failureItems) {
+            const modal = document.getElementById('batchResultModal');
+            const summary = document.getElementById('resultSummary');
+            const failureSection = document.getElementById('failureSection');
+            const tableBody = document.getElementById('failureTableBody');
+            const detailTitle = document.getElementById('failureDetailTitle');
+
+            // 重置弹窗标题和表头（批量模式）
+            const titleEl = modal.querySelector('.text-lg');
+            if (titleEl) titleEl.textContent = '批量提交结果';
+            if (detailTitle) detailTitle.textContent = '提交失败明细：';
+
+            const thead = document.getElementById('failureTableHead');
+            if (thead) {
+                thead.innerHTML = `
+                    <tr>
+                        <th style="width: 130px;">申请单号</th>
+                        <th style="width: 140px;">资源名称</th>
+                        <th style="width: 160px;">所属目录路径</th>
+                        <th>校验不通过原因</th>
+                    </tr>
+                `;
+            }
+
+            // 生成摘要信息
+            summary.className = 'result-summary';
+            if (failCount === 0) {
+                summary.classList.add('all-success');
+                summary.innerHTML = `<i data-lucide="check-circle" class="w-5 h-5 inline mr-2 align-middle"></i>批量提交完成：成功 <strong>${successCount}</strong> 条，失败 <strong>${failCount}</strong> 条`;
+            } else if (successCount === 0) {
+                summary.classList.add('all-fail');
+                summary.innerHTML = `<i data-lucide="x-circle" class="w-5 h-5 inline mr-2 align-middle"></i>批量提交完成：成功 <strong>${successCount}</strong> 条，失败 <strong>${failCount}</strong> 条`;
+            } else {
+                summary.classList.add('success-partial');
+                summary.innerHTML = `<i data-lucide="alert-triangle" class="w-5 h-5 inline mr-2 align-middle"></i>批量提交完成：成功 <strong>${successCount}</strong> 条，失败 <strong>${failCount}</strong> 条`;
+            }
+
+            // 分页渲染失败明细
+            if (failCount > 0) {
+                failureSection.classList.remove('hidden');
+                failurePageData = failureItems;
+                failureCurrentPage = 1;
+                window._failureBuildRowFn = (item) => `
+                    <tr>
+                        <td><span class="req-id">${item.id}</span></td>
+                        <td class="font-medium text-gray-900">${item.resName}</td>
+                        <td class="text-gray-500">${item.resPath}</td>
+                        <td>${item.reason}</td>
+                    </tr>
+                `;
+                renderFailurePage(tableBody, window._failureBuildRowFn);
+                setupFailurePagination();
+            } else {
+                failureSection.classList.add('hidden');
+                document.getElementById('failurePagination').classList.add('hidden');
+            }
+
+            modal.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        // 关闭批量提交结果弹窗
+        function closeBatchResultModal() {
+            document.getElementById('batchResultModal').classList.add('hidden');
+        }
+
+        // 批量删除（仅草稿状态）
+        function batchDelete() {
+            const checked = document.querySelectorAll('.row-checkbox:checked');
+            const ids = Array.from(checked).map(cb => {
+                const row = cb.closest('.table-row');
+                const idCell = row.querySelector('td:nth-child(2) span');
+                return idCell ? idCell.textContent : '';
+            });
+
+            if (ids.length === 0) {
+                alert('请先选择要删除的草稿');
+                return;
+            }
+
+            if (confirm(`确认批量删除以下草稿吗？\n${ids.join('\n')}`)) {
+                alert(`已批量删除 ${ids.length} 个草稿`);
+                clearSelection();
+                // 这里应该调用API并刷新列表
+            }
+        }
+
+        // Tab切换
+        document.querySelectorAll('.tab-item').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // 移除所有active
+                document.querySelectorAll('.tab-item').forEach(t => {
+                    t.classList.remove('active');
+                    t.classList.add('text-gray-600', 'hover:bg-gray-100');
+                });
+                // 添加active
+                this.classList.add('active');
+                this.classList.remove('text-gray-600', 'hover:bg-gray-100');
+
+                // 筛选表格行
+                const filterType = this.dataset.tab;
+                document.querySelectorAll('.table-row').forEach(row => {
+                    if (filterType === 'all' || row.dataset.status === filterType) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                // 清空选择并更新批量操作栏
+                clearSelection();
+            });
+        });
+
+        // 撤销确认
+        document.querySelectorAll('button').forEach(btn => {
+            if (btn.textContent === '撤销') {
+                btn.addEventListener('click', function() {
+                    if (confirm('确认撤销此申请吗？')) {
+                        alert('申请已撤销');
+                        // 这里应该调用API并刷新列表
+                    }
+                });
+            }
+        });
+
+        // 重新申请
+        document.querySelectorAll('button').forEach(btn => {
+            if (btn.textContent === '重新申请') {
+                btn.addEventListener('click', function() {
+                    if (confirm('确认重新申请吗？将创建新的申请单。')) {
+                        alert('已创建新申请');
+                        // 这里应该调用API创建新申请并跳转
+                    }
+                });
+            }
+        });
+
+        // 提交草稿（单条校验）
+        function submitDraft(id) {
+            if (!confirm('确认提交草稿 ' + id + ' 吗？')) return;
+
+            // 收集该申请单下包含的资源列表（模拟数据）
+            const resources = getDraftResources(id);
+
+            // 逐资源校验
+            const successItems = [];
+            const failureItems = [];
+
+            resources.forEach((res) => {
+                // 模拟校验规则
+                if (id === 'REQ-2026007' && res.name === '电子表格E') {
+                    failureItems.push({
+                        ...res,
+                        reason: `您已拥有${res.name}的${getApprovalTypeById(id)}权限，无需再次申请`
+                    });
+                } else if (id === 'REQ-2026007' && res.name === '数据填报F') {
+                    failureItems.push({
+                        ...res,
+                        reason: `该资源已提交了${getApprovalTypeById(id)}权限申请，请等待原申请完成后再提交`
+                    });
+                } else {
+                    successItems.push(res);
+                }
+            });
+
+            if (failureItems.length > 0) {
+                showSingleValidationModal('提交草稿', id, successItems.length, failureItems.length, failureItems);
+            } else {
+                alert(`草稿 ${id} 已提交`);
+                // 这里应该调用API并刷新列表
+            }
+        }
+
+        // 重新提交（单条校验）
+        function resubmit(id) {
+            if (!confirm('确认重新提交申请 ' + id + ' 吗？将创建新的申请单。')) return;
+
+            // 收集该申请单下包含的资源列表（模拟数据）
+            const resources = getDraftResources(id);
+
+            // 逐资源校验
+            const successItems = [];
+            const failureItems = [];
+
+            resources.forEach((res) => {
+                // 模拟校验规则
+                if (id === 'REQ-2026004' && res.name === 'PC端应用A') {
+                    failureItems.push({
+                        ...res,
+                        reason: `您已拥有${res.name}的${getApprovalTypeById(id)}权限，无需再次申请`
+                    });
+                } else if (id === 'REQ-2026003' && res.name === '仪表板B') {
+                    failureItems.push({
+                        ...res,
+                        reason: `该资源已提交了${getApprovalTypeById(id)}权限申请（申请单号：REQ-2026001），请等待原申请完成后再提交`
+                    });
+                } else {
+                    successItems.push(res);
+                }
+            });
+
+            if (failureItems.length > 0) {
+                showSingleValidationModal('重新提交', id, successItems.length, failureItems.length, failureItems);
+            } else {
+                alert(`申请 ${id} 已重新提交`);
+                // 这里应该调用API并刷新列表
+            }
+        }
+
+        // 获取草稿关联的资源列表（模拟数据）
+        function getDraftResources(id) {
+            const resourceMap = {
+                'REQ-2026006': [
+                    { name: '移动端应用C', path: '/移动应用/销售外勤/' },
+                    { name: '销售数据查询模块', path: '/移动应用/销售外勤/数据查询/' }
+                ],
+                'REQ-2026007': [
+                    { name: '电子表格E', path: '/数据填报/财务报表/' },
+                    { name: '数据填报F', path: '/数据填报/业务数据/' }
+                ],
+                'REQ-2026003': [
+                    { name: '仪表板B', path: '/数据分析/销售部/2026年Q2/' },
+                    { name: '销售趋势分析看板', path: '/数据分析/销售部/报表/' }
+                ],
+                'REQ-2026004': [
+                    { name: 'PC端应用A', path: '/PC应用/数据分析工具/' },
+                    { name: '数据导出工具', path: '/PC应用/工具集/' }
+                ]
+            };
+            return resourceMap[id] || [{ name: '未知资源', path: '/' }];
+        }
+
+        // 获取申请单对应的申请类型
+        function getApprovalTypeById(id) {
+            const row = document.querySelector(`.table-row td:nth-child(2) span`);
+            const rows = document.querySelectorAll('.table-row');
+            for (const r of rows) {
+                const span = r.querySelector('td:nth-child(2) span');
+                if (span && span.textContent === id) {
+                    const actionCell = r.querySelector('.col-action-type');
+                    return actionCell ? actionCell.textContent.trim() : '权限';
+                }
+            }
+            return '权限';
+        }
+
+        // 显示单条校验结果弹窗
+        function showSingleValidationModal(actionName, id, successCount, failCount, failureItems) {
+            const modal = document.getElementById('batchResultModal');
+            const summary = document.getElementById('resultSummary');
+            const failureSection = document.getElementById('failureSection');
+            const tableBody = document.getElementById('failureTableBody');
+            const detailTitle = document.getElementById('failureDetailTitle');
+
+            // 更新弹窗标题
+            const titleEl = modal.querySelector('.text-lg');
+            if (titleEl) titleEl.textContent = `${actionName}校验结果`;
+
+            // 生成摘要
+            summary.className = 'result-summary all-fail';
+            summary.innerHTML = `申请单 <strong>${id}</strong> 校验不通过`;
+
+            // 更新明细标题
+            if (detailTitle) detailTitle.textContent = '明细';
+
+            // 更新表头为单条校验的列
+            const thead = document.getElementById('failureTableHead');
+            if (thead) {
+                thead.innerHTML = `
+                    <tr>
+                        <th style="width: 160px;">资源名称</th>
+                        <th style="width: 180px;">所属目录路径</th>
+                        <th>校验不通过原因</th>
+                    </tr>
+                `;
+            }
+
+            // 分页渲染失败明细
+            failureSection.classList.remove('hidden');
+            failurePageData = failureItems;
+            failureCurrentPage = 1;
+            window._failureBuildRowFn = (item) => `
+                <tr>
+                    <td class="font-medium text-gray-900">${item.name}</td>
+                    <td class="text-gray-500">${item.path}</td>
+                    <td>${item.reason}</td>
+                </tr>
+            `;
+            renderFailurePage(tableBody, window._failureBuildRowFn);
+            setupFailurePagination();
+
+            modal.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        // 删除草稿
+        document.querySelectorAll('button').forEach(btn => {
+            if (btn.textContent === '删除') {
+                btn.addEventListener('click', function() {
+                    if (confirm('确认删除此草稿吗？')) {
+                        alert('草稿已删除');
+                        // 这里应该调用API并刷新列表
+                    }
+                });
+            }
+        });
+
+        // 复选框变化时更新行样式
+        document.querySelectorAll('.row-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const row = this.closest('.table-row');
+                if (this.checked) {
+                    row.classList.add('selected');
+                } else {
+                    row.classList.remove('selected');
+                }
+            });
+        });
+
+        // 切换自定义日期范围显示
+        function toggleCustomDateRange() {
+            const timeFilter = document.getElementById('timeFilter');
+            const customDateRange = document.getElementById('customDateRange');
+            if (timeFilter.value === '自定义') {
+                customDateRange.classList.remove('hidden');
+            } else {
+                customDateRange.classList.add('hidden');
+            }
+        }
+    </script>
+
+    <!-- 批量提交结果弹窗 -->
+    <div id="batchResultModal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <h3 class="text-lg font-semibold text-gray-900">批量提交结果</h3>
+                <button onclick="closeBatchResultModal()" class="text-gray-400 hover:text-gray-600 transition">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-auto" style="max-height: 60vh;">
+                <div id="resultSummary" class="result-summary"></div>
+                <div id="failureSection" class="hidden">
+                    <div class="text-sm font-medium text-gray-700 mb-3" id="failureDetailTitle">提交失败明细：</div>
+                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                        <table class="failure-table">
+                            <thead id="failureTableHead">
+                                <tr>
+                                    <th style="width: 140px;">申请单号</th>
+                                    <th>失败原因</th>
+                                </tr>
+                            </thead>
+                            <tbody id="failureTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="failurePagination" class="hidden flex items-center justify-between mt-3">
+                        <div class="text-sm text-gray-500" id="failurePaginationInfo">共 <span id="failureTotalCount">0</span> 条</div>
+                        <div class="flex items-center gap-1" id="failurePaginationBtns">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-100 flex justify-end">
+                <button onclick="closeBatchResultModal()" class="btn-primary px-6 py-2 rounded-lg text-sm font-medium">
+                    我知道了
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // BR-701 演示数据：每一种申请类型至少一条，可从“详情”进入差异化申请内容。
+        const br701Applications = [
+            ['REQ-2026101','销售域资源访问授权','资源权限申请','数据集'],
+            ['REQ-2026102','运营工作台菜单授权','功能权限申请','功能菜单'],
+            ['REQ-2026103','经营驾驶舱发布','资源发布','仪表板'],
+            ['REQ-2026104','历史销售报表下架','资源下架','报表分析'],
+            ['REQ-2026105','测试数据集删除','资源删除','数据集'],
+            ['REQ-2026106','财务分析模型导出','资源导出','语义模型'],
+            ['REQ-2026107','营销看板资源导入','资源导入','仪表板'],
+            ['REQ-2026108','门店经营数据入库','数据入库','数据填报'],
+            ['REQ-2026109','客户回访数据导出','数据导出','数据填报'],
+            ['REQ-2026110','预算明细数据导入','数据导入','数据填报'],
+            ['REQ-2026111','无效客户记录删除','数据变更-删除','数据填报'],
+            ['REQ-2026112','客户联系人信息修正','数据变更-编辑','数据填报']
+        ];
+
+        function renderBr701Applications() {
+            const tbody = document.getElementById('applicationTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = br701Applications.map((item, index) => {
+                const [id, name, type, resourceType] = item;
+                const priority = index % 4 === 0 ? ['priority-high','高'] : ['priority-normal','普通'];
+                return `<tr class="table-row transition" data-status="processing" data-can-check="true">
+                    <td class="sticky-col-left col-checkbox px-4 py-3" style="left:0"><input type="checkbox" class="row-checkbox w-4 h-4 rounded border-gray-300 accent-blue-600 cursor-pointer" aria-label="选择申请 ${id}" onchange="updateBatchBar()"></td>
+                    <td class="sticky-col-left col-id px-4 py-3" style="left:50px"><span class="text-sm font-medium text-blue-600">${id}</span></td>
+                    <td class="col-name px-4 py-3"><div class="text-sm text-gray-900">${name}</div></td>
+                    <td class="col-action-type px-4 py-3 whitespace-nowrap text-sm text-gray-600">${type}</td>
+                    <td class="col-type px-4 py-3 whitespace-nowrap text-sm text-gray-600">${resourceType}</td>
+                    <td class="col-priority px-4 py-3"><span class="priority-badge ${priority[0]}">${priority[1]}</span></td>
+                    <td class="col-status px-4 py-3 whitespace-nowrap"><span class="status-badge status-processing inline-flex items-center">审批中</span></td>
+                    <td class="col-handler px-4 py-3 whitespace-nowrap text-sm text-gray-600">李四海（lisihai）</td>
+                    <td class="col-wait-time px-4 py-3 whitespace-nowrap text-sm text-gray-600">${index + 1}小时20分</td>
+                    <td class="col-applicant px-4 py-3 whitespace-nowrap text-sm text-gray-600">张三（zhangsan）</td>
+                    <td class="col-time px-4 py-3 whitespace-nowrap text-sm text-gray-500">2026-08-${String(18-index).padStart(2,'0')} 09:30</td>
+                    <td class="col-time px-4 py-3 whitespace-nowrap text-sm text-gray-500">2026-08-18 10:20</td>
+                    <td class="sticky-col-right col-action px-4 py-3 whitespace-nowrap text-right"><a href="detail2.html?id=${id}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">详情</a><button class="ml-3 text-orange-600 hover:text-orange-800 text-sm font-medium">撤销</button></td>
+                </tr>`;
+            }).join('');
+            lucide.createIcons();
+        }
+        renderBr701Applications();
+    </script>
+</body>
+</html>

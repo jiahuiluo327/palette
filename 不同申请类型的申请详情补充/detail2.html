@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>申请详情 - 流程中心</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@1.23.0/dist/umd/lucide.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+        .nav-item.active {
+            background-color: #E6F0FF;
+            color: #1677FF;
+        }
+        .tab-btn.active {
+            border-bottom: 2px solid #1677FF;
+            color: #1677FF;
+        }
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .status-draft {
+            background-color: #F0F7FF;
+            color: #1677FF;
+            border: 1px solid #91CAFF;
+        }
+        .status-processing {
+            background-color: #FFF7E6;
+            color: #FA8C16;
+            border: 1px solid #FFD591;
+        }
+        .status-approved {
+            background-color: #F6FFED;
+            color: #52C41A;
+            border: 1px solid #B7EB8F;
+        }
+        .status-rejected {
+            background-color: #FFF2F0;
+            color: #F5222D;
+            border: 1px solid #FFCCC7;
+        }
+        .status-cancelled {
+            background-color: #F5F5F5;
+            color: #8C8C8C;
+            border: 1px solid #D9D9D9;
+        }
+        .priority-badge {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .priority-urgent {
+            background-color: #FFF1F0;
+            color: #F5222D;
+            border: 1px solid #FFCCC7;
+        }
+        .priority-high {
+            background-color: #FFF7E6;
+            color: #FA8C16;
+            border: 1px solid #FFD591;
+        }
+        .priority-normal {
+            background-color: #F0F7FF;
+            color: #1677FF;
+            border: 1px solid #91CAFF;
+        }
+        .priority-low {
+            background-color: #F5F5F5;
+            color: #8C8C8C;
+            border: 1px solid #D9D9D9;
+        }
+        .btn-primary {
+            background-color: #1677FF;
+            color: white;
+            transition: all 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #4096FF;
+        }
+        .btn-secondary {
+            background-color: white;
+            color: #1677FF;
+            border: 1px solid #D9D9D9;
+            transition: all 0.2s;
+        }
+        .btn-secondary:hover {
+            border-color: #1677FF;
+            color: #1677FF;
+        }
+        .info-label {
+            font-size: 13px;
+            color: #8C8C8C;
+            margin-bottom: 2px;
+        }
+        .info-value {
+            font-size: 14px;
+            color: #262626;
+            font-weight: 500;
+        }
+        .timeline-item {
+            position: relative;
+            padding-left: 32px;
+            padding-bottom: 24px;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 24px;
+            bottom: 0;
+            width: 2px;
+            background-color: #E5E7EB;
+        }
+        .timeline-item:last-child::before {
+            display: none;
+        }
+        .timeline-item.reversed::before {
+            top: auto;
+            bottom: 24px;
+        }
+        .timeline-item:first-child::before {
+            display: none;
+        }
+        .timeline-dot {
+            position: absolute;
+            left: 0;
+            top: 4px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px;
+        }
+        .timeline-dot.completed {
+            background-color: #52C41A;
+            box-shadow: 0 0 0 2px #52C41A;
+        }
+        .timeline-dot.current {
+            background-color: #FA8C16;
+            box-shadow: 0 0 0 2px #FA8C16;
+        }
+        .timeline-dot.pending {
+            background-color: #D9D9D9;
+            box-shadow: 0 0 0 2px #D9D9D9;
+        }
+        .flow-node {
+            min-width: 120px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .flow-node-start {
+            background-color: #52C41A;
+            color: white;
+        }
+        .flow-node-process {
+            background-color: #1677FF;
+            color: white;
+        }
+        .flow-node-current {
+            background-color: #FA8C16;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+        .flow-node-pending {
+            background-color: #D9D9D9;
+            color: white;
+        }
+        .flow-node-end {
+            background-color: #52C41A;
+            color: white;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .flow-scroll-container {
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+        .flow-scroll-container::-webkit-scrollbar {
+            height: 6px;
+        }
+        .flow-scroll-container::-webkit-scrollbar-track {
+            background: #F5F5F5;
+            border-radius: 3px;
+        }
+        .flow-scroll-container::-webkit-scrollbar-thumb {
+            background: #D9D9D9;
+            border-radius: 3px;
+        }
+        .flow-scroll-container::-webkit-scrollbar-thumb:hover {
+            background: #BFBFBF;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="flex h-screen">
+        <!-- 左侧导航菜单 -->
+        <aside class="w-56 bg-white border-r border-gray-200 flex flex-col">
+            <div class="p-4 border-b border-gray-200">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <i data-lucide="layout-grid" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <span class="font-semibold text-lg text-gray-800">GienBI</span>
+                </div>
+            </div>
+
+            <nav class="flex-1 py-4 overflow-y-auto">
+                <!-- 其他菜单收起 -->
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                        <span>数据分析</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 ml-auto"></i>
+                    </div>
+                </div>
+
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="tag" class="w-4 h-4"></i>
+                        <span>标签</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 ml-auto"></i>
+                    </div>
+                </div>
+
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="trending-up" class="w-4 h-4"></i>
+                        <span>指标</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 ml-auto"></i>
+                    </div>
+                </div>
+
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="settings" class="w-4 h-4"></i>
+                        <span>系统管理</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 ml-auto"></i>
+                    </div>
+                </div>
+
+                <!-- 流程中心（展开） -->
+                <div class="px-3 mb-2">
+                    <div class="bg-blue-50 rounded-lg p-2">
+                        <div class="flex items-center gap-2 text-gray-700 font-medium text-sm py-2 px-3">
+                            <i data-lucide="clipboard-list" class="w-4 h-4"></i>
+                            <span>流程中心</span>
+                        </div>
+                        <div class="ml-6 mt-1 space-y-1">
+                            <a href="my-applications2.html" class="nav-item active flex items-center gap-2 text-sm py-2 px-3 rounded-lg cursor-pointer">
+                                <i data-lucide="file-text" class="w-4 h-4"></i>
+                                <span>申请列表</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="store" class="w-4 h-4"></i>
+                        <span>模板市场</span>
+                    </div>
+                </div>
+
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="archive" class="w-4 h-4"></i>
+                        <span>管理中心</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 ml-auto"></i>
+                    </div>
+                </div>
+
+                <div class="px-3 mb-2">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm py-2 px-3 cursor-pointer hover:bg-gray-100 rounded-lg">
+                        <i data-lucide="scroll-text" class="w-4 h-4"></i>
+                        <span>审计日志</span>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- 用户信息 -->
+            <div class="p-4 border-t border-gray-200">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-blue-500 rounded-full flex items-center justify-center text-white font-medium">
+                        A
+                    </div>
+                    <div class="flex-1">
+                        <div class="text-sm font-medium text-gray-800">管理员</div>
+                        <div class="text-xs text-gray-500">admin@qq.com</div>
+                    </div>
+                    <i data-lucide="chevron-left" class="w-5 h-5 text-gray-400 cursor-pointer hover:text-gray-600"></i>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="flex-1 flex flex-col bg-gray-50 overflow-hidden">
+            <!-- 顶部导航栏 -->
+            <header class="bg-white border-b border-gray-200 px-6 py-4 flex-shrink-0">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2 text-sm">
+                        <a href="my-applications2.html" class="text-gray-500 hover:text-gray-700">申请列表</a>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+                        <span class="text-gray-800 font-medium">申请详情</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button onclick="handleAction('withdraw')" class="btn-secondary px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
+                            <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                            撤销申请
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 内容区 -->
+            <div class="flex-1 overflow-auto p-6">
+                <div class="max-w-4xl mx-auto">
+                    <!-- 申请单信息卡片 -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 mb-6">
+                        <div class="p-6">
+                            <!-- 第一行：申请单号、申请单名称、状态、优先级 -->
+                            <div class="flex items-center justify-between mb-6">
+                                <div>
+                                    <div class="flex items-center gap-3 mb-1">
+                                        <h1 class="text-xl font-semibold text-gray-900">仪表板A发布审批</h1>
+                                        <span class="status-badge status-processing">审批中</span>
+                                    </div>
+                                    <div class="text-sm text-gray-500 flex items-center gap-2">
+                                        申请单号：REQ-2026001
+                                        <button onclick="copyText('REQ-2026001')" class="text-gray-400 hover:text-blue-500 transition" title="复制申请单号">
+                                            <i data-lucide="copy" class="w-4 h-4"></i>
+                                        </button>
+                                        <span id="copyTip" class="hidden text-xs text-green-500">已复制</span>
+                                    </div>
+                                </div>
+                                <div class="priority-badge priority-high">紧急</div>
+                            </div>
+
+                            <!-- 第二行：申请类型、资源类型、影响范围、申请人 -->
+                            <div class="grid grid-cols-4 gap-6 mb-6">
+                                <div>
+                                    <div class="info-label">申请类型</div>
+                                    <div class="info-value">资源发布</div>
+                                </div>
+                                <div>
+                                    <div class="info-label">资源类型</div>
+                                    <div class="info-value">仪表板</div>
+                                </div>
+                                <div>
+                                    <div class="info-label">影响范围</div>
+                                    <div class="info-value">公司级</div>
+                                </div>
+                                <div>
+                                    <div class="info-label">申请人</div>
+                                    <div class="info-value">张三（zhangsan）</div>
+                                </div>
+                            </div>
+
+                            <!-- 第三行：申请时间、更新时间、当前节点处理人、当前节点等待时长 -->
+                            <div class="grid grid-cols-4 gap-6 mb-6">
+                                <div>
+                                    <div class="info-label">申请时间</div>
+                                    <div class="info-value">2026-07-01 09:00</div>
+                                </div>
+                                <div>
+                                    <div class="info-label">更新时间</div>
+                                    <div class="info-value">2026-07-01 10:30</div>
+                                </div>
+                                <div>
+                                    <div class="info-label">当前节点处理人</div>
+                                    <div class="info-value" title="李四海（lisihai）、王志强（wangzhiqiang）">李四海（lisihai）<span class="text-gray-400"> 等2人</span></div>
+                                </div>
+                                <div>
+                                    <div class="info-label">当前节点等待时长</div>
+                                    <div class="info-value text-orange-600">25小时</div>
+                                </div>
+                            </div>
+
+                            <!-- 第四行：模板名称 -->
+                            <div class="grid grid-cols-4 gap-6 mb-6">
+                                <div>
+                                    <div class="info-label">模板名称</div>
+                                    <div class="info-value text-sm truncate" title="发布审批模板-默认匹配">发布审批模板-默认匹配</div>
+                                </div>
+                            </div>
+
+                            <!-- 第五行：申请说明（单独一行，完整展示） -->
+                            <div class="grid grid-cols-1 gap-4 mb-6">
+                                <div>
+                                    <div class="info-label">申请说明</div>
+                                    <div class="text-sm text-gray-700 leading-relaxed">
+                                        销售数据分析仪表板已完成开发，经过内部测试验证功能正常，现申请发布到生产环境。该仪表板包含Q2销售数据分析和预测功能，预计服务于销售部和市场部共计50+用户。
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 第六行：附件（单独一行，支持多个） -->
+                            <div class="grid grid-cols-1 gap-4">
+                                <div>
+                                    <div class="info-label">附件</div>
+                                    <div class="flex flex-wrap gap-2">
+                                        <div class="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg">
+                                            <i data-lucide="file-text" class="w-4 h-4 text-gray-500"></i>
+                                            <span class="text-sm text-blue-600">测试报告.pdf</span>
+                                            <span class="text-xs text-gray-400 ml-1">2.3MB</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg">
+                                            <i data-lucide="image" class="w-4 h-4 text-gray-500"></i>
+                                            <span class="text-sm text-blue-600">设计稿.png</span>
+                                            <span class="text-xs text-gray-400 ml-1">1.8MB</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab内容区 -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-200">
+                        <!-- Tab切换 -->
+                        <div class="px-6 border-b border-gray-100">
+                            <div class="flex items-center gap-8">
+                                <button class="tab-btn active py-4 text-sm font-medium transition" data-tab="content" onclick="switchTab('content')">
+                                    申请内容
+                                </button>
+                                <button class="tab-btn py-4 text-sm font-medium text-gray-500 hover:text-gray-700 transition" data-tab="flow" onclick="switchTab('flow')">
+                                    流程记录
+                                </button>
+                                <button class="tab-btn py-4 text-sm font-medium text-gray-500 hover:text-gray-700 transition" data-tab="diagram" onclick="switchTab('diagram')">
+                                    流程图
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Tab内容 -->
+                        <div class="p-6">
+                            <!-- 申请内容Tab -->
+                            <div class="tab-content" id="contentTab" data-br701-dynamic="true">
+                                <table class="w-full">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">资源名称</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">所属目录路径</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-100">
+                                        <tr>
+                                            <td class="px-4 py-3">
+                                                <div class="flex items-center gap-2">
+                                                    <i data-lucide="layout-dashboard" class="w-4 h-4 text-blue-500"></i>
+                                                    <a href="#" class="text-sm font-medium text-blue-600 hover:text-blue-800">销售数据分析仪表板</a>
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-3 text-sm text-gray-600">/数据分析/销售部/2026年Q2/</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-4 py-3">
+                                                <div class="flex items-center gap-2">
+                                                    <i data-lucide="bar-chart-3" class="w-4 h-4 text-green-500"></i>
+                                                    <a href="#" class="text-sm font-medium text-blue-600 hover:text-blue-800">区域销售报表</a>
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-3 text-sm text-gray-600">/数据分析/销售部/报表/</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-4 py-3">
+                                                <div class="flex items-center gap-2">
+                                                    <i data-lucide="database" class="w-4 h-4 text-purple-500"></i>
+                                                    <a href="#" class="text-sm font-medium text-blue-600 hover:text-blue-800">销售指标集</a>
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-3 text-sm text-gray-600">/指标/业务指标/销售/</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- 流程记录Tab -->
+                            <div class="tab-content hidden" id="flowTab">
+                                <div class="space-y-1">
+                                    <!-- 待处理节点 -->
+                                    <div class="timeline-item">
+                                        <div class="timeline-dot pending"></div>
+                                        <div class="flex items-center justify-between mb-1">
+                                            <div class="text-sm font-medium text-gray-400">最终审批</div>
+                                            <div class="text-xs text-gray-400">待处理</div>
+                                        </div>
+                                        <div class="text-xs text-gray-400">预设处理人：赵建国（zhaojianguo）、李明远（limingyuan）</div>
+                                    </div>
+
+                                    <!-- 当前节点（最新，倒序第一个） -->
+                                    <div class="timeline-item">
+                                        <div class="timeline-dot current"></div>
+                                        <div class="flex items-center justify-between mb-1">
+                                            <div class="text-sm font-medium text-gray-900">技术审批</div>
+                                            <div class="text-xs text-orange-600">处理中</div>
+                                        </div>
+                                        <div class="text-xs text-gray-400">预设处理人：李明远（limingyuan）、王芳（wangfang）</div>
+                                        <div class="text-xs text-orange-600 mt-1">○ 等待处理 - 已等待25小时</div>
+                                    </div>
+
+                                    <!-- 部门审批 -->
+                                    <div class="timeline-item">
+                                        <div class="timeline-dot completed"></div>
+                                        <div class="flex items-center justify-between mb-1">
+                                            <div class="text-sm font-medium text-gray-900">部门审批</div>
+                                            <div class="text-xs text-gray-500">2026-07-01 10:30</div>
+                                        </div>
+                                        <div class="text-xs text-gray-400">预设处理人：王志强（wangzhiqiang）、李明远（limingyuan）</div>
+                                        <div class="text-xs text-gray-500">实际处理人：王志强（wangzhiqiang）</div>
+                                        <div class="text-xs text-green-600 mt-1">✓ 已通过 - 处理意见：同意发布，测试已完成</div>
+                                    </div>
+
+                                    <!-- 开始 -->
+                                    <div class="timeline-item">
+                                        <div class="timeline-dot completed"></div>
+                                        <div class="flex items-center justify-between mb-1">
+                                            <div class="text-sm font-medium text-gray-900">提交申请</div>
+                                            <div class="text-xs text-gray-500">2026-07-01 09:00</div>
+                                        </div>
+                                        <div class="text-xs text-gray-500">操作人：张三（zhangsan）</div>
+                                        <div class="text-xs text-green-600 mt-1">✓ 已完成</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 流程图Tab -->
+                            <div class="tab-content hidden" id="diagramTab">
+                                <div class="flow-scroll-container py-8">
+                                    <div class="flex items-center gap-4 min-w-max px-4">
+                                        <!-- 开始节点 -->
+                                        <div class="flex flex-col items-center">
+                                            <div class="flow-node flow-node-start">
+                                                <i data-lucide="play" class="w-4 h-4 mx-auto mb-1"></i>
+                                                开始
+                                            </div>
+                                            <div class="text-xs text-gray-500 mt-2">系统</div>
+                                        </div>
+
+                                        <i data-lucide="arrow-right" class="w-6 h-6 text-gray-400 flex-shrink-0"></i>
+
+                                        <!-- 部门审批 -->
+                                        <div class="flex flex-col items-center">
+                                            <div class="flow-node flow-node-start">
+                                                <i data-lucide="user-check" class="w-4 h-4 mx-auto mb-1"></i>
+                                                部门审批
+                                            </div>
+                                            <div class="text-xs text-gray-400 mt-2">预设处理人：王志强（wangzhiqiang）、李明远（limingyuan）</div>
+                                            <div class="text-xs text-gray-500">实际处理人：王志强（wangzhiqiang）</div>
+                                            <div class="text-xs text-green-600 mt-1">已通过</div>
+                                        </div>
+
+                                        <i data-lucide="arrow-right" class="w-6 h-6 text-gray-400 flex-shrink-0"></i>
+
+                                        <!-- 技术审批 -->
+                                        <div class="flex flex-col items-center">
+                                            <div class="flow-node flow-node-current">
+                                                <i data-lucide="user" class="w-4 h-4 mx-auto mb-1"></i>
+                                                技术审批
+                                            </div>
+                                            <div class="text-xs text-gray-400 mt-2">预设处理人：李明远（limingyuan）、王芳（wangfang）</div>
+                                            <div class="text-xs text-orange-600 mt-1">处理中</div>
+                                        </div>
+
+                                        <i data-lucide="arrow-right" class="w-6 h-6 text-gray-400 flex-shrink-0"></i>
+
+                                        <!-- 最终审批 -->
+                                        <div class="flex flex-col items-center">
+                                            <div class="flow-node flow-node-pending">
+                                                <i data-lucide="shield-check" class="w-4 h-4 mx-auto mb-1"></i>
+                                                最终审批
+                                            </div>
+                                            <div class="text-xs text-gray-400 mt-2">预设处理人：赵建国（zhaojianguo）、陈伟（chenwei）</div>
+                                            <div class="text-xs text-gray-400 mt-1">待处理</div>
+                                        </div>
+
+                                        <i data-lucide="arrow-right" class="w-6 h-6 text-gray-400 flex-shrink-0"></i>
+
+                                        <!-- 结束节点 -->
+                                        <div class="flex flex-col items-center">
+                                            <div class="flow-node flow-node-pending">
+                                                <i data-lucide="flag" class="w-4 h-4 mx-auto mb-1"></i>
+                                                结束
+                                            </div>
+                                            <div class="text-xs text-gray-500 mt-2">系统</div>
+                                            <div class="text-xs text-gray-400 mt-1">待处理</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 图例说明 -->
+                                <div class="mt-4 pt-4 border-t border-gray-100">
+                                    <div class="flex items-center gap-6 text-xs">
+
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-4 h-4 rounded" style="background-color:  #52C41A;"></div>
+                                            <span class="text-gray-600">已通过</span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-4 h-4 rounded" style="background-color: #FA8C16;"></div>
+                                            <span class="text-gray-600">处理中</span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-4 h-4 rounded" style="background-color: #D9D9D9;"></div>
+                                            <span class="text-gray-600">待处理</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const detailApplications = {
+            'REQ-2026101': ['销售域资源访问授权','资源权限申请','数据集'],
+            'REQ-2026102': ['运营工作台菜单授权','功能权限申请','功能菜单'],
+            'REQ-2026103': ['经营驾驶舱发布','资源发布','仪表板'],
+            'REQ-2026104': ['历史销售报表下架','资源下架','报表分析'],
+            'REQ-2026105': ['测试数据集删除','资源删除','数据集'],
+            'REQ-2026106': ['财务分析模型导出','资源导出','语义模型'],
+            'REQ-2026107': ['营销看板资源导入','资源导入','仪表板'],
+            'REQ-2026108': ['门店经营数据入库','数据入库','数据填报'],
+            'REQ-2026109': ['客户回访数据导出','数据导出','数据填报'],
+            'REQ-2026110': ['预算明细数据导入','数据导入','数据填报'],
+            'REQ-2026111': ['无效客户记录删除','数据变更-删除','数据填报'],
+            'REQ-2026112': ['客户联系人信息修正','数据变更-编辑','数据填报']
+        };
+
+        const table = (headers, rows, title = '') => `${title ? `<h3 class="text-sm font-semibold text-gray-900 mb-3">${title}</h3>` : ''}<div class="border border-gray-200 rounded-xl overflow-hidden"><table class="w-full"><thead class="bg-gray-50"><tr>${headers.map(h => `<th class="px-4 py-3 text-left text-xs font-medium text-gray-500">${h}</th>`).join('')}</tr></thead><tbody class="divide-y divide-gray-100">${rows.map(row => `<tr>${row.map(cell => `<td class="px-4 py-3 text-sm text-gray-700">${cell}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+        const resourceInfo = (name, path) => `<div class="mb-5"><h3 class="text-sm font-semibold text-gray-900 mb-3">数据填报资源信息</h3><div class="grid grid-cols-2 gap-5 rounded-xl border border-gray-200 bg-gray-50 p-4"><div><div class="info-label">资源名称</div><div class="info-value">${name}</div></div><div><div class="info-label">所属目录路径</div><div class="info-value">${path}</div></div></div></div>`;
+        const attachment = (name, size) => `<div><h3 class="text-sm font-semibold text-gray-900 mb-3">导入文件附件</h3><button onclick="previewAttachment('${name}')" class="w-full flex items-center gap-3 p-4 border border-gray-200 rounded-xl hover:border-blue-400 hover:bg-blue-50 transition text-left"><span class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center"><i data-lucide="file-spreadsheet" class="w-5 h-5 text-green-600"></i></span><span class="flex-1"><span class="block text-sm font-medium text-blue-600">${name}</span><span class="block text-xs text-gray-500 mt-1">${size} · 点击下载查看</span></span><i data-lucide="download" class="w-4 h-4 text-gray-400"></i></button></div>`;
+        const importMode = (mode) => `<div class="mt-5"><h3 class="text-sm font-semibold text-gray-900 mb-3">导入方式</h3><div class="info-value">${mode}</div></div>`;
+        const rows = [
+            ['10001','华东一区','上海旗舰店','128,600.00','2026-08-17'],
+            ['10002','华南二区','深圳中心店','96,420.00','2026-08-17'],
+            ['10003','华北一区','北京朝阳店','115,800.00','2026-08-17']
+        ];
+
+        function contentFor(type) {
+            if (type === '资源权限申请') return table(['资源','权限详情'], [['▾ 销售数据中心','查看、使用'],['　├ 华东销售数据集','查看、下载'],['　└ 客户画像数据集','查看']]);
+            if (type === '功能权限申请') return table(['菜单名称','权限详情'], [['▾ 数据分析','使用'],['　├ 仪表板','使用'],['　└ 自助取数','使用']]);
+            if (['资源发布','资源下架','资源删除','资源导出'].includes(type)) {
+                return table(['资源名称','所属目录路径'], [['区域经营驾驶舱','/数据分析/经营管理/'],['月度销售趋势报表','/数据分析/销售中心/月报/']]);
+            }
+            if (type === '资源导入') return attachment('营销分析资源包.gienbi','18.6 MB');
+            if (type === '数据入库') return resourceInfo('门店日经营数据填报','/数据填报/经营管理/门店日报/') + table(['记录ID','区域','门店','营业额（元）','业务日期'], rows, '待入库数据');
+            if (type === '数据导出') return resourceInfo('客户回访记录填报','/数据填报/客户管理/回访记录/') + table(['记录ID','客户名称','回访人','回访结果','回访日期'], [['C2301','华星科技','王敏','有续约意向','2026-08-16'],['C2302','云帆贸易','李岩','待二次跟进','2026-08-17']], '待导出数据');
+            if (type === '数据导入') return resourceInfo('年度预算明细填报','/数据填报/财务中心/预算管理/') + attachment('2026年度预算调整明细.xlsx','326 KB') + importMode('追加');
+            if (type === '数据变更-删除') return resourceInfo('客户主数据维护','/数据填报/客户管理/客户主数据/') + table(['客户编码','客户名称','所属行业','客户状态'], [['KH-00821','示例测试客户','互联网','无效'],['KH-00835','重复录入客户','零售','无效']], '删除数据');
+            if (type === '数据变更-编辑') return resourceInfo('客户联系人维护','/数据填报/客户管理/联系人/') + `<div class="space-y-5">${table(['客户编码','联系人','联系电话','职务'], [['KH-00618','陈晓峰','138****2671','采购专员']], '变更前')}${table(['客户编码','联系人','联系电话','职务'], [['KH-00618','陈晓峰','<span class="text-orange-600 font-semibold bg-orange-50 px-1 rounded">139****5280</span>','<span class="text-orange-600 font-semibold bg-orange-50 px-1 rounded">采购经理</span>']], '变更后')}</div>`;
+            return '';
+        }
+
+        function renderDetail() {
+            const id = new URLSearchParams(location.search).get('id') || 'REQ-2026103';
+            const app = detailApplications[id] || detailApplications['REQ-2026103'];
+            const [name, type, resourceType] = app;
+            document.querySelector('h1').textContent = name;
+            const numberRow = document.querySelector('h1').parentElement.nextElementSibling;
+            numberRow.childNodes[0].textContent = `申请单号：${id} `;
+            numberRow.querySelector('button').setAttribute('onclick', `copyText('${id}')`);
+            const values = document.querySelectorAll('.info-value');
+            values[0].textContent = type;
+            values[1].textContent = resourceType;
+            // 功能权限与具体资源类型无关，基本信息中不展示“资源类型”。
+            values[1].parentElement.classList.toggle('hidden', type === '功能权限申请');
+            document.getElementById('contentTab').innerHTML = contentFor(type);
+            document.title = `${name} - 申请详情`;
+            lucide.createIcons();
+        }
+
+        function previewAttachment(name) {
+            alert(`正在下载：${name}\n原型演示中不包含真实文件。`);
+        }
+
+        lucide.createIcons();
+        renderDetail();
+
+        // Tab切换
+        function switchTab(tabName) {
+            // 更新按钮状态
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.classList.add('text-gray-500');
+            });
+            const activeBtn = document.querySelector(`[data-tab="${tabName}"]`);
+            activeBtn.classList.add('active');
+            activeBtn.classList.remove('text-gray-500');
+
+            // 切换内容
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.getElementById(tabName + 'Tab').classList.remove('hidden');
+
+            // 重新初始化图标
+            lucide.createIcons();
+        }
+
+        // 复制文本到剪贴板
+        function copyText(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const tip = document.getElementById('copyTip');
+                tip.classList.remove('hidden');
+                setTimeout(() => tip.classList.add('hidden'), 1500);
+            });
+        }
+
+        function handleAction(action) {
+            if (action === 'withdraw') {
+                if (confirm('确认撤销此申请吗？')) {
+                    alert('申请已撤销');
+                    // 这里应该调用API并返回列表
+                }
+            }
+        }
+    </script>
+</body>
+</html>
