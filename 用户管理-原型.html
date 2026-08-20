@@ -487,16 +487,16 @@ main > .hd h1 { font-size: 17px; font-weight: 700; color: var(--t1); }
 </div></div></div>
 
 <!-- Batch Delete Resource Owner Warning Modal -->
-<div id="batchDeleteResourceOwnerWarningModal" class="mod-o" style="z-index:2000;"><div class="mod" style="width:540px;"><div class="mod-bd">
+<div id="batchDeleteResourceOwnerWarningModal" class="mod-o" style="z-index:2000;"><div class="mod" style="width:600px;"><div class="mod-bd">
   <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
     <div style="width:40px;height:40px;background:#FEF2F2;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
       <i data-lucide="alert-circle" style="width:20px;height:20px;color:#EF4444;"></i>
     </div>
     <h3 id="resourceOwnerWarningTitle" style="font-size:16px;font-weight:700;color:var(--t1);margin:0;">部分成员无法删除</h3>
   </div>
-  <p style="font-size:13px;color:var(--t2);margin-bottom:12px;">以下 <span id="resourceOwnerTotal" style="font-weight:600;color:#EF4444;"></span> 个成员存在负责的资源，不允许删除。必须先通过权限迁移转移资源负责人权限：</p>
+  <p style="font-size:13px;color:var(--t2);margin-bottom:12px;">以下 <span id="resourceOwnerTotal" style="font-weight:600;color:#EF4444;"></span> 个成员存在资源引用，暂时无法删除。请先完成资源负责人权限迁移：</p>
   <div id="resourceOwnerWarningList" style="min-height:60px;background:#F8FAFC;border:1px solid var(--bd);border-radius:10px;padding:12px;margin-bottom:8px;"></div>
-  <div id="resourceOwnerPagination" style="display:flex;align-items:center;justify-content:flex-end;margin-bottom:16px;font-size:12px;color:var(--t2);"></div>
+  <div id="resourceOwnerPagination" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;font-size:12px;color:var(--t2);"></div>
   <p id="resourceOwnerWarningDesc" style="font-size:13px;color:var(--t2);margin-bottom:20px;">您可以选择"删除其余成员"仅删除校验通过的成员，或"取消"返回重新选择。</p>
   <div style="display:flex;justify-content:center;gap:10px;">
     <button class="btn btn-sec" onclick="closeModal('batchDeleteResourceOwnerWarningModal')">取消</button>
@@ -889,7 +889,7 @@ const users = [
   { id:1, account:'zhangwei', name:'张伟', email:'zhangwei@gientech.com', phone:'13812340001', orgs:['总公司','销售部'], def:'总公司', roles:['租户管理员','数据分析师'], type:'tenant_admin', status:'active', updater:'张伟（zhangwei）', updateTime:'2024-07-01 09:00', responsibleResources:['销售分析仪表板','客户数据报表','年度销售汇总','实时监控大屏'] },
   { id:2, account:'lina', name:'李娜', email:'lina@gientech.com', phone:'13812340002', orgs:['销售部'], def:'销售部', roles:['次级管理员'], type:'org_admin', status:'active', updater:'张伟（zhangwei）', updateTime:'2024-07-02 14:30', desc:'销售部管理员，负责华东和华南区域' },
   { id:3, account:'wangqiang', name:'王强', email:'wangqiang@gientech.com', phone:'13812340003', orgs:['技术部'], def:'技术部', roles:['次级管理员'], type:'org_admin', status:'active', updater:'张伟（zhangwei）', updateTime:'2024-06-28 11:15' },
-  { id:4, account:'zhaomin', name:'赵敏', email:'zhaomin@gientech.com', phone:'13812340004', orgs:['总公司','技术部','财务部'], def:'技术部', roles:['数据分析师','次级管理员'], type:'normal', status:'active', updater:'李娜（lina）', updateTime:'2024-07-03 16:45', responsibleResources:['财务数据集','技术指标报表'] },
+  { id:4, account:'zhaomin', name:'赵敏', email:'zhaomin@gientech.com', phone:'13812340004', orgs:['总公司','技术部','财务部'], def:'技术部', roles:['数据分析师','次级管理员'], type:'normal', status:'active', updater:'李娜（lina）', updateTime:'2024-07-03 16:45', responsibleResources:['财务数据集','技术指标报表','财务经营驾驶舱','系统健康度监控','月度成本明细','应收账款分析','API 调用趋势'] },
   { id:5, account:'liuyang', name:'刘洋', email:'liuyang@gientech.com', phone:'13812340005', orgs:['销售部'], def:'销售部', roles:['数据分析师'], type:'normal', status:'active', updater:'李娜（lina）', updateTime:'2024-06-30 10:00', responsibleResources:['客户行为分析仪表板'] },
   { id:6, account:'chenjing', name:'陈静', email:'chenjing@gientech.com', phone:'13812340006', orgs:['财务部'], def:'财务部', roles:['数据查看者'], type:'normal', status:'inactive', updater:'王强（wangqiang）', updateTime:'2024-06-25 08:30' },
   { id:7, account:'yangfan', name:'杨帆', email:'yangfan@gientech.com', phone:'13812340007', orgs:['分公司','销售部'], def:'分公司', roles:['数据分析师','数据查看者'], type:'normal', status:'active', updater:'王强（wangqiang）', updateTime:'2024-07-04 13:20', responsibleResources:['分公司销售仪表板'] },
@@ -1132,7 +1132,8 @@ function showResourceOwnerWarningModal(usersWithResources, usersWithoutResources
   // Store for pagination
   window.resourceOwnerAllUsers = usersWithResources;
   window.resourceOwnerPage = 1;
-  window.resourceOwnerPageSize = 5;
+  // 拦截弹窗成员列表独立分页，避免依赖用户过多时撑高弹窗
+  window.resourceOwnerPageSize = 3;
 
   // Render first page
   renderResourceOwnerPage(1);
@@ -1160,7 +1161,7 @@ function showResourceOwnerWarningModal(usersWithResources, usersWithoutResources
 }
 
 function renderResourceOwnerPage(page) {
-  const PAGE_SIZE = window.resourceOwnerPageSize || 5;
+  const PAGE_SIZE = window.resourceOwnerPageSize || 3;
   const users = window.resourceOwnerAllUsers || [];
   const totalPages = Math.ceil(users.length / PAGE_SIZE);
   window.resourceOwnerPage = page;
@@ -1169,11 +1170,13 @@ function renderResourceOwnerPage(page) {
 
   const listEl = document.getElementById('resourceOwnerWarningList');
   listEl.innerHTML = pageUsers.map(user => `
-    <div style="display:flex;align-items:flex-start;gap:10px;padding:8px;background:#fff;border-radius:8px;margin-bottom:8px;">
-      <div class="av ${avClass(user.name)}" style="width:32px;height:32px;font-size:13px;flex-shrink:0;">${user.name[0]}</div>
-      <div style="flex:1;min-width:0;">
-        <div style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:2px;">${user.name} <span style="font-weight:400;color:var(--t3);font-size:12px;">(${user.account})</span></div>
-        <div style="font-size:12px;color:var(--t3);display:flex;flex-wrap:wrap;align-items:center;gap:3px;">负责资源：${renderResourcesInline(user)}</div>
+    <div style="background:#fff;border:1px solid var(--bd-lt);border-radius:8px;margin-bottom:8px;overflow:hidden;">
+      <div style="display:flex;align-items:center;gap:10px;padding:10px;">
+        <div class="av ${avClass(user.name)}" style="width:32px;height:32px;font-size:13px;flex-shrink:0;">${user.name[0]}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:2px;">${user.name} <span style="font-weight:400;color:var(--t3);font-size:12px;">(${user.account})</span></div>
+          <div style="font-size:12px;color:var(--t3);">有 <span style="font-weight:600;color:#EF4444;">${user.responsibleResources.length}</span> 项资源引用</div>
+        </div>
       </div>
     </div>
   `).join('');
@@ -1183,59 +1186,28 @@ function renderResourceOwnerPage(page) {
 }
 
 function renderResourceOwnerPagination(total, page) {
-  const PAGE_SIZE = window.resourceOwnerPageSize || 5;
+  const PAGE_SIZE = window.resourceOwnerPageSize || 3;
   const totalPages = Math.ceil(total / PAGE_SIZE);
   const container = document.getElementById('resourceOwnerPagination');
 
   if (totalPages <= 1) {
-    container.innerHTML = `<span>共 ${total} 人</span>`;
+    container.innerHTML = `<span>共 ${total} 人，已全部显示</span>`;
     return;
   }
 
   container.innerHTML = `
-    <span style="margin-right:8px;">共 ${total} 人</span>
-    <button class="pg-btn pg-btn-sm" ${page === 1 ? 'disabled' : ''} onclick="renderResourceOwnerPage(${page - 1})">
-      <i data-lucide="chevron-left" style="width:14px;height:14px;"></i>
-    </button>
-    <span style="margin:0 8px;color:var(--t1);">${page}/${totalPages}</span>
-    <button class="pg-btn pg-btn-sm" ${page === totalPages ? 'disabled' : ''} onclick="renderResourceOwnerPage(${page + 1})">
-      <i data-lucide="chevron-right" style="width:14px;height:14px;"></i>
-    </button>
+    <span>共 ${total} 人，每页 ${PAGE_SIZE} 人</span>
+    <div class="pg-btns">
+      <button class="pg-btn pg-btn-sm" title="上一页" ${page === 1 ? 'disabled' : ''} onclick="renderResourceOwnerPage(${page - 1})">
+        <i data-lucide="chevron-left" style="width:14px;height:14px;"></i>
+      </button>
+      ${Array.from({length:totalPages}, (_, i) => `<button class="pg-btn pg-btn-sm ${i + 1 === page ? 'on' : ''}" onclick="renderResourceOwnerPage(${i + 1})">${i + 1}</button>`).join('')}
+      <button class="pg-btn pg-btn-sm" title="下一页" ${page === totalPages ? 'disabled' : ''} onclick="renderResourceOwnerPage(${page + 1})">
+        <i data-lucide="chevron-right" style="width:14px;height:14px;"></i>
+      </button>
+    </div>
   `;
   lucide.createIcons();
-}
-
-function renderResourcesInline(user) {
-  const resources = user.responsibleResources || [];
-  if (resources.length === 0) return '<span style="color:var(--t3);">无</span>';
-
-  const MAX_VISIBLE = 2;
-  if (resources.length <= MAX_VISIBLE) {
-    return resources.map(r => `<span class="tag tag-gray" style="font-size:11px;">${r}</span>`).join('');
-  }
-
-  const visible = resources.slice(0, MAX_VISIBLE);
-  const hidden = resources.slice(MAX_VISIBLE);
-  const uid = 'res' + user.id;
-
-  return `
-    ${visible.map(r => `<span class="tag tag-gray" style="font-size:11px;">${r}</span>`).join('')}
-    <span class="tag" style="font-size:11px;background:#EFF6FF;color:#1D4ED8;cursor:pointer;" onclick="toggleResources('${uid}')" id="${uid}_btn">+${hidden.length}</span>
-    <span id="${uid}_more" style="display:none;">${hidden.map(r => `<span class="tag tag-gray" style="font-size:11px;">${r}</span>`).join('')}</span>
-  `;
-}
-
-function toggleResources(uid) {
-  const btn = document.getElementById(uid + '_btn');
-  const more = document.getElementById(uid + '_more');
-  if (!btn || !more) return;
-  if (more.style.display === 'none') {
-    more.style.display = 'inline';
-    btn.style.display = 'none';
-  } else {
-    more.style.display = 'none';
-    btn.style.display = 'inline';
-  }
 }
 
 function showBatchDeleteConfirmModal(count) {
