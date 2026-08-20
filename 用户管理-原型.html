@@ -355,7 +355,7 @@ main > .hd h1 { font-size: 17px; font-weight: 700; color: var(--t1); }
         <div class="hd">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
             <span style="font-size:13px;font-weight:600;">组织</span>
-            <div style="display:flex;align-items:center;gap:4px;"><button class="btn btn-sec" style="padding:4px 8px;font-size:12px;" onclick="showModal('orgImportModal')"><i data-lucide="upload" style="width:13px;height:13px;"></i> 导入</button><button class="btn btn-sec" style="padding:4px 8px;font-size:12px;" onclick="alert('导出组织架构')"><i data-lucide="download" style="width:13px;height:13px;"></i> 导出</button><button class="btn btn-pri" style="padding:4px 10px;font-size:12px;" onclick="showModal('orgModal')"><i data-lucide="plus" style="width:13px;height:13px;"></i> 新增</button></div>
+            <div style="display:flex;align-items:center;gap:4px;"><button class="btn btn-sec" style="padding:4px 8px;font-size:12px;" onclick="showModal('orgImportModal')"><i data-lucide="upload" style="width:13px;height:13px;"></i> 导入</button><button class="btn btn-sec" style="padding:4px 8px;font-size:12px;" onclick="alert('导出组织架构')"><i data-lucide="download" style="width:13px;height:13px;"></i> 导出</button><button class="btn btn-pri" style="padding:4px 10px;font-size:12px;" onclick="openCreateOrgModal()"><i data-lucide="plus" style="width:13px;height:13px;"></i> 新增</button></div>
           </div>
           <input class="frm-inp" style="font-size:12.5px;" placeholder="搜索组织...">
         </div>
@@ -495,8 +495,7 @@ main > .hd h1 { font-size: 17px; font-weight: 700; color: var(--t1); }
     <h3 id="resourceOwnerWarningTitle" style="font-size:16px;font-weight:700;color:var(--t1);margin:0;">部分成员无法删除</h3>
   </div>
   <p style="font-size:13px;color:var(--t2);margin-bottom:12px;">以下 <span id="resourceOwnerTotal" style="font-weight:600;color:#EF4444;"></span> 个成员存在资源引用，暂时无法删除。请先完成资源负责人权限迁移：</p>
-  <div id="resourceOwnerWarningList" style="min-height:60px;background:#F8FAFC;border:1px solid var(--bd);border-radius:10px;padding:12px;margin-bottom:8px;"></div>
-  <div id="resourceOwnerPagination" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;font-size:12px;color:var(--t2);"></div>
+  <div id="resourceOwnerWarningList" style="min-height:60px;max-height:360px;overflow-y:auto;background:#F8FAFC;border:1px solid var(--bd);border-radius:10px;padding:12px;margin-bottom:16px;"></div>
   <p id="resourceOwnerWarningDesc" style="font-size:13px;color:var(--t2);margin-bottom:20px;">您可以选择"删除其余成员"仅删除校验通过的成员，或"取消"返回重新选择。</p>
   <div style="display:flex;justify-content:center;gap:10px;">
     <button class="btn btn-sec" onclick="closeModal('batchDeleteResourceOwnerWarningModal')">取消</button>
@@ -709,7 +708,8 @@ main > .hd h1 { font-size: 17px; font-weight: 700; color: var(--t1); }
   <div><label class="frm-lbl">组织名称<span class="rq">*</span></label><input class="frm-inp" placeholder="输入组织名称"></div>
   <div><label class="frm-lbl">组织编码<span class="rq">*</span></label><input class="frm-inp" placeholder="唯一标识"></div>
   <div><label class="frm-lbl">父组织</label><select class="frm-inp"><option value="">无（根组织）</option><option>总公司</option><option>销售部</option></select></div>
-  <div style="display:flex;align-items:center;justify-content:space-between;"><div><span style="font-size:13px;font-weight:500;">继承父组织</span><div style="font-size:11px;color:var(--t3);">开启后继承父组织赋予的权限</div></div><div class="switch on" id="orgInherit" onclick="this.classList.toggle('on')"></div></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;"><div><span style="font-size:13px;font-weight:500;">向子组织传递权限</span><div style="font-size:11px;color:var(--t3);">开启后，当前组织的权限将传递给子组织</div></div><div class="switch" id="orgPassToChildren" onclick="this.classList.toggle('on')"></div></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;"><div><span style="font-size:13px;font-weight:500;">禁止父组织权限传递</span><div style="font-size:11px;color:var(--t3);">开启后，父组织的权限不再传递给当前组织</div></div><div class="switch" id="orgBlockParentPermission" onclick="this.classList.toggle('on')"></div></div>
   <div><label class="frm-lbl">组织描述</label><textarea class="frm-inp" style="resize:vertical;min-height:70px;padding-top:8px;" placeholder="组织描述"></textarea></div>
 </div>
 <div class="mod-ft"><button class="btn btn-sec" onclick="closeModal('orgModal')">取消</button><button class="btn btn-pri" onclick="closeModal('orgModal')">保存</button></div>
@@ -721,7 +721,8 @@ main > .hd h1 { font-size: 17px; font-weight: 700; color: var(--t1); }
   <div><label class="frm-lbl">组织名称<span class="rq">*</span></label><input class="frm-inp" id="asoName" placeholder="输入组织名称"></div>
   <div><label class="frm-lbl">组织编码<span class="rq">*</span></label><input class="frm-inp" id="asoCode" placeholder="唯一标识"></div>
   <div><label class="frm-lbl">父组织</label><input class="frm-inp" id="asoParent" readonly style="background:#F1F5F9;color:var(--t2);cursor:not-allowed;"></div>
-  <div style="display:flex;align-items:center;justify-content:space-between;"><div><span style="font-size:13px;font-weight:500;">继承父组织</span><div style="font-size:11px;color:var(--t3);">开启后继承父组织赋予的权限</div></div><div class="switch on" id="asoInherit" onclick="this.classList.toggle('on')"></div></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;"><div><span style="font-size:13px;font-weight:500;">向子组织传递权限</span><div style="font-size:11px;color:var(--t3);">开启后，当前组织的权限将传递给子组织</div></div><div class="switch" id="asoPassToChildren" onclick="this.classList.toggle('on')"></div></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;"><div><span style="font-size:13px;font-weight:500;">禁止父组织权限传递</span><div style="font-size:11px;color:var(--t3);">开启后，父组织的权限不再传递给当前组织</div></div><div class="switch" id="asoBlockParentPermission" onclick="this.classList.toggle('on')"></div></div>
   <div><label class="frm-lbl">组织描述</label><textarea class="frm-inp" id="asoDesc" style="resize:vertical;min-height:70px;padding-top:8px;" placeholder="组织描述"></textarea></div>
 </div>
 <div class="mod-ft"><button class="btn btn-sec" onclick="closeModal('addSubOrgModal')">取消</button><button class="btn btn-pri" onclick="saveSubOrg()">保存</button></div>
@@ -733,7 +734,8 @@ main > .hd h1 { font-size: 17px; font-weight: 700; color: var(--t1); }
   <div><label class="frm-lbl">组织名称<span class="rq">*</span></label><input class="frm-inp" id="eoName" placeholder="输入组织名称"></div>
   <div><label class="frm-lbl">组织编码<span class="rq">*</span></label><input class="frm-inp" id="eoCode" placeholder="唯一标识"></div>
   <div><label class="frm-lbl">父组织</label><select class="frm-inp" id="eoParent"><option value="">无（根组织）</option></select></div>
-  <div style="display:flex;align-items:center;justify-content:space-between;"><div><span style="font-size:13px;font-weight:500;">继承父组织</span><div style="font-size:11px;color:var(--t3);">开启后继承父组织赋予的角色和权限</div></div><div class="switch on" id="eoInherit" onclick="this.classList.toggle('on')"></div></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;"><div><span style="font-size:13px;font-weight:500;">向子组织传递权限</span><div style="font-size:11px;color:var(--t3);">开启后，当前组织的权限将传递给子组织</div></div><div class="switch" id="eoPassToChildren" onclick="this.classList.toggle('on')"></div></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;"><div><span style="font-size:13px;font-weight:500;">禁止父组织权限传递</span><div style="font-size:11px;color:var(--t3);">开启后，父组织的权限不再传递给当前组织</div></div><div class="switch" id="eoBlockParentPermission" onclick="this.classList.toggle('on')"></div></div>
   <div><label class="frm-lbl">组织描述</label><textarea class="frm-inp" id="eoDesc" style="resize:vertical;min-height:70px;padding-top:8px;" placeholder="组织描述"></textarea></div>
 </div>
 <div class="mod-ft"><button class="btn btn-sec" onclick="closeModal('editOrgModal')">取消</button><button class="btn btn-pri" onclick="saveEditOrg()">保存</button></div>
@@ -1129,14 +1131,10 @@ function batchDelete() {
 }
 
 function showResourceOwnerWarningModal(usersWithResources, usersWithoutResources) {
-  // Store for pagination
+  // Store blocked users for rendering
   window.resourceOwnerAllUsers = usersWithResources;
-  window.resourceOwnerPage = 1;
-  // 拦截弹窗成员列表独立分页，避免依赖用户过多时撑高弹窗
-  window.resourceOwnerPageSize = 3;
 
-  // Render first page
-  renderResourceOwnerPage(1);
+  renderResourceOwnerList();
 
   // Update total count
   document.getElementById('resourceOwnerTotal').textContent = usersWithResources.length;
@@ -1160,16 +1158,11 @@ function showResourceOwnerWarningModal(usersWithResources, usersWithoutResources
   showModal('batchDeleteResourceOwnerWarningModal');
 }
 
-function renderResourceOwnerPage(page) {
-  const PAGE_SIZE = window.resourceOwnerPageSize || 3;
+function renderResourceOwnerList() {
   const users = window.resourceOwnerAllUsers || [];
-  const totalPages = Math.ceil(users.length / PAGE_SIZE);
-  window.resourceOwnerPage = page;
-  const start = (page - 1) * PAGE_SIZE;
-  const pageUsers = users.slice(start, start + PAGE_SIZE);
 
   const listEl = document.getElementById('resourceOwnerWarningList');
-  listEl.innerHTML = pageUsers.map(user => `
+  listEl.innerHTML = users.map(user => `
     <div style="background:#fff;border:1px solid var(--bd-lt);border-radius:8px;margin-bottom:8px;overflow:hidden;">
       <div style="display:flex;align-items:center;gap:10px;padding:10px;">
         <div class="av ${avClass(user.name)}" style="width:32px;height:32px;font-size:13px;flex-shrink:0;">${user.name[0]}</div>
@@ -1181,32 +1174,6 @@ function renderResourceOwnerPage(page) {
     </div>
   `).join('');
 
-  renderResourceOwnerPagination(users.length, page);
-  lucide.createIcons();
-}
-
-function renderResourceOwnerPagination(total, page) {
-  const PAGE_SIZE = window.resourceOwnerPageSize || 3;
-  const totalPages = Math.ceil(total / PAGE_SIZE);
-  const container = document.getElementById('resourceOwnerPagination');
-
-  if (totalPages <= 1) {
-    container.innerHTML = `<span>共 ${total} 人，已全部显示</span>`;
-    return;
-  }
-
-  container.innerHTML = `
-    <span>共 ${total} 人，每页 ${PAGE_SIZE} 人</span>
-    <div class="pg-btns">
-      <button class="pg-btn pg-btn-sm" title="上一页" ${page === 1 ? 'disabled' : ''} onclick="renderResourceOwnerPage(${page - 1})">
-        <i data-lucide="chevron-left" style="width:14px;height:14px;"></i>
-      </button>
-      ${Array.from({length:totalPages}, (_, i) => `<button class="pg-btn pg-btn-sm ${i + 1 === page ? 'on' : ''}" onclick="renderResourceOwnerPage(${i + 1})">${i + 1}</button>`).join('')}
-      <button class="pg-btn pg-btn-sm" title="下一页" ${page === totalPages ? 'disabled' : ''} onclick="renderResourceOwnerPage(${page + 1})">
-        <i data-lucide="chevron-right" style="width:14px;height:14px;"></i>
-      </button>
-    </div>
-  `;
   lucide.createIcons();
 }
 
@@ -1692,8 +1659,15 @@ function openAddSubOrgModal(parentId) {
   document.getElementById('asoDesc').value = '';
   document.getElementById('asoParent').value = parent.name;
   document.getElementById('asoParent').dataset.parentId = parentId;
-  document.getElementById('asoInherit').classList.add('on');
+  document.getElementById('asoBlockParentPermission').classList.remove('on');
+  document.getElementById('asoPassToChildren').classList.remove('on');
   document.getElementById('addSubOrgModal').classList.add('show');
+}
+
+function openCreateOrgModal() {
+  document.getElementById('orgBlockParentPermission').classList.remove('on');
+  document.getElementById('orgPassToChildren').classList.remove('on');
+  showModal('orgModal');
 }
 
 function saveSubOrg() {
@@ -1711,15 +1685,19 @@ function openEditOrgModal(id) {
   document.getElementById('eoName').value = o.name;
   document.getElementById('eoCode').value = o.code || '';
   document.getElementById('eoDesc').value = o.desc || '';
-  const inheritSwitch = document.getElementById('eoInherit');
-  if (o.noInherit) { inheritSwitch.classList.remove('on'); }
-  else { inheritSwitch.classList.add('on'); }
+  document.getElementById('eoBlockParentPermission').classList.toggle('on', !!o.noInherit);
+  document.getElementById('eoPassToChildren').classList.toggle('on', !!o.passToChildren);
   const sel = document.getElementById('eoParent');
   sel.innerHTML = '<option value="">无（根组织）</option>' + orgsData.filter(x => x.id !== id).map(x => `<option value="${x.id}" ${x.id===o.parent?'selected':''}>${x.name}</option>`).join('');
   document.getElementById('editOrgModal').classList.add('show');
 }
 
 function saveEditOrg() {
+  const o = orgsData.find(x => x.id === currentEditOrgId);
+  if (o) {
+    o.noInherit = document.getElementById('eoBlockParentPermission').classList.contains('on');
+    o.passToChildren = document.getElementById('eoPassToChildren').classList.contains('on');
+  }
   closeModal('editOrgModal');
   alert('组织信息保存成功！');
   renderOrgTree();
@@ -1757,7 +1735,16 @@ function selOrg(e, id) {
 
   c.innerHTML = `<div class="dsec">
     <div style="display:flex;align-items:flex-start;justify-content:space-between;">
-      <div><div style="font-weight:700;font-size:16px;">${o.name}</div><div style="font-size:12px;color:var(--t3);margin-top:2px;">父组织：${o.parent?orgsData.find(x=>x.id===o.parent).name:'无（根组织）'} · <span style="color:${o.noInherit?'#EF4444':'#22C55E'};">${o.noInherit?'不继承':'继承'}父组织</span></div><div style="font-size:12px;color:var(--t3);margin-top:4px;display:flex;gap:16px;"><span>更新人：${o.updater || '-'}</span><span>更新时间：${o.updateTime || '-'}</span></div><div style="font-size:12px;color:var(--t3);margin-top:4px;">次级管理员：${(adminAssignments.orgs[o.name]||[]).length ? adminAssignments.orgs[o.name].map(a => `<span class="tag tag-gray">${a}</span>`).join(' ') : '-'}</div></div>
+      <div>
+        <div style="font-weight:700;font-size:16px;">${o.name}</div>
+        <div style="font-size:12px;color:var(--t3);margin-top:4px;">父组织：<span style="color:var(--t2);">${o.parent?orgsData.find(x=>x.id===o.parent).name:'无（根组织）'}</span></div>
+        <div style="display:flex;align-items:center;gap:20px;margin-top:8px;font-size:12px;color:var(--t3);">
+          <span style="display:flex;align-items:center;gap:6px;">向子组织传递权限 <span class="badge" style="padding:2px 8px;background:${o.passToChildren?'#F0FDF4':'#F1F5F9'};color:${o.passToChildren?'#15803D':'#64748B'};"><span class="badge-dot" style="background:${o.passToChildren?'#22C55E':'#94A3B8'};"></span>${o.passToChildren?'已开启':'已关闭'}</span></span>
+          <span style="display:flex;align-items:center;gap:6px;">禁止父组织权限传递 <span class="badge" style="padding:2px 8px;background:${o.noInherit?'#F0FDF4':'#F1F5F9'};color:${o.noInherit?'#15803D':'#64748B'};"><span class="badge-dot" style="background:${o.noInherit?'#22C55E':'#94A3B8'};"></span>${o.noInherit?'已开启':'已关闭'}</span></span>
+        </div>
+        <div style="font-size:12px;color:var(--t3);margin-top:8px;display:flex;gap:16px;"><span>更新人：${o.updater || '-'}</span><span>更新时间：${o.updateTime || '-'}</span></div>
+        <div style="font-size:12px;color:var(--t3);margin-top:4px;">次级管理员：${(adminAssignments.orgs[o.name]||[]).length ? adminAssignments.orgs[o.name].map(a => `<span class="tag tag-gray">${a}</span>`).join(' ') : '-'}</div>
+      </div>
       <div style="display:flex;gap:6px;"><button class="btn btn-sec" style="font-size:12px;padding:5px 10px;" onclick="openEditOrgModal(selectedOrgId)"><i data-lucide="edit-3" style="width:13px;height:13px;"></i> 编辑</button><button class="btn btn-sec" style="font-size:12px;padding:5px 10px;color:#EF4444;border-color:#EF4444;" onclick="confirmDeleteOrg(selectedOrgId)"><i data-lucide="trash-2" style="width:13px;height:13px;"></i> 删除</button></div>
     </div>
   </div>
