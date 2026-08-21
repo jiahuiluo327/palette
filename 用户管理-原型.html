@@ -708,8 +708,8 @@ main > .hd h1 { font-size: 17px; font-weight: 700; color: var(--t1); }
   <div><label class="frm-lbl">组织名称<span class="rq">*</span></label><input class="frm-inp" placeholder="输入组织名称"></div>
   <div><label class="frm-lbl">组织编码<span class="rq">*</span></label><input class="frm-inp" placeholder="唯一标识"></div>
   <div><label class="frm-lbl">父组织</label><select class="frm-inp"><option value="">无（根组织）</option><option>总公司</option><option>销售部</option></select></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;"><div><span style="font-size:13px;font-weight:500;">继承父组织</span><div style="font-size:11px;color:var(--t3);">开启后，当前组织将继承父组织的权限</div></div><div class="switch" id="orgInheritParent" onclick="this.classList.toggle('on')"></div></div>
   <div style="display:flex;align-items:center;justify-content:space-between;"><div><span style="font-size:13px;font-weight:500;">向子组织传递权限</span><div style="font-size:11px;color:var(--t3);">开启后，当前组织的权限将传递给子组织</div></div><div class="switch" id="orgPassToChildren" onclick="this.classList.toggle('on')"></div></div>
-  <div style="display:flex;align-items:center;justify-content:space-between;"><div><span style="font-size:13px;font-weight:500;">禁止父组织权限传递</span><div style="font-size:11px;color:var(--t3);">开启后，父组织的权限不再传递给当前组织</div></div><div class="switch" id="orgBlockParentPermission" onclick="this.classList.toggle('on')"></div></div>
   <div><label class="frm-lbl">组织描述</label><textarea class="frm-inp" style="resize:vertical;min-height:70px;padding-top:8px;" placeholder="组织描述"></textarea></div>
 </div>
 <div class="mod-ft"><button class="btn btn-sec" onclick="closeModal('orgModal')">取消</button><button class="btn btn-pri" onclick="closeModal('orgModal')">保存</button></div>
@@ -721,8 +721,8 @@ main > .hd h1 { font-size: 17px; font-weight: 700; color: var(--t1); }
   <div><label class="frm-lbl">组织名称<span class="rq">*</span></label><input class="frm-inp" id="asoName" placeholder="输入组织名称"></div>
   <div><label class="frm-lbl">组织编码<span class="rq">*</span></label><input class="frm-inp" id="asoCode" placeholder="唯一标识"></div>
   <div><label class="frm-lbl">父组织</label><input class="frm-inp" id="asoParent" readonly style="background:#F1F5F9;color:var(--t2);cursor:not-allowed;"></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;"><div><span style="font-size:13px;font-weight:500;">继承父组织</span><div style="font-size:11px;color:var(--t3);">开启后，当前组织将继承父组织的权限</div></div><div class="switch" id="asoInheritParent" onclick="this.classList.toggle('on')"></div></div>
   <div style="display:flex;align-items:center;justify-content:space-between;"><div><span style="font-size:13px;font-weight:500;">向子组织传递权限</span><div style="font-size:11px;color:var(--t3);">开启后，当前组织的权限将传递给子组织</div></div><div class="switch" id="asoPassToChildren" onclick="this.classList.toggle('on')"></div></div>
-  <div style="display:flex;align-items:center;justify-content:space-between;"><div><span style="font-size:13px;font-weight:500;">禁止父组织权限传递</span><div style="font-size:11px;color:var(--t3);">开启后，父组织的权限不再传递给当前组织</div></div><div class="switch" id="asoBlockParentPermission" onclick="this.classList.toggle('on')"></div></div>
   <div><label class="frm-lbl">组织描述</label><textarea class="frm-inp" id="asoDesc" style="resize:vertical;min-height:70px;padding-top:8px;" placeholder="组织描述"></textarea></div>
 </div>
 <div class="mod-ft"><button class="btn btn-sec" onclick="closeModal('addSubOrgModal')">取消</button><button class="btn btn-pri" onclick="saveSubOrg()">保存</button></div>
@@ -734,8 +734,8 @@ main > .hd h1 { font-size: 17px; font-weight: 700; color: var(--t1); }
   <div><label class="frm-lbl">组织名称<span class="rq">*</span></label><input class="frm-inp" id="eoName" placeholder="输入组织名称"></div>
   <div><label class="frm-lbl">组织编码<span class="rq">*</span></label><input class="frm-inp" id="eoCode" placeholder="唯一标识"></div>
   <div><label class="frm-lbl">父组织</label><select class="frm-inp" id="eoParent"><option value="">无（根组织）</option></select></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;"><div><span style="font-size:13px;font-weight:500;">继承父组织</span><div style="font-size:11px;color:var(--t3);">开启后，当前组织将继承父组织的权限</div></div><div class="switch" id="eoInheritParent" onclick="this.classList.toggle('on')"></div></div>
   <div style="display:flex;align-items:center;justify-content:space-between;"><div><span style="font-size:13px;font-weight:500;">向子组织传递权限</span><div style="font-size:11px;color:var(--t3);">开启后，当前组织的权限将传递给子组织</div></div><div class="switch" id="eoPassToChildren" onclick="this.classList.toggle('on')"></div></div>
-  <div style="display:flex;align-items:center;justify-content:space-between;"><div><span style="font-size:13px;font-weight:500;">禁止父组织权限传递</span><div style="font-size:11px;color:var(--t3);">开启后，父组织的权限不再传递给当前组织</div></div><div class="switch" id="eoBlockParentPermission" onclick="this.classList.toggle('on')"></div></div>
   <div><label class="frm-lbl">组织描述</label><textarea class="frm-inp" id="eoDesc" style="resize:vertical;min-height:70px;padding-top:8px;" placeholder="组织描述"></textarea></div>
 </div>
 <div class="mod-ft"><button class="btn btn-sec" onclick="closeModal('editOrgModal')">取消</button><button class="btn btn-pri" onclick="saveEditOrg()">保存</button></div>
@@ -913,13 +913,13 @@ let rolesData = [
 ];
 
 const orgsData = [
-  { id:1, name:'总公司', parent:null, members:15, children:3, ctime:'2024-01-01', status:'启用', updater:'张伟（zhangwei）', updateTime:'2024-07-01 09:00', roles:['数据分析师','数据查看者'], noInherit:false },
-  { id:2, name:'销售部', parent:1, members:5, children:2, ctime:'2024-01-05', status:'启用', updater:'李娜（lina）', updateTime:'2024-07-02 14:30', roles:['报表编辑者','销售分析组'], noInherit:false },
-  { id:3, name:'华东区', parent:2, members:3, children:0, ctime:'2024-01-08', status:'启用', updater:'李娜（lina）', updateTime:'2024-06-28 11:15', roles:[], noInherit:true },
-  { id:4, name:'华南区', parent:2, members:2, children:0, ctime:'2024-01-08', status:'启用', updater:'王强（wangqiang）', updateTime:'2024-07-03 16:45', roles:[], noInherit:false },
-  { id:5, name:'技术部', parent:1, members:12, children:0, ctime:'2024-01-03', status:'启用', updater:'张伟（zhangwei）', updateTime:'2024-06-30 10:00', roles:['数据开发者'], noInherit:false },
-  { id:6, name:'财务部', parent:1, members:5, children:0, ctime:'2024-01-04', status:'启用', updater:'王强（wangqiang）', updateTime:'2024-06-25 08:30', roles:['财务审计员'], noInherit:false },
-  { id:7, name:'分公司', parent:null, members:20, children:0, ctime:'2024-02-01', status:'启用', updater:'张伟（zhangwei）', updateTime:'2024-07-04 13:20', roles:['市场运营'], noInherit:false },
+  { id:1, name:'总公司', parent:null, members:15, children:3, ctime:'2024-01-01', status:'启用', updater:'张伟（zhangwei）', updateTime:'2024-07-01 09:00', roles:['数据分析师','数据查看者'], passToChildren:false },
+  { id:2, name:'销售部', parent:1, members:5, children:2, ctime:'2024-01-05', status:'启用', updater:'李娜（lina）', updateTime:'2024-07-02 14:30', roles:['报表编辑者','销售分析组'], passToChildren:false },
+  { id:3, name:'华东区', parent:2, members:3, children:0, ctime:'2024-01-08', status:'启用', updater:'李娜（lina）', updateTime:'2024-06-28 11:15', roles:[], passToChildren:false },
+  { id:4, name:'华南区', parent:2, members:2, children:0, ctime:'2024-01-08', status:'启用', updater:'王强（wangqiang）', updateTime:'2024-07-03 16:45', roles:[], passToChildren:false },
+  { id:5, name:'技术部', parent:1, members:12, children:0, ctime:'2024-01-03', status:'启用', updater:'张伟（zhangwei）', updateTime:'2024-06-30 10:00', roles:['数据开发者'], passToChildren:false },
+  { id:6, name:'财务部', parent:1, members:5, children:0, ctime:'2024-01-04', status:'启用', updater:'王强（wangqiang）', updateTime:'2024-06-25 08:30', roles:['财务审计员'], passToChildren:false },
+  { id:7, name:'分公司', parent:null, members:20, children:0, ctime:'2024-02-01', status:'启用', updater:'张伟（zhangwei）', updateTime:'2024-07-04 13:20', roles:['市场运营'], passToChildren:false },
 ];
 
 // Mock secondary admin assignment data
@@ -1659,14 +1659,14 @@ function openAddSubOrgModal(parentId) {
   document.getElementById('asoDesc').value = '';
   document.getElementById('asoParent').value = parent.name;
   document.getElementById('asoParent').dataset.parentId = parentId;
-  document.getElementById('asoBlockParentPermission').classList.remove('on');
   document.getElementById('asoPassToChildren').classList.remove('on');
+  document.getElementById('asoInheritParent').classList.remove('on');
   document.getElementById('addSubOrgModal').classList.add('show');
 }
 
 function openCreateOrgModal() {
-  document.getElementById('orgBlockParentPermission').classList.remove('on');
   document.getElementById('orgPassToChildren').classList.remove('on');
+  document.getElementById('orgInheritParent').classList.remove('on');
   showModal('orgModal');
 }
 
@@ -1685,8 +1685,8 @@ function openEditOrgModal(id) {
   document.getElementById('eoName').value = o.name;
   document.getElementById('eoCode').value = o.code || '';
   document.getElementById('eoDesc').value = o.desc || '';
-  document.getElementById('eoBlockParentPermission').classList.toggle('on', !!o.noInherit);
   document.getElementById('eoPassToChildren').classList.toggle('on', !!o.passToChildren);
+  document.getElementById('eoInheritParent').classList.toggle('on', !!o.inheritParent);
   const sel = document.getElementById('eoParent');
   sel.innerHTML = '<option value="">无（根组织）</option>' + orgsData.filter(x => x.id !== id).map(x => `<option value="${x.id}" ${x.id===o.parent?'selected':''}>${x.name}</option>`).join('');
   document.getElementById('editOrgModal').classList.add('show');
@@ -1695,8 +1695,8 @@ function openEditOrgModal(id) {
 function saveEditOrg() {
   const o = orgsData.find(x => x.id === currentEditOrgId);
   if (o) {
-    o.noInherit = document.getElementById('eoBlockParentPermission').classList.contains('on');
     o.passToChildren = document.getElementById('eoPassToChildren').classList.contains('on');
+    o.inheritParent = document.getElementById('eoInheritParent').classList.contains('on');
   }
   closeModal('editOrgModal');
   alert('组织信息保存成功！');
@@ -1739,8 +1739,8 @@ function selOrg(e, id) {
         <div style="font-weight:700;font-size:16px;">${o.name}</div>
         <div style="font-size:12px;color:var(--t3);margin-top:4px;">父组织：<span style="color:var(--t2);">${o.parent?orgsData.find(x=>x.id===o.parent).name:'无（根组织）'}</span></div>
         <div style="display:flex;align-items:center;gap:20px;margin-top:8px;font-size:12px;color:var(--t3);">
+          <span style="display:flex;align-items:center;gap:6px;">继承父组织 <span class="badge" style="padding:2px 8px;background:${o.inheritParent?'#F0FDF4':'#F1F5F9'};color:${o.inheritParent?'#15803D':'#64748B'};"><span class="badge-dot" style="background:${o.inheritParent?'#22C55E':'#94A3B8'};"></span>${o.inheritParent?'已开启':'已关闭'}</span></span>
           <span style="display:flex;align-items:center;gap:6px;">向子组织传递权限 <span class="badge" style="padding:2px 8px;background:${o.passToChildren?'#F0FDF4':'#F1F5F9'};color:${o.passToChildren?'#15803D':'#64748B'};"><span class="badge-dot" style="background:${o.passToChildren?'#22C55E':'#94A3B8'};"></span>${o.passToChildren?'已开启':'已关闭'}</span></span>
-          <span style="display:flex;align-items:center;gap:6px;">禁止父组织权限传递 <span class="badge" style="padding:2px 8px;background:${o.noInherit?'#F0FDF4':'#F1F5F9'};color:${o.noInherit?'#15803D':'#64748B'};"><span class="badge-dot" style="background:${o.noInherit?'#22C55E':'#94A3B8'};"></span>${o.noInherit?'已开启':'已关闭'}</span></span>
         </div>
         <div style="font-size:12px;color:var(--t3);margin-top:8px;display:flex;gap:16px;"><span>更新人：${o.updater || '-'}</span><span>更新时间：${o.updateTime || '-'}</span></div>
         <div style="font-size:12px;color:var(--t3);margin-top:4px;">次级管理员：${(adminAssignments.orgs[o.name]||[]).length ? adminAssignments.orgs[o.name].map(a => `<span class="tag tag-gray">${a}</span>`).join(' ') : '-'}</div>
