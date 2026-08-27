@@ -42,6 +42,11 @@ main > .hd h1 { font-size: 17px; font-weight: 700; color: var(--t1); }
 .tabs .t { padding: 12px 20px; font-size: 14px; font-weight: 500; color: var(--t2); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all .12s; }
 .tabs .t:hover { color: var(--t1); }
 .tabs .t.on { color: var(--pri); border-bottom-color: var(--pri); font-weight: 600; }
+.org-view-bar { height: 50px; padding: 9px 14px; background: #fff; border-bottom: 1px solid var(--bd); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.org-view-switch { display: inline-flex; align-items: center; gap: 3px; padding: 3px; background: #F1F5F9; border-radius: 9px; }
+.org-view-btn { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 12px; border: 0; border-radius: 7px; background: transparent; color: var(--t2); font-size: 12.5px; font-weight: 500; cursor: pointer; transition: all .15s; }
+.org-view-btn:hover { color: var(--t1); }
+.org-view-btn.on { background: #fff; color: var(--pri); font-weight: 600; box-shadow: 0 1px 3px rgba(15,23,42,.1); }
 
 /* Toolbar */
 .toolbar { padding: 12px 24px; background: #fff; border-bottom: 1px solid var(--bd-lt); display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
@@ -66,6 +71,14 @@ main > .hd h1 { font-size: 17px; font-weight: 700; color: var(--t1); }
 .tbl-wrap tbody tr:hover { background: #FAFBFC; }
 .tbl-wrap tbody tr:last-child td { border-bottom: none; }
 
+/* Compact member lists: hide organization/position and role columns */
+.member-list-compact.has-select tr > :nth-child(6),
+.member-list-compact.has-select tr > :nth-child(7),
+.member-list-compact.has-select col:nth-child(6),
+.member-list-compact.has-select col:nth-child(7) { display: none; }
+.member-list-compact.no-select tr > :nth-child(5),
+.member-list-compact.no-select tr > :nth-child(6) { display: none; }
+
 /* Column widths */
 .c-acct { width: 120px; min-width: 120px; }
 .c-name { width: 160px; min-width: 160px; }
@@ -81,7 +94,7 @@ main > .hd h1 { font-size: 17px; font-weight: 700; color: var(--t1); }
 
 /* Table scroll wrapper */
 .tbl-scroll { overflow-x: auto; overflow-y: visible; background: linear-gradient(to left, rgba(0,0,0,.15) 0%, rgba(0,0,0,.08) 12px, transparent 30px) 100% 0 / 30px 100% no-repeat; }
-.tbl-scroll table { min-width: 1220px; table-layout: auto; }
+.tbl-scroll table { min-width: 900px; table-layout: auto; }
 .tbl-scroll th, .tbl-scroll td { white-space: nowrap; }
 
 /* Pagination */
@@ -123,6 +136,7 @@ main > .hd h1 { font-size: 17px; font-weight: 700; color: var(--t1); }
 .btn-sec:hover { background: #F8FAFC; }
 .btn-gh { background: none; color: var(--t3); padding: 6px; border-radius: 6px; }
 .btn-gh:hover { background: #F1F5F9; color: var(--t1); }
+.btn:disabled, .btn:disabled:hover { opacity: .45; cursor: not-allowed; pointer-events: none; background: #fff; color: var(--t3); border-color: var(--bd); }
 
 /* Input/Select */
 .inp, .sel { height: 34px; padding: 0 10px; border: 1px solid var(--bd); border-radius: 7px; font-size: 13px; color: var(--t1); background: #fff; outline: none; transition: all .12s; }
@@ -134,10 +148,10 @@ main > .hd h1 { font-size: 17px; font-weight: 700; color: var(--t1); }
 .dd { position: relative; display: inline-block; }
 .dd-m { position: absolute; top: 100%; right: 0; margin-top: 2px; background: #fff; border: 1px solid var(--bd); border-radius: 9px; box-shadow: 0 8px 30px rgba(0,0,0,.1); min-width: 148px; z-index: 999; opacity: 0; visibility: hidden; transform: translateY(-3px); transition: all .12s; }
 .dd-m.show { opacity: 1; visibility: visible; transform: translateY(0); }
-.dd-m div { padding: 9px 12px; font-size: 13px; color: var(--t2); cursor: pointer; display: flex; align-items: center; gap: 7px; transition: background .08s; }
-.dd-m div:first-child { border-radius: 9px 9px 0 0; }
-.dd-m div:last-child { border-radius: 0 0 9px 9px; }
-.dd-m div:hover { background: #F8FAFC; }
+.dd-m > div { padding: 9px 12px; font-size: 13px; color: var(--t2); cursor: pointer; display: flex; align-items: center; gap: 7px; transition: background .08s; }
+.dd-m > div:first-child { border-radius: 9px 9px 0 0; }
+.dd-m > div:last-child { border-radius: 0 0 9px 9px; }
+.dd-m > div:hover { background: #F8FAFC; }
 .dd-m .sep { border-top: 1px solid var(--bd-lt); margin: 3px 0; height: 0; padding: 0; cursor: default; }
 
 /* Modal */
@@ -187,6 +201,9 @@ main > .hd h1 { font-size: 17px; font-weight: 700; color: var(--t1); }
 .split-l { width: 240px; flex-shrink: 0; border-right: 1px solid var(--bd); background: #fff; display: flex; flex-direction: column; }
 .split-l .hd { padding: 14px; border-bottom: 1px solid var(--bd-lt); }
 .split-l .lst { flex: 1; overflow-y: auto; padding: 6px; }
+.split-m { width: 260px; flex-shrink: 0; border-right: 1px solid var(--bd); background: #fff; display: flex; flex-direction: column; }
+.split-m .hd { padding: 14px; border-bottom: 1px solid var(--bd-lt); }
+.split-m .lst { flex: 1; overflow-y: auto; padding: 6px; }
 .split-r { flex: 1; overflow-y: auto; background: #fff; min-width: 0; }
 
 /* List items */
@@ -254,9 +271,12 @@ main > .hd h1 { font-size: 17px; font-weight: 700; color: var(--t1); }
 .panel.on { display: block !important; }
 .tab-panel { display: none !important; }
 .tab-panel.on { display: flex !important; }
+.toast { position: fixed; top: 22px; right: 24px; z-index: 3000; min-width: 320px; max-width: 460px; padding: 12px 15px; background: #fff; border: 1px solid #BBF7D0; border-radius: 10px; box-shadow: 0 12px 32px rgba(15,23,42,.14); display: flex; align-items: center; gap: 9px; color: #166534; font-size: 13px; font-weight: 500; opacity: 0; visibility: hidden; transform: translateY(-8px); transition: all .2s ease; }
+.toast.show { opacity: 1; visibility: visible; transform: translateY(0); }
 </style>
 </head>
 <body>
+<div id="operationToast" class="toast"><i data-lucide="circle-check" style="width:18px;height:18px;flex-shrink:0;color:#16A34A;"></i><span id="operationToastText"></span></div>
 
 <!-- Sidebar -->
 <aside>
@@ -309,15 +329,13 @@ main > .hd h1 { font-size: 17px; font-weight: 700; color: var(--t1); }
     </div>
     <div class="toolbar" style="border-top:none;padding-top:8px;">
       <input class="inp" style="flex:1;max-width:280px;" placeholder="搜索账号、昵称" id="userKw" oninput="goPage(1)">
-      <select class="sel" style="width:130px;" id="userOrg" onchange="goPage(1)"><option value="">所有组织</option><option>总公司</option><option>销售部</option><option>技术部</option><option>财务部</option><option>分公司</option></select>
-      <select class="sel" style="width:130px;" id="userRole" onchange="goPage(1)"><option value="">所有角色</option><option>数据分析师</option><option>数据查看者</option><option>报表编辑者</option><option>数据开发者</option><option>销售分析组</option><option>财务审计员</option><option>市场运营</option></select>
       <select class="sel" style="width:110px;" id="userStatus" onchange="goPage(1)"><option value="">所有状态</option><option value="active">已启用</option><option value="inactive">已禁用</option></select>
     </div>
     <div class="content">
       <div class="tbl-wrap tbl-scroll"><table>
         <thead><tr>
           <th style="width:40px;text-align:center;padding-left:14px;"><input type="checkbox" id="selectAllUsers" onclick="toggleSelectAll(this)"></th>
-          <th class="c-acct">账号</th><th class="c-name">昵称</th><th class="c-email">邮箱</th><th class="c-phone">手机号</th><th class="c-orgs">所属组织</th><th class="c-roles">角色</th><th class="c-status">状态</th><th class="c-updater">更新人</th><th class="c-updatetime">更新时间</th><th class="c-act">操作</th>
+          <th class="c-acct">账号</th><th class="c-name">昵称</th><th class="c-email">邮箱</th><th class="c-phone">手机号</th><th class="c-status">状态</th><th class="c-updater">更新人</th><th class="c-updatetime">更新时间</th><th class="c-act">操作</th>
         </tr></thead>
         <tbody id="userBody"></tbody>
       </table></div>
@@ -331,7 +349,7 @@ main > .hd h1 { font-size: 17px; font-weight: 700; color: var(--t1); }
       <div class="split-l">
         <div class="hd">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-            <span style="font-size:13px;font-weight:600;">角色列表</span>
+            <span style="font-size:13px;font-weight:600;">角色</span>
             <button class="btn btn-pri" style="padding:4px 10px;font-size:12px;" onclick="showCreateRoleModal()"><i data-lucide="plus" style="width:13px;height:13px;"></i> 新增</button>
           </div>
           <input class="frm-inp" style="font-size:12.5px;margin-bottom:6px;" placeholder="搜索角色..." id="roleKw" oninput="renderRoles()">
@@ -349,17 +367,31 @@ main > .hd h1 { font-size: 17px; font-weight: 700; color: var(--t1); }
   </div>
 
   <!-- ====== 组织 Tab ====== -->
-  <div id="tab-org-list" class="tab-panel" style="flex:1;overflow:visible;">
+  <div id="tab-org-list" class="tab-panel" style="flex:1;flex-direction:column;overflow:visible;">
+    <div class="org-view-bar">
+      <div class="org-view-switch" aria-label="组织展示视图">
+        <button class="org-view-btn on" onclick="switchOrganizationView('org')"><i data-lucide="building-2" style="width:14px;height:14px;"></i>组织视图</button>
+        <button class="org-view-btn" onclick="switchOrganizationView('position')"><i data-lucide="briefcase-business" style="width:14px;height:14px;"></i>岗位视图</button>
+      </div>
+      <span style="font-size:12px;color:var(--t3);">按组织层级或岗位维度管理成员归属</span>
+    </div>
     <div class="split">
       <div class="split-l">
         <div class="hd">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
             <span style="font-size:13px;font-weight:600;">组织</span>
-            <div style="display:flex;align-items:center;gap:4px;"><button class="btn btn-sec" style="padding:4px 8px;font-size:12px;" onclick="showModal('orgImportModal')"><i data-lucide="upload" style="width:13px;height:13px;"></i> 导入</button><button class="btn btn-sec" style="padding:4px 8px;font-size:12px;" onclick="alert('导出组织架构')"><i data-lucide="download" style="width:13px;height:13px;"></i> 导出</button><button class="btn btn-pri" style="padding:4px 10px;font-size:12px;" onclick="openCreateOrgModal()"><i data-lucide="plus" style="width:13px;height:13px;"></i> 新增</button></div>
+            <div style="display:flex;align-items:center;gap:4px;"><button id="orgMiddleToggleBtn" class="btn btn-sec" style="padding:4px 7px;" title="隐藏岗位栏" onclick="toggleMiddleColumn('orgMiddleColumn','orgMiddleToggleBtn','岗位')"><i data-lucide="panel-right-close" style="width:14px;"></i></button><div class="dd" id="orgToolbarMore"><button class="btn btn-sec" style="padding:4px 8px;" title="更多操作" onclick="event.stopPropagation();toggleDD('orgToolbarMore')"><i data-lucide="more-horizontal" style="width:15px;height:15px;"></i></button><div class="dd-m"><div onclick="showModal('orgImportModal')"><i data-lucide="upload" style="width:13px;height:13px;"></i> 导入</div><div onclick="alert('导出组织架构')"><i data-lucide="download" style="width:13px;height:13px;"></i> 导出</div></div></div><button class="btn btn-pri" style="padding:4px 10px;font-size:12px;" onclick="openCreateOrgModal()"><i data-lucide="plus" style="width:13px;height:13px;"></i> 新增</button></div>
           </div>
-          <input class="frm-inp" style="font-size:12.5px;" placeholder="搜索组织...">
+          <input class="frm-inp" style="font-size:12.5px;margin-bottom:8px;" placeholder="搜索组织...">
         </div>
         <div class="lst tree" id="orgTree"></div>
+      </div>
+      <div class="split-m" id="orgMiddleColumn">
+        <div class="hd">
+          <div style="font-size:13px;font-weight:600;margin-bottom:8px;">岗位</div>
+          <input id="orgSidePositionKeyword" class="frm-inp" style="font-size:12.5px;margin-bottom:8px;" placeholder="搜索岗位..." oninput="renderOrgSidePositions(selectedOrgId)">
+        </div>
+        <div class="lst" id="orgSidePositionList"><div style="height:100%;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--t3);font-size:12px;padding:20px;">请先选择组织</div></div>
       </div>
       <div class="split-r" id="orgDetail">
         <div id="orgDetailEmpty" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--t3);opacity:.5;">
@@ -367,6 +399,43 @@ main > .hd h1 { font-size: 17px; font-weight: 700; color: var(--t1); }
           <span style="font-size:13px;">请从左侧选择一个组织查看详情</span>
         </div>
         <div id="orgDetailContent" class="panel"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== 岗位 Tab ====== -->
+  <div id="tab-position-list" class="tab-panel" style="flex:1;flex-direction:column;overflow:visible;">
+    <div class="org-view-bar">
+      <div class="org-view-switch" aria-label="组织展示视图">
+        <button class="org-view-btn" onclick="switchOrganizationView('org')"><i data-lucide="building-2" style="width:14px;height:14px;"></i>组织视图</button>
+        <button class="org-view-btn on" onclick="switchOrganizationView('position')"><i data-lucide="briefcase-business" style="width:14px;height:14px;"></i>岗位视图</button>
+      </div>
+      <span style="font-size:12px;color:var(--t3);">按组织层级或岗位维度管理成员归属</span>
+    </div>
+    <div class="split">
+      <div class="split-l">
+        <div class="hd">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <span style="font-size:13px;font-weight:600;">岗位</span>
+            <div style="display:flex;gap:4px;"><button id="positionMiddleToggleBtn" class="btn btn-sec" style="padding:4px 7px;" title="隐藏组织栏" onclick="toggleMiddleColumn('positionMiddleColumn','positionMiddleToggleBtn','组织')"><i data-lucide="panel-right-close" style="width:14px;"></i></button><div class="dd" id="positionToolbarMore"><button class="btn btn-sec" style="padding:4px 7px;" title="导入导出" onclick="event.stopPropagation();toggleDD('positionToolbarMore')"><i data-lucide="more-horizontal" style="width:14px;"></i></button><div class="dd-m"><div onclick="showModal('positionImportModal')"><i data-lucide="upload" style="width:13px;"></i> 导入</div><div onclick="showOperationToast('岗位导出成功')"><i data-lucide="download" style="width:13px;"></i> 导出</div></div></div><button class="btn btn-pri" style="padding:4px 10px;font-size:12px;" onclick="showCreatePositionModal()"><i data-lucide="plus" style="width:13px;height:13px;"></i> 新增</button></div>
+          </div>
+          <input class="frm-inp" style="font-size:12.5px;margin-bottom:6px;" placeholder="搜索岗位名称..." id="positionKw" oninput="renderPositionList()">
+        </div>
+        <div class="lst" id="positionList"></div>
+      </div>
+      <div class="split-m" id="positionMiddleColumn">
+        <div class="hd">
+          <div style="font-size:13px;font-weight:600;margin-bottom:8px;">关联组织</div>
+          <input id="positionSideOrgKeyword" class="frm-inp" style="font-size:12.5px;margin-bottom:8px;" placeholder="搜索组织..." oninput="renderPositionSideOrgs(selectedPositionId)">
+        </div>
+        <div class="lst" id="positionSideOrgList"><div style="height:100%;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--t3);font-size:12px;padding:20px;">请先选择岗位</div></div>
+      </div>
+      <div class="split-r" id="positionDetail">
+        <div id="positionDetailEmpty" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--t3);opacity:.55;">
+          <i data-lucide="briefcase-business" style="width:44px;height:44px;margin-bottom:10px;"></i>
+          <span style="font-size:13px;">请从左侧选择一个岗位查看岗位成员</span>
+        </div>
+        <div id="positionDetailContent" class="panel"></div>
       </div>
     </div>
   </div>
@@ -400,11 +469,12 @@ main > .hd h1 { font-size: 17px; font-weight: 700; color: var(--t1); }
     <div><label class="frm-lbl">手机号<span class="rq">*</span></label><input class="frm-inp" id="fuPhone" placeholder="输入手机号"></div>
     <div><label class="frm-lbl">描述</label><textarea class="frm-inp" id="fuDesc" style="resize:vertical;min-height:60px;padding-top:8px;" placeholder="输入用户描述"></textarea></div>
   </div></div>
-  <div class="frm-sec"><div class="frm-sec-tt">所属组织<span style="font-weight:400;font-size:12px;color:var(--t3);margin-left:6px;">成员可属于多个组织</span><button type="button" class="btn" style="margin-left:auto;font-size:12.5px;color:var(--pri);font-weight:500;background:none;border:none;cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:3px;" onclick="showModal('orgPickerModal')"><i data-lucide="plus" style="width:13px;height:13px;"></i>添加组织</button></div>
-    <div id="selectedOrgs">
-      <div class="org-chip"><div style="display:flex;align-items:center;gap:7px;"><i data-lucide="building-2" style="width:15px;height:15px;color:var(--t3);"></i><span style="font-size:13.5px;font-weight:500;">总公司</span></div><button class="btn btn-gh" onclick="this.parentElement.remove()"><i data-lucide="x" style="width:15px;height:15px;"></i></button></div>
-      <div class="org-chip"><div style="display:flex;align-items:center;gap:7px;"><i data-lucide="users" style="width:15px;height:15px;color:var(--t3);"></i><span style="font-size:13.5px;font-weight:500;">销售部</span></div><button class="btn btn-gh" onclick="this.parentElement.remove()"><i data-lucide="x" style="width:15px;height:15px;"></i></button></div>
+  <div class="frm-sec"><div class="frm-sec-tt">组织岗位<span style="font-weight:400;font-size:12px;color:var(--t3);margin-left:6px;">组织和岗位均为可选，可添加多组组织岗位</span></div>
+    <div class="dd" id="memberOrgPositionPickerDD" style="display:block;width:100%;margin-bottom:10px;">
+      <button type="button" class="frm-inp" id="memberOrgPositionPickerBtn" style="display:flex;align-items:center;justify-content:space-between;text-align:left;cursor:pointer;" onclick="event.stopPropagation();renderMemberOrgPositionPicker();toggleDD('memberOrgPositionPickerDD')"><span>请选择组织岗位</span><i data-lucide="chevron-down" style="width:14px;color:var(--t3);"></i></button>
+      <div class="dd-m" id="memberOrgPositionPickerMenu" style="left:0;right:auto;width:100%;max-height:310px;overflow:auto;padding:0;"></div>
     </div>
+    <div id="selectedOrgs" style="display:flex;flex-direction:column;gap:6px;"></div>
   </div>
   <div class="frm-sec"><div class="frm-sec-tt">分配角色<button type="button" class="btn" style="margin-left:auto;font-size:12.5px;color:var(--pri);font-weight:500;background:none;border:none;cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:3px;" onclick="showModal('rolePickerModal')"><i data-lucide="plus" style="width:13px;height:13px;"></i>添加角色</button></div>
     <div id="selectedRoles">
@@ -531,6 +601,26 @@ main > .hd h1 { font-size: 17px; font-weight: 700; color: var(--t1); }
   </div>
 </div></div></div>
 
+<!-- Position Create/Edit Modal -->
+<div id="positionModal" class="mod-o"><div class="mod"><div class="mod-hd"><h3 id="positionModalTitle">新增岗位</h3><button class="btn btn-gh" onclick="closeModal('positionModal')"><i data-lucide="x" style="width:18px;height:18px;"></i></button></div>
+<div class="mod-bd"><div id="positionEditImpact" class="alrt" style="display:none;margin-bottom:15px;"><i data-lucide="alert-triangle" style="width:15px;flex-shrink:0;"></i><div>该岗位已有关联引用，修改名称将同步更新；取消关联组织将移除该组织下成员的岗位任职，但保留其组织归属。</div></div><div class="frm-g">
+  <div style="grid-column:1/-1;"><label class="frm-lbl">岗位名称<span class="rq">*</span></label><input class="frm-inp" id="posName" maxlength="50" placeholder="例如：业务归口审核岗"><div style="font-size:11px;color:var(--t3);margin-top:4px;">岗位名称在当前租户内唯一</div></div>
+  <div style="grid-column:1/-1;"><label class="frm-lbl">岗位描述</label><textarea class="frm-inp" id="posDesc" maxlength="500" style="height:80px;padding-top:8px;resize:vertical;" placeholder="输入岗位职责说明"></textarea></div>
+  <div style="grid-column:1/-1;"><label class="frm-lbl">关联组织</label><div class="dd" id="positionCreateOrgDD" style="width:100%;"><button type="button" class="frm-inp" style="width:100%;display:flex;align-items:center;justify-content:space-between;text-align:left;background:#fff;cursor:pointer;" onclick="event.stopPropagation();toggleDD('positionCreateOrgDD')"><span id="positionCreateOrgLabel">请选择组织</span><i data-lucide="chevron-down" style="width:14px;"></i></button><div class="dd-m" style="left:0;right:auto;width:100%;padding:0;" onclick="event.stopPropagation();"><div style="display:block;padding:8px;border-bottom:1px solid var(--bd-lt);cursor:default;"><input class="frm-inp" placeholder="搜索组织..." style="height:30px;font-size:12px;margin-bottom:7px;" oninput="filterMultiSelectOptions(this,'positionCreateOrgOptions')"><label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;"><input type="checkbox" onchange="toggleVisibleMultiSelect(this,'positionCreateOrgOptions','.position-create-org-checkbox','positionCreateOrgLabel','请选择组织')"> 全选</label></div><div id="positionCreateOrgOptions" style="display:block;max-height:180px;overflow:auto;padding:4px;"></div></div></div></div>
+</div></div><div class="mod-ft"><button class="btn btn-sec" onclick="closeModal('positionModal')">取消</button><button class="btn btn-pri" onclick="savePosition()">保存</button></div></div></div>
+
+<!-- Add Position To Organization Modal -->
+<div id="orgPositionModal" class="mod-o"><div class="mod mod-lg"><div class="mod-hd"><div><h3 id="orgPositionTitle">添加岗位</h3><div style="font-size:12px;color:var(--t3);margin-top:3px;">选择已有岗位关联到当前组织</div></div><button class="btn btn-gh" onclick="closeModal('orgPositionModal')"><i data-lucide="x" style="width:18px;height:18px;"></i></button></div>
+<div class="mod-bd">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;"><input class="frm-inp" id="orgPositionKw" placeholder="搜索岗位名称..." oninput="renderOrgPositionOptions()" style="flex:1;"><button class="btn btn-sec" onclick="openQuickCreatePosition()"><i data-lucide="plus" style="width:14px;"></i> 新建岗位</button></div>
+  <div id="orgPositionOptions" style="border:1px solid var(--bd);border-radius:10px;max-height:300px;overflow:auto;"></div>
+</div><div class="mod-ft"><button class="btn btn-sec" onclick="closeModal('orgPositionModal')">取消</button><button class="btn btn-pri" onclick="saveOrgPositions()">确定</button></div></div></div>
+
+<!-- Add Organization To Position Modal -->
+<div id="positionOrgModal" class="mod-o"><div class="mod mod-lg"><div class="mod-hd"><div><h3 id="positionOrgModalTitle">关联组织</h3><div style="font-size:12px;color:var(--t3);margin-top:3px;">选择已有组织关联到当前岗位</div></div><button class="btn btn-gh" onclick="closeModal('positionOrgModal')"><i data-lucide="x" style="width:18px;height:18px;"></i></button></div>
+<div class="mod-bd"><input class="frm-inp" id="positionOrgKw" placeholder="搜索组织名称..." oninput="renderPositionOrgOptions()" style="margin-bottom:10px;"><div id="positionOrgOptions" style="border:1px solid var(--bd);border-radius:10px;max-height:320px;overflow:auto;"></div></div>
+<div class="mod-ft"><button class="btn btn-sec" onclick="closeModal('positionOrgModal')">取消</button><button class="btn btn-pri" onclick="savePositionOrgs()">确定</button></div></div></div>
+
 <!-- Org Picker Modal -->
 <div id="orgPickerModal" class="mod-o"><div class="mod" style="width:400px;"><div class="mod-hd"><h3>选择组织</h3><button class="btn btn-gh" onclick="closeModal('orgPickerModal')"><i data-lucide="x" style="width:18px;height:18px;"></i></button></div>
 <div class="mod-bd">
@@ -571,12 +661,13 @@ main > .hd h1 { font-size: 17px; font-weight: 700; color: var(--t1); }
 </div></div>
 
 <!-- Add User to Role Modal -->
-<div id="addUserToRoleModal" class="mod-o"><div class="mod mod-lg" style="width:780px;"><div class="mod-hd"><h3>添加成员</h3><button class="btn btn-gh" onclick="closeModal('addUserToRoleModal')"><i data-lucide="x" style="width:18px;height:18px;"></i></button></div>
-<div class="mod-bd" style="display:flex;gap:16px;">
+<div id="addUserToRoleModal" class="mod-o"><div class="mod mod-lg" style="width:1180px;max-width:94vw;"><div class="mod-hd"><h3>添加成员</h3><button class="btn btn-gh" onclick="closeModal('addUserToRoleModal')"><i data-lucide="x" style="width:18px;height:18px;"></i></button></div>
+<div class="mod-bd" style="display:block;">
   <!-- Left: Organization Tree -->
-  <div style="width:240px;flex-shrink:0;display:flex;flex-direction:column;">
+  <div style="display:none;">
     <div style="margin-bottom:8px;">
-      <input class="frm-inp" style="font-size:12.5px;" placeholder="搜索组织名称...">
+      <input class="frm-inp" style="font-size:12.5px;margin-bottom:7px;" placeholder="搜索组织或岗位名称...">
+      <button id="roleMemberPositionToggle" class="btn btn-sec" style="width:100%;justify-content:center;padding:5px 8px;font-size:12px;" onclick="toggleRoleMemberPositions()"><i data-lucide="briefcase-business" style="width:13px;"></i> 展示岗位</button>
     </div>
     <div style="flex:1;overflow-y:auto;border:1px solid var(--bd);border-radius:8px;padding:4px;">
       <div style="padding:6px 4px;border-bottom:1px solid var(--bd-lt);display:flex;align-items:center;gap:6px;cursor:pointer;">
@@ -584,46 +675,56 @@ main > .hd h1 { font-size: 17px; font-weight: 700; color: var(--t1); }
         <input type="checkbox" onclick="event.stopPropagation();"><i data-lucide="building-2" style="width:14px;height:14px;color:var(--t3);flex-shrink:0;"></i>
         <div style="flex:1;"><div style="font-size:12px;font-weight:500;">总公司</div></div>
       </div>
+      <div class="role-picker-position-node" style="display:none;padding:6px 4px 6px 28px;border-bottom:1px solid var(--bd-lt);align-items:center;gap:6px;cursor:pointer;"><span style="width:14px;"></span><input type="checkbox"><i data-lucide="briefcase-business" style="width:14px;color:var(--t3);"></i><span style="font-size:12px;">集团监管审核岗</span></div>
+      <div class="role-picker-position-node" style="display:none;padding:6px 4px 6px 28px;border-bottom:1px solid var(--bd-lt);align-items:center;gap:6px;cursor:pointer;"><span style="width:14px;"></span><input type="checkbox"><i data-lucide="briefcase-business" style="width:14px;color:var(--t3);"></i><span style="font-size:12px;">监管领导岗</span></div>
       <div class="org-tree-children">
         <div style="padding:6px 4px 6px 28px;border-bottom:1px solid var(--bd-lt);display:flex;align-items:center;gap:6px;cursor:pointer;">
           <span style="width:14px;"></span>
-          <input type="checkbox" onclick="event.stopPropagation();"><i data-lucide="users" style="width:14px;height:14px;color:var(--t3);flex-shrink:0;"></i>
+          <input type="checkbox" onclick="event.stopPropagation();"><i data-lucide="building-2" style="width:14px;height:14px;color:var(--t3);flex-shrink:0;"></i>
           <div style="flex:1;"><div style="font-size:12px;font-weight:500;">销售部</div></div>
         </div>
+        <div class="role-picker-position-node" style="display:none;padding:6px 4px 6px 68px;border-bottom:1px solid var(--bd-lt);align-items:center;gap:6px;cursor:pointer;"><input type="checkbox"><i data-lucide="briefcase-business" style="width:14px;color:var(--t3);"></i><span style="font-size:12px;">业务归口审核岗</span></div>
+        <div class="role-picker-position-node" style="display:none;padding:6px 4px 6px 68px;border-bottom:1px solid var(--bd-lt);align-items:center;gap:6px;cursor:pointer;"><input type="checkbox"><i data-lucide="briefcase-business" style="width:14px;color:var(--t3);"></i><span style="font-size:12px;">问题处理岗</span></div>
         <div style="padding:6px 4px 6px 28px;border-bottom:1px solid var(--bd-lt);display:flex;align-items:center;gap:6px;cursor:pointer;">
           <span style="width:14px;"></span>
-          <input type="checkbox" onclick="event.stopPropagation();"><i data-lucide="users" style="width:14px;height:14px;color:var(--t3);flex-shrink:0;"></i>
+          <input type="checkbox" onclick="event.stopPropagation();"><i data-lucide="building-2" style="width:14px;height:14px;color:var(--t3);flex-shrink:0;"></i>
           <div style="flex:1;"><div style="font-size:12px;font-weight:500;">技术部</div></div>
         </div>
+        <div class="role-picker-position-node" style="display:none;padding:6px 4px 6px 68px;border-bottom:1px solid var(--bd-lt);align-items:center;gap:6px;cursor:pointer;"><input type="checkbox"><i data-lucide="briefcase-business" style="width:14px;color:var(--t3);"></i><span style="font-size:12px;">问题处理岗</span></div>
+        <div class="role-picker-position-node" style="display:none;padding:6px 4px 6px 68px;border-bottom:1px solid var(--bd-lt);align-items:center;gap:6px;cursor:pointer;"><input type="checkbox"><i data-lucide="briefcase-business" style="width:14px;color:var(--t3);"></i><span style="font-size:12px;">整改责任岗</span></div>
         <div style="padding:6px 4px 6px 28px;border-bottom:1px solid var(--bd-lt);display:flex;align-items:center;gap:6px;cursor:pointer;">
           <span style="width:14px;"></span>
-          <input type="checkbox" onclick="event.stopPropagation();"><i data-lucide="users" style="width:14px;height:14px;color:var(--t3);flex-shrink:0;"></i>
+          <input type="checkbox" onclick="event.stopPropagation();"><i data-lucide="building-2" style="width:14px;height:14px;color:var(--t3);flex-shrink:0;"></i>
           <div style="flex:1;"><div style="font-size:12px;font-weight:500;">财务部</div></div>
         </div>
+        <div class="role-picker-position-node" style="display:none;padding:6px 4px 6px 68px;border-bottom:1px solid var(--bd-lt);align-items:center;gap:6px;cursor:pointer;"><input type="checkbox"><i data-lucide="briefcase-business" style="width:14px;color:var(--t3);"></i><span style="font-size:12px;">整改责任岗</span></div>
       </div>
       <div style="padding:6px 4px;border-bottom:1px solid var(--bd-lt);display:flex;align-items:center;gap:6px;cursor:pointer;">
         <span style="width:14px;"></span>
         <input type="checkbox" onclick="event.stopPropagation();"><i data-lucide="building-2" style="width:14px;height:14px;color:var(--t3);flex-shrink:0;"></i>
         <div style="flex:1;"><div style="font-size:12px;font-weight:500;">分公司</div></div>
       </div>
+      <div class="role-picker-position-node" style="display:none;padding:6px 4px 6px 28px;border-bottom:1px solid var(--bd-lt);align-items:center;gap:6px;cursor:pointer;"><span style="width:14px;"></span><input type="checkbox"><i data-lucide="briefcase-business" style="width:14px;color:var(--t3);"></i><span style="font-size:12px;">问题处理岗</span></div>
+      <div class="role-picker-position-node" style="display:none;padding:6px 4px 6px 28px;border-bottom:1px solid var(--bd-lt);align-items:center;gap:6px;cursor:pointer;"><span style="width:14px;"></span><input type="checkbox"><i data-lucide="briefcase-business" style="width:14px;color:var(--t3);"></i><span style="font-size:12px;">整改责任岗</span></div>
     </div>
   </div>
   <!-- Right: User List -->
-  <div style="flex:1;display:flex;flex-direction:column;min-width:0;">
-    <div style="margin-bottom:8px;">
-      <input class="frm-inp" style="font-size:12.5px;" placeholder="搜索账号或昵称...">
+  <div style="display:flex;flex-direction:column;min-width:0;">
+    <div style="margin-bottom:10px;display:flex;gap:8px;align-items:center;">
+      <div class="dd" id="addRoleMemberOrgFilterDD" style="width:260px;flex-shrink:0;"><button type="button" class="frm-inp" id="addRoleMemberOrgFilterBtn" style="display:flex;align-items:center;justify-content:space-between;text-align:left;cursor:pointer;background:#fff;" onclick="event.stopPropagation();renderAddRoleMemberOrgFilter();toggleDD('addRoleMemberOrgFilterDD')"><span>所有组织岗位</span><i data-lucide="chevron-down" style="width:13px;"></i></button><div class="dd-m" id="addRoleMemberOrgFilterMenu" style="left:0;right:auto;width:300px;max-height:340px;overflow:auto;padding:0;"></div></div>
+      <input class="frm-inp" id="addRoleMemberKeyword" style="flex:1;font-size:12.5px;" placeholder="搜索账号或昵称..." oninput="filterAddRoleMemberRows()">
     </div>
     <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--bd);border-radius:8px;">
-      <div style="flex:1;overflow-y:auto;">
-        <table style="width:100%;table-layout:fixed;border-collapse:collapse;font-size:12px;">
-          <colgroup><col style="width:36px;"><col style="width:90px;"><col style="width:90px;"><col style="width:180px;"><col style="width:110px;"><col style="width:80px;"><col style="width:140px;"><col style="width:70px;"></colgroup>
+      <div style="flex:1;overflow:auto;">
+        <table class="member-list-compact has-select" style="width:100%;min-width:650px;table-layout:fixed;border-collapse:collapse;font-size:12px;">
+          <colgroup><col style="width:36px;"><col style="width:88px;"><col style="width:76px;"><col style="width:178px;"><col style="width:108px;"><col style="width:230px;"><col style="width:132px;"><col style="width:72px;"></colgroup>
           <thead><tr style="position:sticky;top:0;background:#F8FAFC;">
             <th style="padding:8px 6px;text-align:left;border-bottom:1px solid var(--bd);white-space:nowrap;"><input type="checkbox"></th>
             <th style="padding:8px 6px;text-align:left;border-bottom:1px solid var(--bd);white-space:nowrap;">账号</th>
             <th style="padding:8px 6px;text-align:left;border-bottom:1px solid var(--bd);white-space:nowrap;">昵称</th>
             <th style="padding:8px 6px;text-align:left;border-bottom:1px solid var(--bd);white-space:nowrap;">邮箱</th>
             <th style="padding:8px 6px;text-align:left;border-bottom:1px solid var(--bd);white-space:nowrap;">手机号</th>
-            <th style="padding:8px 6px;text-align:left;border-bottom:1px solid var(--bd);white-space:nowrap;">所属组织</th>
+            <th style="padding:8px 6px;text-align:left;border-bottom:1px solid var(--bd);white-space:nowrap;">组织岗位</th>
             <th style="padding:8px 6px;text-align:left;border-bottom:1px solid var(--bd);white-space:nowrap;">角色</th>
             <th style="padding:8px 6px;text-align:left;border-bottom:1px solid var(--bd);white-space:nowrap;">状态</th>
           </tr></thead>
@@ -705,14 +806,15 @@ main > .hd h1 { font-size: 17px; font-weight: 700; color: var(--t1); }
 <!-- Org Modal -->
 <div id="orgModal" class="mod-o"><div class="mod"><div class="mod-hd"><h3 id="orgModalTitle">新增组织</h3><button class="btn btn-gh" onclick="closeModal('orgModal')"><i data-lucide="x" style="width:18px;height:18px;"></i></button></div>
 <div class="mod-bd" style="display:flex;flex-direction:column;gap:14px;">
-  <div><label class="frm-lbl">组织名称<span class="rq">*</span></label><input class="frm-inp" placeholder="输入组织名称"></div>
-  <div><label class="frm-lbl">组织编码<span class="rq">*</span></label><input class="frm-inp" placeholder="唯一标识"></div>
-  <div><label class="frm-lbl">父组织</label><select class="frm-inp"><option value="">无（根组织）</option><option>总公司</option><option>销售部</option></select></div>
+  <div><label class="frm-lbl">组织名称<span class="rq">*</span></label><input class="frm-inp" id="orgCreateName" placeholder="输入组织名称"></div>
+  <div><label class="frm-lbl">组织编码<span class="rq">*</span></label><input class="frm-inp" id="orgCreateCode" placeholder="唯一标识"></div>
+  <div><label class="frm-lbl">父组织</label><select class="frm-inp" id="orgCreateParent"><option value="">无（根组织）</option></select></div>
+  <div><label class="frm-lbl">配置岗位</label><div class="dd" id="orgCreatePositionDD" style="width:100%;"><button type="button" class="frm-inp" style="width:100%;display:flex;align-items:center;justify-content:space-between;text-align:left;background:#fff;cursor:pointer;" onclick="event.stopPropagation();toggleDD('orgCreatePositionDD')"><span id="orgCreatePositionLabel">请选择岗位</span><i data-lucide="chevron-down" style="width:14px;"></i></button><div class="dd-m" style="left:0;right:auto;width:100%;padding:0;" onclick="event.stopPropagation();"><div style="display:block;padding:8px;border-bottom:1px solid var(--bd-lt);cursor:default;"><input class="frm-inp" placeholder="搜索岗位..." style="height:30px;font-size:12px;margin-bottom:7px;" oninput="filterMultiSelectOptions(this,'orgCreatePositionOptions')"><label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;"><input type="checkbox" onchange="toggleVisibleMultiSelect(this,'orgCreatePositionOptions','.org-create-position-checkbox','orgCreatePositionLabel','请选择岗位')"> 全选</label></div><div id="orgCreatePositionOptions" style="display:block;max-height:180px;overflow:auto;padding:4px;"></div></div></div></div>
   <div style="display:flex;align-items:center;justify-content:space-between;"><div><span style="font-size:13px;font-weight:500;">继承父组织</span><div style="font-size:11px;color:var(--t3);">开启后，当前组织将继承父组织的权限</div></div><div class="switch" id="orgInheritParent" onclick="this.classList.toggle('on')"></div></div>
   <div style="display:flex;align-items:center;justify-content:space-between;"><div><span style="font-size:13px;font-weight:500;">向子组织传递权限</span><div style="font-size:11px;color:var(--t3);">开启后，当前组织的权限将传递给子组织</div></div><div class="switch" id="orgPassToChildren" onclick="this.classList.toggle('on')"></div></div>
   <div><label class="frm-lbl">组织描述</label><textarea class="frm-inp" style="resize:vertical;min-height:70px;padding-top:8px;" placeholder="组织描述"></textarea></div>
 </div>
-<div class="mod-ft"><button class="btn btn-sec" onclick="closeModal('orgModal')">取消</button><button class="btn btn-pri" onclick="closeModal('orgModal')">保存</button></div>
+<div class="mod-ft"><button class="btn btn-sec" onclick="closeModal('orgModal')">取消</button><button class="btn btn-pri" onclick="saveCreatedOrg()">保存</button></div>
 </div></div>
 
 <!-- Add Sub Org Modal -->
@@ -721,6 +823,7 @@ main > .hd h1 { font-size: 17px; font-weight: 700; color: var(--t1); }
   <div><label class="frm-lbl">组织名称<span class="rq">*</span></label><input class="frm-inp" id="asoName" placeholder="输入组织名称"></div>
   <div><label class="frm-lbl">组织编码<span class="rq">*</span></label><input class="frm-inp" id="asoCode" placeholder="唯一标识"></div>
   <div><label class="frm-lbl">父组织</label><input class="frm-inp" id="asoParent" readonly style="background:#F1F5F9;color:var(--t2);cursor:not-allowed;"></div>
+  <div><label class="frm-lbl">配置岗位</label><div class="dd" id="asoPositionDD" style="width:100%;"><button type="button" class="frm-inp" style="width:100%;display:flex;align-items:center;justify-content:space-between;text-align:left;background:#fff;cursor:pointer;" onclick="event.stopPropagation();toggleDD('asoPositionDD')"><span id="asoPositionLabel">请选择岗位</span><i data-lucide="chevron-down" style="width:14px;"></i></button><div class="dd-m" style="left:0;right:auto;width:100%;padding:0;" onclick="event.stopPropagation();"><div style="display:block;padding:8px;border-bottom:1px solid var(--bd-lt);cursor:default;"><input class="frm-inp" placeholder="搜索岗位..." style="height:30px;font-size:12px;margin-bottom:7px;" oninput="filterMultiSelectOptions(this,'asoPositionOptions')"><label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;"><input type="checkbox" onchange="toggleVisibleMultiSelect(this,'asoPositionOptions','.aso-position-checkbox','asoPositionLabel','请选择岗位')"> 全选</label></div><div id="asoPositionOptions" style="display:block;max-height:180px;overflow:auto;padding:4px;"></div></div></div></div>
   <div style="display:flex;align-items:center;justify-content:space-between;"><div><span style="font-size:13px;font-weight:500;">继承父组织</span><div style="font-size:11px;color:var(--t3);">开启后，当前组织将继承父组织的权限</div></div><div class="switch" id="asoInheritParent" onclick="this.classList.toggle('on')"></div></div>
   <div style="display:flex;align-items:center;justify-content:space-between;"><div><span style="font-size:13px;font-weight:500;">向子组织传递权限</span><div style="font-size:11px;color:var(--t3);">开启后，当前组织的权限将传递给子组织</div></div><div class="switch" id="asoPassToChildren" onclick="this.classList.toggle('on')"></div></div>
   <div><label class="frm-lbl">组织描述</label><textarea class="frm-inp" id="asoDesc" style="resize:vertical;min-height:70px;padding-top:8px;" placeholder="组织描述"></textarea></div>
@@ -734,12 +837,20 @@ main > .hd h1 { font-size: 17px; font-weight: 700; color: var(--t1); }
   <div><label class="frm-lbl">组织名称<span class="rq">*</span></label><input class="frm-inp" id="eoName" placeholder="输入组织名称"></div>
   <div><label class="frm-lbl">组织编码<span class="rq">*</span></label><input class="frm-inp" id="eoCode" placeholder="唯一标识"></div>
   <div><label class="frm-lbl">父组织</label><select class="frm-inp" id="eoParent"><option value="">无（根组织）</option></select></div>
+  <div><label class="frm-lbl">配置岗位</label><div class="dd" id="editOrgPositionDD" style="width:100%;"><button type="button" class="frm-inp" style="width:100%;display:flex;align-items:center;justify-content:space-between;text-align:left;background:#fff;cursor:pointer;" onclick="event.stopPropagation();toggleDD('editOrgPositionDD')"><span id="editOrgPositionLabel">请选择岗位</span><i data-lucide="chevron-down" style="width:14px;"></i></button><div class="dd-m" style="left:0;right:auto;width:100%;padding:0;" onclick="event.stopPropagation();"><div style="display:block;padding:8px;border-bottom:1px solid var(--bd-lt);cursor:default;"><input class="frm-inp" placeholder="搜索岗位..." style="height:30px;font-size:12px;margin-bottom:7px;" oninput="filterMultiSelectOptions(this,'editOrgPositionOptions')"><label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;"><input type="checkbox" onchange="toggleVisibleMultiSelect(this,'editOrgPositionOptions','.edit-org-position-checkbox','editOrgPositionLabel','请选择岗位')"> 全选</label></div><div id="editOrgPositionOptions" style="display:block;max-height:180px;overflow:auto;padding:4px;"></div></div></div></div>
   <div style="display:flex;align-items:center;justify-content:space-between;"><div><span style="font-size:13px;font-weight:500;">继承父组织</span><div style="font-size:11px;color:var(--t3);">开启后，当前组织将继承父组织的权限</div></div><div class="switch" id="eoInheritParent" onclick="this.classList.toggle('on')"></div></div>
   <div style="display:flex;align-items:center;justify-content:space-between;"><div><span style="font-size:13px;font-weight:500;">向子组织传递权限</span><div style="font-size:11px;color:var(--t3);">开启后，当前组织的权限将传递给子组织</div></div><div class="switch" id="eoPassToChildren" onclick="this.classList.toggle('on')"></div></div>
   <div><label class="frm-lbl">组织描述</label><textarea class="frm-inp" id="eoDesc" style="resize:vertical;min-height:70px;padding-top:8px;" placeholder="组织描述"></textarea></div>
 </div>
 <div class="mod-ft"><button class="btn btn-sec" onclick="closeModal('editOrgModal')">取消</button><button class="btn btn-pri" onclick="saveEditOrg()">保存</button></div>
 </div></div>
+
+<!-- Position Import Modal -->
+<div id="positionImportModal" class="mod-o"><div class="mod mod-lg"><div class="mod-hd"><h3>批量导入岗位</h3><button class="btn btn-gh" onclick="closeModal('positionImportModal')"><i data-lucide="x" style="width:18px;height:18px;"></i></button></div>
+<div class="mod-bd">
+  <div style="margin-bottom:16px;"><div class="frm-sec-tt">1. 下载模板</div><div style="font-size:12px;color:var(--t3);margin-bottom:8px;">按照模板填写岗位名称、岗位描述和关联组织</div><button class="btn btn-sec" onclick="showOperationToast('岗位导入模板下载成功')"><i data-lucide="download" style="width:14px;"></i> 下载 Excel 模板</button></div>
+  <div><div class="frm-sec-tt">2. 上传文件</div><div style="border:2px dashed var(--bd);border-radius:10px;padding:30px;text-align:center;color:var(--t3);cursor:pointer;"><div style="display:flex;justify-content:center;margin-bottom:8px;"><i data-lucide="upload-cloud" style="width:32px;height:32px;"></i></div><div style="font-size:13px;">拖拽文件到此处或<span style="color:var(--pri);">点击上传</span></div><div style="font-size:11px;margin-top:4px;">支持 .xlsx、.csv 格式，单次最多导入 1000 条</div></div></div>
+</div><div class="mod-ft"><button class="btn btn-sec" onclick="closeModal('positionImportModal')">取消</button><button class="btn btn-pri" onclick="closeModal('positionImportModal');showOperationToast('岗位导入任务已提交')">确认导入</button></div></div></div>
 
 <!-- Org Import Modal -->
 <div id="orgImportModal" class="mod-o"><div class="mod mod-lg"><div class="mod-hd"><h3>批量导入组织</h3><button class="btn btn-gh" onclick="closeModal('orgImportModal')"><i data-lucide="x" style="width:18px;height:18px;"></i></button></div>
@@ -757,12 +868,17 @@ main > .hd h1 { font-size: 17px; font-weight: 700; color: var(--t1); }
 </div></div>
 
 <!-- Add Members Modal -->
-<div id="addMemberModal" class="mod-o"><div class="mod" style="width:480px;"><div class="mod-hd"><h3 id="addMemberTitle">添加成员</h3><button class="btn btn-gh" onclick="closeModal('addMemberModal')"><i data-lucide="x" style="width:18px;height:18px;"></i></button></div>
+<div id="addMemberModal" class="mod-o"><div class="mod mod-lg" style="width:1180px;max-width:94vw;"><div class="mod-hd"><h3 id="addMemberTitle">添加成员</h3><button class="btn btn-gh" onclick="closeModal('addMemberModal')"><i data-lucide="x" style="width:18px;height:18px;"></i></button></div>
 <div class="mod-bd">
-  <div style="margin-bottom:12px;">
+  <div style="margin-bottom:10px;display:flex;gap:8px;align-items:center;">
+    <div class="dd" id="orgAddMemberFilterDD" style="width:260px;flex-shrink:0;"><button type="button" class="frm-inp" id="orgAddMemberFilterBtn" style="display:flex;align-items:center;justify-content:space-between;text-align:left;cursor:pointer;background:#fff;" onclick="event.stopPropagation();renderOrgAddMemberFilter();toggleDD('orgAddMemberFilterDD')"><span>所有组织岗位</span><i data-lucide="chevron-down" style="width:13px;"></i></button><div class="dd-m" id="orgAddMemberFilterMenu" style="left:0;right:auto;width:300px;max-height:340px;overflow:auto;padding:0;"></div></div>
+    <input class="frm-inp" id="orgAddMemberKeyword" style="flex:1;font-size:12.5px;" placeholder="搜索账号或昵称..." oninput="renderOrgAddMemberRows()">
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--bd);border-radius:8px;"><div style="flex:1;max-height:390px;overflow:auto;"><table class="member-list-compact has-select" style="width:100%;min-width:650px;table-layout:fixed;border-collapse:collapse;font-size:12px;"><colgroup><col style="width:36px;"><col style="width:88px;"><col style="width:76px;"><col style="width:178px;"><col style="width:108px;"><col style="width:230px;"><col style="width:132px;"><col style="width:72px;"></colgroup><thead><tr style="position:sticky;top:0;background:#F8FAFC;"><th style="padding:8px 6px;text-align:left;border-bottom:1px solid var(--bd);white-space:nowrap;"><input type="checkbox" onclick="document.querySelectorAll('.org-add-member-checkbox').forEach(x=>x.checked=this.checked)"></th><th style="padding:8px 6px;text-align:left;border-bottom:1px solid var(--bd);white-space:nowrap;">账号</th><th style="padding:8px 6px;text-align:left;border-bottom:1px solid var(--bd);white-space:nowrap;">昵称</th><th style="padding:8px 6px;text-align:left;border-bottom:1px solid var(--bd);white-space:nowrap;">邮箱</th><th style="padding:8px 6px;text-align:left;border-bottom:1px solid var(--bd);white-space:nowrap;">手机号</th><th style="padding:8px 6px;text-align:left;border-bottom:1px solid var(--bd);white-space:nowrap;">组织岗位</th><th style="padding:8px 6px;text-align:left;border-bottom:1px solid var(--bd);white-space:nowrap;">角色</th><th style="padding:8px 6px;text-align:left;border-bottom:1px solid var(--bd);white-space:nowrap;">状态</th></tr></thead><tbody id="orgAddMemberBody"></tbody></table></div><div style="flex-shrink:0;padding:8px 12px;border-top:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;background:#F8FAFC;"><span style="font-size:12px;color:var(--t3);">共 12 条</span><div style="display:flex;gap:4px;"><button class="pg-btn on">1</button><button class="pg-btn">2</button></div></div></div>
+  <div style="display:none;margin-bottom:12px;">
     <input class="frm-inp" style="font-size:12.5px;" placeholder="搜索成员账号或昵称...">
   </div>
-  <div style="max-height:320px;overflow-y:auto;">
+  <div style="display:none;max-height:320px;overflow-y:auto;">
     <label class="cb" style="padding:8px 4px;border-bottom:1px solid var(--bd-lt);cursor:pointer;display:flex;align-items:center;gap:10px;">
       <input type="checkbox" checked><div style="flex:1;"><div style="font-size:13px;font-weight:500;">张伟（zhangwei）</div><div style="font-size:11px;color:var(--t3);">总公司 · 租户管理员</div></div>
     </label>
@@ -786,7 +902,7 @@ main > .hd h1 { font-size: 17px; font-weight: 700; color: var(--t1); }
     </label>
   </div>
 </div>
-<div class="mod-ft"><button class="btn btn-sec" onclick="closeModal('addMemberModal')">取消</button><button class="btn btn-pri" onclick="closeModal('addMemberModal');alert('成员添加成功！')">确定</button></div>
+<div class="mod-ft"><button class="btn btn-sec" onclick="closeModal('addMemberModal')">取消</button><button class="btn btn-pri" onclick="confirmAddMembers()">确定</button></div>
 </div></div>
 
 <!-- Add Role to Org Modal -->
@@ -844,7 +960,7 @@ main > .hd h1 { font-size: 17px; font-weight: 700; color: var(--t1); }
     </div>
     <div id="db-basic" class="panel on">
       <div class="ig" id="drawerInfo"></div>
-      <div style="margin-top:18px;"><div class="frm-sec-tt">组织归属</div><div id="drawerOrgs" style="display:flex;flex-wrap:wrap;gap:3px;"></div></div>
+      <div style="margin-top:18px;"><div class="frm-sec-tt">组织岗位</div><div id="drawerOrgs" style="display:flex;flex-wrap:wrap;gap:3px;"></div></div>
       <div style="margin-top:16px;">
         <div class="frm-sec-tt">角色分配</div>
         <div id="drawerRoles" style="display:flex;flex-wrap:wrap;gap:3px;"></div>
@@ -922,6 +1038,40 @@ const orgsData = [
   { id:7, name:'分公司', parent:null, members:20, children:0, ctime:'2024-02-01', status:'启用', updater:'张伟（zhangwei）', updateTime:'2024-07-04 13:20', roles:['市场运营'], passToChildren:false },
 ];
 
+let positionsData = [
+  {id:1,name:'业务归口审核岗',desc:'负责问题派单、任务验收和闭环审核',orgs:['销售部','华东区'],updater:'张伟（zhangwei）',updateTime:'2026-08-22 14:30'},
+  {id:2,name:'集团监管审核岗',desc:'负责集团监管事项复核与审批',orgs:['总公司'],updater:'张伟（zhangwei）',updateTime:'2026-08-21 10:15'},
+  {id:3,name:'监管领导岗',desc:'负责重大监管事项最终审批',orgs:['总公司'],updater:'李娜（lina）',updateTime:'2026-08-20 09:42'},
+  {id:4,name:'问题处理岗',desc:'负责问题分析、任务拆分与处理跟进',orgs:['销售部','技术部','分公司'],updater:'李娜（lina）',updateTime:'2026-08-18 16:20'},
+  {id:5,name:'整改责任岗',desc:'负责整改任务执行、反馈和提交验收',orgs:['销售部','技术部','财务部','分公司'],updater:'王强（wangqiang）',updateTime:'2026-08-17 11:08'},
+  {id:6,name:'模型运营岗',desc:'负责监管模型配置、试算和上线运营',orgs:['总公司'],updater:'张伟（zhangwei）',updateTime:'2026-08-16 15:35'}
+];
+
+const userOrgPositions = {
+  1:[{org:'总公司',position:'集团监管审核岗'},{org:'总公司',position:'监管领导岗'},{org:'销售部',position:'业务归口审核岗'}],
+  2:[{org:'销售部',position:'业务归口审核岗'},{org:'销售部',position:'问题处理岗'}],
+  3:[{org:'技术部',position:'问题处理岗'}],
+  4:[{org:'总公司',position:'模型运营岗'},{org:'技术部',position:'问题处理岗'},{org:'财务部',position:'整改责任岗'}],
+  5:[{org:'销售部',position:'业务归口审核岗'},{org:'销售部',position:'整改责任岗'}],
+  6:[{org:'财务部',position:'整改责任岗'}],
+  7:[{org:'分公司',position:'问题处理岗'},{org:'销售部',position:'整改责任岗'}],
+  8:[{org:'技术部',position:'问题处理岗'},{org:'技术部',position:'整改责任岗'}],
+  9:[{org:'财务部',position:'整改责任岗'},{org:'分公司',position:'问题处理岗'}],
+  10:[{org:'分公司',position:'整改责任岗'}],
+  11:[{org:'总公司',position:'模型运营岗'},{org:'技术部',position:'问题处理岗'}],
+  12:[{org:'销售部',position:'业务归口审核岗'},{org:'分公司',position:'整改责任岗'}]
+};
+
+function getUserOrgPositions(u) {
+  const assigned = userOrgPositions[u.id] || [];
+  const covered = new Set(assigned.map(x=>x.org));
+  return [...assigned, ...u.orgs.filter(org=>!covered.has(org)).map(org=>({org,position:''}))];
+}
+
+function renderOrgPositionTags(u) {
+  return getUserOrgPositions(u).map(x=>`<span class="tag ${x.position?'tag-blue':'tag-gray'}">${x.org}${x.position?`（${x.position}）`:''}</span>`).join('');
+}
+
 // Mock secondary admin assignment data
 const adminAssignments = {
   users: { 4:['李娜'], 5:['李娜'], 8:['王强'], 11:['王强'] },    // userId -> [admin names]
@@ -940,11 +1090,87 @@ function showTab(id, el) {
   if (target) target.classList.add('on');
   if (id === 'role-list') renderRoles();
   if (id === 'org-list') renderOrgTree();
+  if (id === 'position-list') renderPositionList();
   lucide.createIcons();
 }
 
-function showModal(id) { document.querySelectorAll('.dd-m.show').forEach(m => m.classList.remove('show')); document.getElementById(id).classList.add('show'); lucide.createIcons(); }
+function switchOrganizationView(view) {
+  const orgPanel=document.getElementById('tab-org-list'),positionPanel=document.getElementById('tab-position-list');
+  orgPanel.classList.toggle('on',view==='org');
+  positionPanel.classList.toggle('on',view==='position');
+  if(view==='org')renderOrgTree();else renderPositionList();
+  lucide.createIcons();
+}
+
+function showModal(id) { document.querySelectorAll('.dd-m.show').forEach(m => m.classList.remove('show')); document.getElementById(id).classList.add('show'); if(id==='addUserToRoleModal') setTimeout(()=>{decorateUserOrgPositionTable(document.getElementById(id));initAddRoleMemberPicker();applyOverflowTitles(document.getElementById(id));},0); lucide.createIcons(); }
 function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+function applyOverflowTitles(root){
+  if(!root)return;
+  setTimeout(()=>root.querySelectorAll('tbody td').forEach(td=>{
+    if(td.cellIndex===0)return;
+    const child=td.firstElementChild,overflow=td.scrollWidth>td.clientWidth||(child&&child.scrollWidth>child.clientWidth);
+    if(overflow){td.title=td.textContent.replace(/\s+/g,' ').trim();td.style.cursor='help';}
+    else{td.removeAttribute('title');td.style.cursor='';}
+  }),0);
+}
+
+let operationToastTimer = null;
+function showOperationToast(message) {
+  const toast=document.getElementById('operationToast');
+  document.getElementById('operationToastText').textContent=message;
+  toast.classList.add('show');
+  clearTimeout(operationToastTimer);
+  operationToastTimer=setTimeout(()=>toast.classList.remove('show'),2000);
+  lucide.createIcons();
+}
+
+function decorateUserOrgPositionTable(root) {
+  if (!root) return;
+  root.querySelectorAll('tbody tr').forEach(tr=>{
+    const cells=tr.cells; if(cells.length<6)return;
+    const account=(cells[1]?.textContent||'').trim();
+    const u=users.find(x=>x.account===account); if(u) cells[5].innerHTML=`<div style="display:flex;flex-wrap:wrap;gap:2px;">${renderOrgPositionTags(u)}</div>`;
+  });
+}
+
+let selectedAddRoleMemberOrgFilters=[];
+let collapsedAddRoleMemberFilterOrgs=new Set();
+let addRoleMemberOrgFilterKeyword='';
+
+function initAddRoleMemberPicker(){selectedAddRoleMemberOrgFilters=[];collapsedAddRoleMemberFilterOrgs=new Set();addRoleMemberOrgFilterKeyword='';const kw=document.getElementById('addRoleMemberKeyword');if(kw)kw.value='';renderAddRoleMemberOrgFilter();filterAddRoleMemberRows();}
+
+function renderAddRoleMemberOrgFilter(){
+  const menu=document.getElementById('addRoleMemberOrgFilterMenu');if(!menu)return;
+  const renderOrg=(o,level)=>{
+    const allPs=positionsData.filter(p=>p.orgs.includes(o.name)),children=orgsData.filter(x=>x.parent===o.id),orgMatched=!addRoleMemberOrgFilterKeyword||o.name.toLowerCase().includes(addRoleMemberOrgFilterKeyword);
+    const ps=orgMatched?allPs:allPs.filter(p=>p.name.toLowerCase().includes(addRoleMemberOrgFilterKeyword)),childRows=children.map(child=>renderOrg(child,level+1)).join('');
+    if(addRoleMemberOrgFilterKeyword&&!orgMatched&&!ps.length&&!childRows)return '';
+    const collapsed=!addRoleMemberOrgFilterKeyword&&collapsedAddRoleMemberFilterOrgs.has(o.id),hasChildren=allPs.length||children.length,left=10+level*28,childLeft=10+(level+1)*28,orgValue=`org|${o.name}`;
+    const orgRow=`<label style="display:flex;align-items:center;gap:7px;padding:8px 10px 8px ${left}px;cursor:pointer;font-size:13px;font-weight:600;" onclick="event.stopPropagation();"><button type="button" class="btn btn-gh" style="width:16px;height:16px;padding:0;visibility:${hasChildren?'visible':'hidden'};" onclick="event.preventDefault();event.stopPropagation();toggleAddRoleMemberFilterOrg(${o.id})"><i data-lucide="${collapsed?'chevron-right':'chevron-down'}" style="width:13px;"></i></button><input type="checkbox" ${selectedAddRoleMemberOrgFilters.includes(orgValue)?'checked':''} onchange="toggleAddRoleMemberOrgFilter('${orgValue}',this.checked)"><i data-lucide="building-2" style="width:14px;color:var(--t3);"></i><span>${o.name}</span></label>`;
+    if(collapsed)return orgRow;
+    const positionRows=ps.map(p=>{const value=`position|${o.name}|${p.name}`;return `<label style="display:flex;align-items:center;gap:7px;padding:7px 10px 7px ${childLeft}px;cursor:pointer;font-size:12.5px;color:var(--t2);" onclick="event.stopPropagation();"><span style="width:16px;flex-shrink:0;"></span><input type="checkbox" ${selectedAddRoleMemberOrgFilters.includes(value)?'checked':''} onchange="toggleAddRoleMemberOrgFilter('${value}',this.checked)"><i data-lucide="briefcase-business" style="width:13px;color:var(--t3);"></i><span>${p.name}</span></label>`;}).join('');
+    return orgRow+positionRows+childRows;
+  };
+  const treeHtml=orgsData.filter(o=>o.parent===null).map(o=>renderOrg(o,0)).join('');
+  menu.innerHTML=`<div style="display:block;padding:8px 10px;border-bottom:1px solid var(--bd-lt);cursor:default;background:#fff;position:sticky;top:0;z-index:2;" onclick="event.stopPropagation();"><div style="position:relative;width:100%;"><i data-lucide="search" style="position:absolute;left:9px;top:9px;width:13px;color:var(--t3);pointer-events:none;"></i><input id="addRoleMemberOrgFilterSearch" class="frm-inp" value="${addRoleMemberOrgFilterKeyword}" placeholder="搜索组织或岗位" style="display:block;width:100%;height:32px;padding-left:29px;font-size:12px;" oninput="searchAddRoleMemberOrgFilter(this.value)"></div><div style="display:flex;justify-content:space-between;align-items:center;width:100%;margin-top:6px;"><span style="font-size:11.5px;color:var(--t3);">可多选组织或岗位</span><button class="btn btn-gh" style="font-size:12px;padding:2px 5px;color:var(--pri);" onclick="event.stopPropagation();clearAddRoleMemberOrgFilter()">清空</button></div></div>${treeHtml||'<div style="padding:28px;text-align:center;font-size:12px;color:var(--t3);">未找到匹配的组织或岗位</div>'}`;
+  const label=document.querySelector('#addRoleMemberOrgFilterBtn span');if(label)label.textContent=selectedAddRoleMemberOrgFilters.length?`已选 ${selectedAddRoleMemberOrgFilters.length} 项`:'所有组织岗位';lucide.createIcons();
+}
+function toggleAddRoleMemberFilterOrg(id){collapsedAddRoleMemberFilterOrgs.has(id)?collapsedAddRoleMemberFilterOrgs.delete(id):collapsedAddRoleMemberFilterOrgs.add(id);renderAddRoleMemberOrgFilter();document.querySelector('#addRoleMemberOrgFilterDD .dd-m').classList.add('show');}
+function toggleAddRoleMemberOrgFilter(value,checked){selectedAddRoleMemberOrgFilters=checked?[...new Set([...selectedAddRoleMemberOrgFilters,value])]:selectedAddRoleMemberOrgFilters.filter(x=>x!==value);renderAddRoleMemberOrgFilter();filterAddRoleMemberRows();document.querySelector('#addRoleMemberOrgFilterDD .dd-m').classList.add('show');}
+function clearAddRoleMemberOrgFilter(){selectedAddRoleMemberOrgFilters=[];renderAddRoleMemberOrgFilter();filterAddRoleMemberRows();}
+function searchAddRoleMemberOrgFilter(value){addRoleMemberOrgFilterKeyword=value.trim().toLowerCase();renderAddRoleMemberOrgFilter();document.querySelector('#addRoleMemberOrgFilterDD .dd-m').classList.add('show');setTimeout(()=>{const input=document.getElementById('addRoleMemberOrgFilterSearch');if(input){input.focus();input.setSelectionRange(input.value.length,input.value.length);}},0);}
+function filterAddRoleMemberRows(){const kw=(document.getElementById('addRoleMemberKeyword')?.value||'').trim().toLowerCase();document.querySelectorAll('#addUserToRoleModal tbody tr').forEach(row=>{const account=row.children[1]?.textContent.trim()||'',name=row.children[2]?.textContent.trim()||'',u=users.find(x=>x.account===account);const matchKw=!kw||account.toLowerCase().includes(kw)||name.toLowerCase().includes(kw),matchOrg=!selectedAddRoleMemberOrgFilters.length||!!u&&selectedAddRoleMemberOrgFilters.some(value=>{const [type,org,position]=value.split('|');return type==='org'?u.orgs.includes(org):(userOrgPositions[u.id]||[]).some(x=>x.org===org&&x.position===position);});row.style.display=matchKw&&matchOrg?'':'none';});}
+
+let roleMemberPositionsVisible=false;
+function toggleRoleMemberPositions(){
+  roleMemberPositionsVisible=!roleMemberPositionsVisible;
+  document.querySelectorAll('#addUserToRoleModal .role-picker-position-node').forEach(node=>node.style.display=roleMemberPositionsVisible?'flex':'none');
+  const btn=document.getElementById('roleMemberPositionToggle');
+  btn.classList.toggle('btn-pri',roleMemberPositionsVisible);btn.classList.toggle('btn-sec',!roleMemberPositionsVisible);
+  btn.innerHTML=`<i data-lucide="briefcase-business" style="width:13px;"></i> ${roleMemberPositionsVisible?'隐藏岗位':'展示岗位'}`;
+  lucide.createIcons();
+}
 
 function closeDrawer() { document.getElementById('userDrawer').classList.remove('show'); document.getElementById('userDrawerInner').classList.remove('show'); }
 
@@ -958,15 +1184,52 @@ function switchDrawerTab(id, el) {
 // ========== USERS ==========
 const PAGE_SIZE = 8;
 let userPage = 1;
+let selectedUserOrgFilters = [];
+let collapsedUserFilterOrgs = new Set();
+let userOrgFilterKeyword = '';
+
+function renderUserOrgFilter() {
+  const menu=document.getElementById('userOrgFilterMenu');if(!menu)return;
+  const renderOrg=(o,level)=>{
+    const orgValue=`org|${o.name}`,orgChecked=selectedUserOrgFilters.includes(orgValue);
+    const allPs=positionsData.filter(p=>p.orgs.includes(o.name)),children=orgsData.filter(x=>x.parent===o.id),orgMatched=!userOrgFilterKeyword||o.name.toLowerCase().includes(userOrgFilterKeyword);
+    const ps=orgMatched?allPs:allPs.filter(p=>p.name.toLowerCase().includes(userOrgFilterKeyword));
+    const childRows=children.map(child=>renderOrg(child,level+1)).join('');
+    if(userOrgFilterKeyword&&!orgMatched&&!ps.length&&!childRows)return '';
+    const hasChildren=allPs.length||children.length,collapsed=!userOrgFilterKeyword&&collapsedUserFilterOrgs.has(o.id),left=10+level*28,childLeft=10+(level+1)*28;
+    const orgRow=`<label style="display:flex;align-items:center;gap:7px;padding:8px 10px 8px ${left}px;cursor:pointer;font-size:13px;font-weight:600;" onclick="event.stopPropagation();"><button type="button" class="btn btn-gh" style="width:16px;height:16px;padding:0;visibility:${hasChildren?'visible':'hidden'};" onclick="event.preventDefault();event.stopPropagation();toggleUserFilterOrg(${o.id})"><i data-lucide="${collapsed?'chevron-right':'chevron-down'}" style="width:13px;"></i></button><input type="checkbox" ${orgChecked?'checked':''} onchange="toggleUserOrgFilter('${orgValue}',this.checked)"><i data-lucide="building-2" style="width:14px;color:var(--t3);"></i><span>${o.name}</span></label>`;
+    if(collapsed)return orgRow;
+    const positionRows=ps.map(p=>{const value=`position|${o.name}|${p.name}`;return `<label style="display:flex;align-items:center;gap:7px;padding:7px 10px 7px ${childLeft}px;cursor:pointer;font-size:12.5px;color:var(--t2);" onclick="event.stopPropagation();"><span style="width:16px;flex-shrink:0;"></span><input type="checkbox" ${selectedUserOrgFilters.includes(value)?'checked':''} onchange="toggleUserOrgFilter('${value}',this.checked)"><i data-lucide="briefcase-business" style="width:13px;color:var(--t3);"></i><span>${p.name}</span></label>`;}).join('');
+    return orgRow+positionRows+childRows;
+  };
+  const treeHtml=orgsData.filter(o=>o.parent===null).map(o=>renderOrg(o,0)).join('');
+  menu.innerHTML=`<div style="display:block;padding:8px 10px;border-bottom:1px solid var(--bd-lt);cursor:default;" onclick="event.stopPropagation();"><div style="position:relative;width:100%;"><i data-lucide="search" style="position:absolute;left:9px;top:9px;width:13px;color:var(--t3);pointer-events:none;"></i><input id="userOrgFilterSearch" class="frm-inp" value="${userOrgFilterKeyword}" placeholder="搜索组织或岗位" style="display:block;width:100%;height:32px;padding-left:29px;font-size:12px;" oninput="searchUserOrgFilter(this.value)"></div><div style="display:flex;justify-content:space-between;align-items:center;width:100%;margin-top:6px;"><span style="font-size:11.5px;color:var(--t3);">可多选组织或岗位</span><button class="btn btn-gh" style="font-size:12px;padding:2px 5px;color:var(--pri);" onclick="event.stopPropagation();clearUserOrgFilters()">清空</button></div></div>${treeHtml||'<div style="padding:28px;text-align:center;font-size:12px;color:var(--t3);">未找到匹配的组织或岗位</div>'}`;
+  const btn=document.querySelector('#userOrgFilterBtn span');
+  btn.textContent=selectedUserOrgFilters.length?`已选 ${selectedUserOrgFilters.length} 项`:'所有组织岗位';
+  lucide.createIcons();
+}
+
+function searchUserOrgFilter(value){userOrgFilterKeyword=value.trim().toLowerCase();renderUserOrgFilter();document.querySelector('#userOrgFilterDD .dd-m').classList.add('show');setTimeout(()=>{const input=document.getElementById('userOrgFilterSearch');if(input){input.focus();input.setSelectionRange(input.value.length,input.value.length);}},0);}
+
+function toggleUserFilterOrg(orgId){collapsedUserFilterOrgs.has(orgId)?collapsedUserFilterOrgs.delete(orgId):collapsedUserFilterOrgs.add(orgId);renderUserOrgFilter();document.querySelector('#userOrgFilterDD .dd-m').classList.add('show');}
+
+function toggleUserOrgFilter(value,checked){
+  selectedUserOrgFilters=checked?[...new Set([...selectedUserOrgFilters,value])]:selectedUserOrgFilters.filter(x=>x!==value);
+  renderUserOrgFilter();goPage(1);
+}
+
+function clearUserOrgFilters(){selectedUserOrgFilters=[];renderUserOrgFilter();goPage(1);}
 
 function getFilteredUsers() {
   const kw = document.getElementById('userKw').value.toLowerCase();
-  const org = document.getElementById('userOrg').value;
-  const role = document.getElementById('userRole').value;
+  const role = document.getElementById('userRole')?.value || '';
   const status = document.getElementById('userStatus').value;
   return users.filter(u => {
     if (kw && !u.account.toLowerCase().includes(kw) && !u.name.includes(kw)) return false;
-    if (org && !u.orgs.includes(org)) return false;
+    if (selectedUserOrgFilters.length && !selectedUserOrgFilters.some(value=>{
+      const [type,orgName,positionName]=value.split('|');
+      return type==='org'?u.orgs.includes(orgName):(userOrgPositions[u.id]||[]).some(x=>x.org===orgName&&x.position===positionName);
+    })) return false;
     if (role && !u.roles.includes(role)) return false;
     if (status && u.status !== status) return false;
     return true;
@@ -985,13 +1248,6 @@ function renderTable(data) {
       <td><div style="display:flex;align-items:center;gap:8px;"><div class="av ${avClass(u.name)}">${u.name[0]}</div><span style="font-weight:500;">${u.name}</span></div></td>
       <td><span style="font-size:13px;color:var(--t2);">${u.email}</span></td>
       <td><span style="font-size:13px;color:var(--t2);">${u.phone}</span></td>
-      <td><div style="display:flex;flex-wrap:wrap;gap:2px;">${u.orgs.map(o => `<span class="tag tag-gray">${o}</span>`).join('')}</div></td>
-      <td><div style="display:flex;flex-wrap:wrap;gap:2px;">${[...u.roles].sort((a,b) => {
-  const priority = {'租户管理员':1,'次级管理员':2};
-  const pa = priority[a] || 99;
-  const pb = priority[b] || 99;
-  return pa - pb;
-}).map(r => `<span class="tag ${r==='租户管理员'||r==='次级管理员'?'tag-gray':'tag-blue'}">${r}</span>`).join('')||'<span style="font-size:12px;color:var(--t3);">-</span>'}</div></td>
       <td><span class="badge ${sc}"><span class="badge-dot ${sd}"></span>${st}</span></td>
       <td><span style="font-size:13px;color:var(--t2);">${u.updater || '-'}</span></td>
       <td><span style="font-size:13px;color:var(--t2);">${u.updateTime || '-'}</span></td>
@@ -1216,25 +1472,82 @@ function toggleDD(id) {
   }
 }
 
+let editingMemberId = null;
+let pendingMemberOrgPositions = [];
+let memberOrgPositionKeyword = '';
+let collapsedMemberPickerOrgs = new Set();
+
+function initMemberOrgPositionEditor(items=[]) {
+  const orgs=[...new Set(items.map(x=>x.org))];
+  pendingMemberOrgPositions=[...orgs.map(org=>({org,position:''})),...items.filter(x=>x.position).filter((x,i,arr)=>arr.findIndex(y=>y.org===x.org&&y.position===x.position)===i).map(x=>({...x}))];
+  memberOrgPositionKeyword='';collapsedMemberPickerOrgs=new Set();
+  renderSelectedMemberOrgPositions();renderMemberOrgPositionPicker();
+}
+
+function renderMemberOrgPositionPicker(){
+  const menu=document.getElementById('memberOrgPositionPickerMenu');if(!menu)return;
+  const renderOrg=(o,level)=>{
+    const allPs=positionsData.filter(p=>p.orgs.includes(o.name)),children=orgsData.filter(x=>x.parent===o.id),orgMatched=!memberOrgPositionKeyword||o.name.toLowerCase().includes(memberOrgPositionKeyword);
+    const ps=orgMatched?allPs:allPs.filter(p=>p.name.toLowerCase().includes(memberOrgPositionKeyword)),childRows=children.map(child=>renderOrg(child,level+1)).join('');
+    if(memberOrgPositionKeyword&&!orgMatched&&!ps.length&&!childRows)return '';
+    const collapsed=!memberOrgPositionKeyword&&collapsedMemberPickerOrgs.has(o.id),hasChildren=allPs.length||children.length,left=10+level*28,childLeft=10+(level+1)*28;
+    const orgChecked=pendingMemberOrgPositions.some(x=>x.org===o.name&&!x.position);
+    const orgRow=`<label style="display:flex;align-items:center;gap:7px;padding:8px 10px 8px ${left}px;cursor:pointer;font-size:13px;font-weight:600;" onclick="event.stopPropagation();"><button type="button" class="btn btn-gh" style="width:16px;height:16px;padding:0;visibility:${hasChildren?'visible':'hidden'};" onclick="event.preventDefault();event.stopPropagation();toggleMemberPickerOrg(${o.id})"><i data-lucide="${collapsed?'chevron-right':'chevron-down'}" style="width:13px;"></i></button><input type="checkbox" ${orgChecked?'checked':''} onchange="togglePendingMemberOrgPosition('${o.name}','',this.checked)"><i data-lucide="building-2" style="width:14px;color:var(--t3);"></i><span>${o.name}</span></label>`;
+    if(collapsed)return orgRow;
+    const positionRows=ps.map(p=>`<label style="display:flex;align-items:center;gap:7px;padding:7px 10px 7px ${childLeft}px;cursor:pointer;font-size:12.5px;color:var(--t2);" onclick="event.stopPropagation();"><span style="width:16px;flex-shrink:0;"></span><input type="checkbox" ${pendingMemberOrgPositions.some(x=>x.org===o.name&&x.position===p.name)?'checked':''} onchange="togglePendingMemberOrgPosition('${o.name}','${p.name}',this.checked)"><i data-lucide="briefcase-business" style="width:13px;color:var(--t3);"></i><span>${p.name}</span></label>`).join('');
+    return orgRow+positionRows+childRows;
+  };
+  const treeHtml=orgsData.filter(o=>o.parent===null).map(o=>renderOrg(o,0)).join('');
+  menu.innerHTML=`<div style="display:block;padding:8px 10px;border-bottom:1px solid var(--bd-lt);cursor:default;background:#fff;position:sticky;top:0;z-index:2;" onclick="event.stopPropagation();"><div style="position:relative;width:100%;"><i data-lucide="search" style="position:absolute;left:9px;top:9px;width:13px;color:var(--t3);pointer-events:none;"></i><input id="memberOrgPositionSearch" class="frm-inp" value="${memberOrgPositionKeyword}" placeholder="搜索组织或岗位" style="display:block;width:100%;height:32px;padding-left:29px;font-size:12px;" oninput="searchMemberOrgPosition(this.value)"></div></div>${treeHtml||'<div style="padding:28px;text-align:center;font-size:12px;color:var(--t3);">未找到匹配的组织或岗位</div>'}`;
+  const label=document.querySelector('#memberOrgPositionPickerBtn span'),orgCount=new Set(pendingMemberOrgPositions.map(x=>x.org)).size,positionCount=pendingMemberOrgPositions.filter(x=>x.position).length;if(label)label.textContent=orgCount?`已选 ${orgCount} 个组织、${positionCount} 个岗位`:'请选择组织岗位';
+  lucide.createIcons();
+}
+
+function togglePendingMemberOrgPosition(org,position,checked){
+  if(position){
+    if(checked){if(!pendingMemberOrgPositions.some(x=>x.org===org&&!x.position))pendingMemberOrgPositions.push({org,position:''});if(!pendingMemberOrgPositions.some(x=>x.org===org&&x.position===position))pendingMemberOrgPositions.push({org,position});}
+    else pendingMemberOrgPositions=pendingMemberOrgPositions.filter(x=>!(x.org===org&&x.position===position));
+  }else{
+    if(checked){if(!pendingMemberOrgPositions.some(x=>x.org===org&&!x.position))pendingMemberOrgPositions.push({org,position:''});}
+    else pendingMemberOrgPositions=pendingMemberOrgPositions.filter(x=>x.org!==org);
+  }
+  renderSelectedMemberOrgPositions();renderMemberOrgPositionPicker();document.querySelector('#memberOrgPositionPickerDD .dd-m').classList.add('show');
+}
+function toggleMemberPickerOrg(orgId){collapsedMemberPickerOrgs.has(orgId)?collapsedMemberPickerOrgs.delete(orgId):collapsedMemberPickerOrgs.add(orgId);renderMemberOrgPositionPicker();document.querySelector('#memberOrgPositionPickerDD .dd-m').classList.add('show');}
+function searchMemberOrgPosition(value){memberOrgPositionKeyword=value.trim().toLowerCase();renderMemberOrgPositionPicker();document.querySelector('#memberOrgPositionPickerDD .dd-m').classList.add('show');setTimeout(()=>{const input=document.getElementById('memberOrgPositionSearch');if(input){input.focus();input.setSelectionRange(input.value.length,input.value.length);}},0);}
+
+function removePendingMemberOrgPosition(org){pendingMemberOrgPositions=pendingMemberOrgPositions.filter(x=>x.org!==org);renderSelectedMemberOrgPositions();renderMemberOrgPositionPicker();}
+
+function renderSelectedMemberOrgPositions(){
+  const box=document.getElementById('selectedOrgs');if(!box)return;
+  const orgs=[...new Set(pendingMemberOrgPositions.map(x=>x.org))];
+  box.innerHTML=orgs.length?orgs.map(org=>{const positions=pendingMemberOrgPositions.filter(x=>x.org===org&&x.position).map(x=>x.position);return `<div class="org-chip"><div style="display:flex;align-items:center;gap:7px;min-width:0;"><i data-lucide="building-2" style="width:15px;height:15px;color:var(--t3);flex-shrink:0;"></i><span style="font-size:13.5px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${org}${positions.length?`（${positions.join('、')}）`:''}</span></div><button type="button" class="btn btn-gh" title="移除组织及其岗位" onclick="removePendingMemberOrgPosition('${org}')"><i data-lucide="x" style="width:15px;height:15px;"></i></button></div>`;}).join(''):'<div style="padding:14px;border:1px dashed var(--bd);border-radius:9px;text-align:center;font-size:12px;color:var(--t3);">暂未添加组织岗位</div>';
+  lucide.createIcons();
+}
+
 function showCreateUser() {
+  editingMemberId = null;
   document.getElementById('userModalTitle').textContent = '新增成员';
   document.getElementById('fuAccount').value = '';
   document.getElementById('fuName').value = '';
   document.getElementById('fuEmail').value = '';
   document.getElementById('fuPhone').value = '';
   document.getElementById('fuDesc').value = '';
+  initMemberOrgPositionEditor([]);
   showModal('userModal');
 }
 
 function editUser(id) {
   const u = users.find(x => x.id === id);
   if (!u) return;
+  editingMemberId = id;
   document.getElementById('userModalTitle').textContent = '编辑成员 - ' + u.name;
   document.getElementById('fuAccount').value = u.account;
   document.getElementById('fuName').value = u.name;
   document.getElementById('fuEmail').value = u.email;
   document.getElementById('fuPhone').value = u.phone;
   document.getElementById('fuDesc').value = u.desc || '';
+  initMemberOrgPositionEditor(getUserOrgPositions(u));
   showModal('userModal');
 }
 
@@ -1251,12 +1564,17 @@ function saveUser() {
     return;
   }
 
-  closeModal('userModal');
   if (isCreate) {
-    alert('成员新增成功！');
+    const id=Math.max(0,...users.map(u=>u.id))+1;
+    const newUser={id,account,name:name||account,email,phone,orgs:[...new Set(pendingMemberOrgPositions.map(x=>x.org))],def:pendingMemberOrgPositions[0]?.org||'',roles:[],type:'normal',status:'active',updater:'管理员（admin）',updateTime:'2026-08-24 17:00',desc:document.getElementById('fuDesc').value};
+    users.push(newUser);userOrgPositions[id]=pendingMemberOrgPositions.filter(x=>x.position).map(x=>({...x}));
+    showOperationToast('成员新增成功');
   } else {
-    alert('成员信息更新成功！');
+    const u=users.find(x=>x.id===editingMemberId);
+    if(u){u.account=account;u.name=name||account;u.email=email;u.phone=phone;u.desc=document.getElementById('fuDesc').value;u.orgs=[...new Set(pendingMemberOrgPositions.map(x=>x.org))];u.def=pendingMemberOrgPositions[0]?.org||'';u.updater='管理员（admin）';u.updateTime='2026-08-24 17:00';userOrgPositions[u.id]=pendingMemberOrgPositions.filter(x=>x.position).map(x=>({...x}));}
+    showOperationToast('成员信息更新成功');
   }
+  closeModal('userModal');
   goPage(1);
 }
 function resetPwd(account, name) {
@@ -1320,7 +1638,7 @@ function viewUser(id) {
     ['密码', '<button class="btn btn-sec" style="padding:6px 12px;font-size:12px;" onclick="resetPwd(\''+u.account+'\', \''+u.name+'\')"><i data-lucide="key" style="width:13px;height:13px;"></i> 重置密码</button>'],
     ['描述', u.desc || '-']
   ].map(([l,v]) => `<div><div class="ig-l">${l}</div><div class="ig-v">${v}</div></div>`).join('');
-  document.getElementById('drawerOrgs').innerHTML = u.orgs.map(o => `<span class="tag tag-gray">${o}</span>`).join('');
+  document.getElementById('drawerOrgs').innerHTML = renderOrgPositionTags(u);
   // All roles (direct + org inherited + parent org inherited)
   const allRoles = [...new Set([...u.roles])];
   u.orgs.forEach(orgName => {
@@ -1494,7 +1812,34 @@ function renderRoles() {
   lucide.createIcons();
 }
 
+let selectedRoleMemberOrgFilters=[];
+let collapsedRoleMemberFilterOrgs=new Set();
+let roleMemberOrgFilterKeyword='';
+
+function renderRoleMemberOrgFilter(){
+  const menu=document.getElementById('roleMemberOrgFilterMenu');if(!menu)return;
+  const renderOrg=(o,level)=>{
+    const allPs=positionsData.filter(p=>p.orgs.includes(o.name)),children=orgsData.filter(x=>x.parent===o.id),orgMatched=!roleMemberOrgFilterKeyword||o.name.toLowerCase().includes(roleMemberOrgFilterKeyword);
+    const ps=orgMatched?allPs:allPs.filter(p=>p.name.toLowerCase().includes(roleMemberOrgFilterKeyword)),childRows=children.map(child=>renderOrg(child,level+1)).join('');
+    if(roleMemberOrgFilterKeyword&&!orgMatched&&!ps.length&&!childRows)return '';
+    const collapsed=!roleMemberOrgFilterKeyword&&collapsedRoleMemberFilterOrgs.has(o.id),hasChildren=allPs.length||children.length,left=10+level*28,childLeft=10+(level+1)*28,orgValue=`org|${o.name}`;
+    const orgRow=`<label style="display:flex;align-items:center;gap:7px;padding:8px 10px 8px ${left}px;cursor:pointer;font-size:13px;font-weight:600;" onclick="event.stopPropagation();"><button type="button" class="btn btn-gh" style="width:16px;height:16px;padding:0;visibility:${hasChildren?'visible':'hidden'};" onclick="event.preventDefault();event.stopPropagation();toggleRoleMemberFilterOrg(${o.id})"><i data-lucide="${collapsed?'chevron-right':'chevron-down'}" style="width:13px;"></i></button><input type="checkbox" ${selectedRoleMemberOrgFilters.includes(orgValue)?'checked':''} onchange="toggleRoleMemberOrgFilter('${orgValue}',this.checked)"><i data-lucide="building-2" style="width:14px;color:var(--t3);"></i><span>${o.name}</span></label>`;
+    if(collapsed)return orgRow;
+    const positionRows=ps.map(p=>{const value=`position|${o.name}|${p.name}`;return `<label style="display:flex;align-items:center;gap:7px;padding:7px 10px 7px ${childLeft}px;cursor:pointer;font-size:12.5px;color:var(--t2);" onclick="event.stopPropagation();"><span style="width:16px;flex-shrink:0;"></span><input type="checkbox" ${selectedRoleMemberOrgFilters.includes(value)?'checked':''} onchange="toggleRoleMemberOrgFilter('${value}',this.checked)"><i data-lucide="briefcase-business" style="width:13px;color:var(--t3);"></i><span>${p.name}</span></label>`;}).join('');
+    return orgRow+positionRows+childRows;
+  };
+  const treeHtml=orgsData.filter(o=>o.parent===null).map(o=>renderOrg(o,0)).join('');
+  menu.innerHTML=`<div style="display:block;padding:8px 10px;border-bottom:1px solid var(--bd-lt);cursor:default;background:#fff;position:sticky;top:0;z-index:2;" onclick="event.stopPropagation();"><div style="position:relative;width:100%;"><i data-lucide="search" style="position:absolute;left:9px;top:9px;width:13px;color:var(--t3);pointer-events:none;"></i><input id="roleMemberOrgFilterSearch" class="frm-inp" value="${roleMemberOrgFilterKeyword}" placeholder="搜索组织或岗位" style="display:block;width:100%;height:32px;padding-left:29px;font-size:12px;" oninput="searchRoleMemberOrgFilter(this.value)"></div><div style="display:flex;justify-content:space-between;align-items:center;width:100%;margin-top:6px;"><span style="font-size:11.5px;color:var(--t3);">可多选组织或岗位</span><button class="btn btn-gh" style="font-size:12px;padding:2px 5px;color:var(--pri);" onclick="event.stopPropagation();clearRoleMemberOrgFilter()">清空</button></div></div>${treeHtml||'<div style="padding:28px;text-align:center;font-size:12px;color:var(--t3);">未找到匹配的组织或岗位</div>'}`;
+  const label=document.querySelector('#roleMemberOrgFilterBtn span');if(label)label.textContent=selectedRoleMemberOrgFilters.length?`已选 ${selectedRoleMemberOrgFilters.length} 项`:'所有组织岗位';lucide.createIcons();
+}
+function toggleRoleMemberFilterOrg(id){collapsedRoleMemberFilterOrgs.has(id)?collapsedRoleMemberFilterOrgs.delete(id):collapsedRoleMemberFilterOrgs.add(id);renderRoleMemberOrgFilter();document.querySelector('#roleMemberOrgFilterDD .dd-m').classList.add('show');}
+function toggleRoleMemberOrgFilter(value,checked){selectedRoleMemberOrgFilters=checked?[...new Set([...selectedRoleMemberOrgFilters,value])]:selectedRoleMemberOrgFilters.filter(x=>x!==value);renderRoleMemberOrgFilter();filterRoleMemberRows();document.querySelector('#roleMemberOrgFilterDD .dd-m').classList.add('show');}
+function clearRoleMemberOrgFilter(){selectedRoleMemberOrgFilters=[];renderRoleMemberOrgFilter();filterRoleMemberRows();}
+function searchRoleMemberOrgFilter(value){roleMemberOrgFilterKeyword=value.trim().toLowerCase();renderRoleMemberOrgFilter();document.querySelector('#roleMemberOrgFilterDD .dd-m').classList.add('show');setTimeout(()=>{const input=document.getElementById('roleMemberOrgFilterSearch');if(input){input.focus();input.setSelectionRange(input.value.length,input.value.length);}},0);}
+function filterRoleMemberRows(){document.querySelectorAll('#rt-users tbody tr').forEach(row=>{const account=row.children[1]?.textContent.trim(),u=users.find(x=>x.account===account);row.style.display=!selectedRoleMemberOrgFilters.length||!!u&&selectedRoleMemberOrgFilters.some(value=>{const [type,org,position]=value.split('|');return type==='org'?u.orgs.includes(org):(userOrgPositions[u.id]||[]).some(x=>x.org===org&&x.position===position);})?'':'none';});}
+
 function selRole(id, el) {
+  selectedRoleMemberOrgFilters=[];collapsedRoleMemberFilterOrgs=new Set();roleMemberOrgFilterKeyword='';
   document.querySelectorAll('#roleList .li').forEach(l => l.classList.remove('on'));
   el.classList.add('on');
   const r = rolesData.find(x => x.id === id);
@@ -1517,28 +1862,25 @@ function selRole(id, el) {
     </div>
   </div>
   <div class="dsec">
-    <div class="dtabs" style="margin-bottom:12px;">
-      <div class="dtab on">关联成员</div>
-    </div>
     <div id="rt-users" class="panel on">
-      <div class="dsec-hd"><span class="dsec-tt">成员 (${r.users})</span>
+      <div class="dsec-hd"><span class="dsec-tt">角色成员（${r.users}）</span>
         <div style="display:flex;gap:6px;">
           <button class="btn btn-sec" style="font-size:12px;padding:5px 10px;" onclick="showModal('addUserToRoleModal')"><i data-lucide="plus" style="width:13px;height:13px;"></i> 添加成员</button>
           <button class="btn btn-sec" style="font-size:12px;padding:5px 10px;color:#EF4444;border-color:#EF4444;" onclick="alert('已批量移除选中成员')"><i data-lucide="trash-2" style="width:13px;height:13px;"></i> 批量移除</button>
         </div>
       </div>
-      <div style="margin-bottom:8px;display:flex;gap:8px;"><input class="frm-inp" style="flex:1;font-size:12.5px;" placeholder="搜索账号或昵称..."><select class="frm-inp" style="width:140px;font-size:12.5px;"><option value="">所有组织</option><option>技术部</option><option>销售部</option><option>分公司</option></select></div>
+      <div style="margin-bottom:8px;"><input class="frm-inp" style="width:100%;font-size:12.5px;" placeholder="搜索账号或昵称..."></div>
       <div class="tbl-wrap" style="overflow-x:auto;border-radius:10px;">
-        <table style="min-width:900px;table-layout:auto;">
+        <table style="min-width:700px;table-layout:auto;">
           <thead><tr>
             <th style="width:36px;text-align:center;"><input type="checkbox"></th>
-            <th>账号</th><th>昵称</th><th>邮箱</th><th>手机号</th><th>所属组织</th><th>角色</th><th>状态</th><th style="width:50px;">操作</th>
+            <th>账号</th><th>昵称</th><th>邮箱</th><th>手机号</th><th>状态</th><th style="width:50px;">操作</th>
           </tr></thead>
           <tbody>
-            <tr><td style="text-align:center;"><input type="checkbox"></td><td style="font-weight:500;">zhaomin</td><td>赵敏</td><td>zhaomin@gientech.com</td><td>13812340004</td><td><span class="tag tag-gray">技术部</span></td><td><span class="tag tag-blue">数据分析师</span></td><td><span class="badge badge-on"><span class="badge-dot badge-dot-on"></span>已启用</span></td><td><button class="btn btn-gh" style="color:var(--t3);padding:2px 4px;" title="移除"><i data-lucide="x" style="width:14px;height:14px;"></i></button></td></tr>
-            <tr><td style="text-align:center;"><input type="checkbox"></td><td style="font-weight:500;">liuyang</td><td>刘洋</td><td>liuyang@gientech.com</td><td>13812340005</td><td><span class="tag tag-gray">销售部</span></td><td><span class="tag tag-blue">数据分析师</span></td><td><span class="badge badge-on"><span class="badge-dot badge-dot-on"></span>已启用</span></td><td><button class="btn btn-gh" style="color:var(--t3);padding:2px 4px;" title="移除"><i data-lucide="x" style="width:14px;height:14px;"></i></button></td></tr>
-            <tr><td style="text-align:center;"><input type="checkbox"></td><td style="font-weight:500;">yangfan</td><td>杨帆</td><td>yangfan@gientech.com</td><td>13812340007</td><td><span class="tag tag-gray">分公司</span></td><td><span class="tag tag-blue">数据分析师</span></td><td><span class="badge badge-on"><span class="badge-dot badge-dot-on"></span>已启用</span></td><td><button class="btn btn-gh" style="color:var(--t3);padding:2px 4px;" title="移除"><i data-lucide="x" style="width:14px;height:14px;"></i></button></td></tr>
-            <tr><td style="text-align:center;"><input type="checkbox"></td><td style="font-weight:500;">zhoujie</td><td>周杰</td><td>zhoujie@gientech.com</td><td>13812340008</td><td><span class="tag tag-gray">技术部</span></td><td><span class="tag tag-blue">数据分析师</span></td><td><span class="badge badge-on"><span class="badge-dot badge-dot-on"></span>已启用</span></td><td><button class="btn btn-gh" style="color:var(--t3);padding:2px 4px;" title="移除"><i data-lucide="x" style="width:14px;height:14px;"></i></button></td></tr>
+            <tr><td style="text-align:center;"><input type="checkbox"></td><td style="font-weight:500;">zhaomin</td><td>赵敏</td><td>zhaomin@gientech.com</td><td>13812340004</td><td><span class="badge badge-on"><span class="badge-dot badge-dot-on"></span>已启用</span></td><td><button class="btn btn-gh" style="color:var(--t3);padding:2px 4px;" title="移除"><i data-lucide="x" style="width:14px;height:14px;"></i></button></td></tr>
+            <tr><td style="text-align:center;"><input type="checkbox"></td><td style="font-weight:500;">liuyang</td><td>刘洋</td><td>liuyang@gientech.com</td><td>13812340005</td><td><span class="badge badge-on"><span class="badge-dot badge-dot-on"></span>已启用</span></td><td><button class="btn btn-gh" style="color:var(--t3);padding:2px 4px;" title="移除"><i data-lucide="x" style="width:14px;height:14px;"></i></button></td></tr>
+            <tr><td style="text-align:center;"><input type="checkbox"></td><td style="font-weight:500;">yangfan</td><td>杨帆</td><td>yangfan@gientech.com</td><td>13812340007</td><td><span class="badge badge-on"><span class="badge-dot badge-dot-on"></span>已启用</span></td><td><button class="btn btn-gh" style="color:var(--t3);padding:2px 4px;" title="移除"><i data-lucide="x" style="width:14px;height:14px;"></i></button></td></tr>
+            <tr><td style="text-align:center;"><input type="checkbox"></td><td style="font-weight:500;">zhoujie</td><td>周杰</td><td>zhoujie@gientech.com</td><td>13812340008</td><td><span class="badge badge-on"><span class="badge-dot badge-dot-on"></span>已启用</span></td><td><button class="btn btn-gh" style="color:var(--t3);padding:2px 4px;" title="移除"><i data-lucide="x" style="width:14px;height:14px;"></i></button></td></tr>
           </tbody>
         </table>
       </div>
@@ -1626,12 +1968,198 @@ function confirmRolePermissionMigration() {
   alert('权限迁移成功！');
 }
 
+// ========== POSITIONS ==========
+let selectedPositionId = null;
+let editingPositionId = null;
+let currentOrgForPosition = null;
+let currentPositionForOrg = null;
+let quickCreateForOrg = false;
+
+function positionMembers(positionName) {
+  return users.filter(u => getUserOrgPositions(u).some(x => x.position === positionName));
+}
+
+function updateMultiSelectLabel(selector,labelId,emptyText){
+  const count=document.querySelectorAll(`${selector}:checked`).length,label=document.getElementById(labelId);if(label)label.textContent=count?`已选 ${count} 项`:emptyText;
+}
+
+function filterMultiSelectOptions(input,containerId){
+  const keyword=input.value.trim().toLowerCase(),container=document.getElementById(containerId);if(!container)return;
+  container.querySelectorAll(':scope > label').forEach(label=>{label.style.display=!keyword||label.textContent.trim().toLowerCase().includes(keyword)?'flex':'none';});
+  const selectAll=input.parentElement.querySelector('input[type="checkbox"]');if(selectAll)selectAll.checked=false;
+}
+
+function toggleVisibleMultiSelect(source,containerId,selector,labelId,emptyText){
+  const container=document.getElementById(containerId);if(!container)return;
+  container.querySelectorAll(':scope > label').forEach(label=>{if(label.style.display!=='none'){const cb=label.querySelector(selector);if(cb)cb.checked=source.checked;}});
+  updateMultiSelectLabel(selector,labelId,emptyText);
+}
+
+function renderPositionList() {
+  const kw = (document.getElementById('positionKw')?.value || '').trim().toLowerCase();
+  const data = positionsData.filter(p => !kw || p.name.toLowerCase().includes(kw));
+  const list = document.getElementById('positionList'); if (!list) return;
+  list.innerHTML = data.length ? data.map(p=>`<div class="li ${selectedPositionId===p.id?'on':''}" onclick="selectPosition(${p.id},this)">
+    <div style="display:flex;align-items:center;gap:7px;"><i data-lucide="briefcase-business" style="width:15px;height:15px;"></i><div style="min-width:0;flex:1;"><div class="li-tt">${p.name}</div></div><div class="dd" id="pdd-${p.id}"><button class="btn btn-gh" style="padding:2px 4px;" onclick="event.stopPropagation();toggleDD('pdd-${p.id}')"><i data-lucide="more-horizontal" style="width:14px;"></i></button><div class="dd-m"><div onclick="event.stopPropagation();editPosition(${p.id})"><i data-lucide="edit-3" style="width:13px;"></i> 编辑</div><div class="sep"></div><div style="color:#EF4444;" onclick="event.stopPropagation();deletePosition(${p.id})"><i data-lucide="trash-2" style="width:13px;"></i> 删除</div></div></div></div>
+  </div>`).join('') : '<div style="text-align:center;padding:34px 10px;color:var(--t3);font-size:12px;">未找到匹配岗位</div>';
+  lucide.createIcons();
+}
+
+function openPositionOrgModal(positionId){
+  currentPositionForOrg=positionsData.find(p=>p.id===positionId);if(!currentPositionForOrg){showOperationToast('请先选择岗位');return;}
+  document.getElementById('positionOrgModalTitle').textContent=`关联组织 - ${currentPositionForOrg.name}`;
+  document.getElementById('positionOrgKw').value='';renderPositionOrgOptions();showModal('positionOrgModal');
+}
+
+function renderPositionOrgOptions(){
+  if(!currentPositionForOrg)return;const kw=(document.getElementById('positionOrgKw')?.value||'').trim().toLowerCase();
+  const render=(parent,level)=>orgsData.filter(o=>o.parent===parent).map(o=>{const children=render(o.id,level+1),matched=!kw||o.name.toLowerCase().includes(kw);if(!matched&&!children)return '';const disabled=currentPositionForOrg.orgs.includes(o.name);return `${matched?`<label style="display:flex;align-items:center;gap:9px;padding:10px 12px 10px ${12+level*20}px;border-bottom:1px solid var(--bd-lt);cursor:${disabled?'not-allowed':'pointer'};"><input type="checkbox" class="position-org-option" value="${o.id}" ${disabled?'checked disabled':''}><i data-lucide="building-2" style="width:14px;color:var(--t3);"></i><span style="font-size:13px;">${o.name}</span>${disabled?'<span style="margin-left:auto;font-size:11px;color:var(--t3);">已关联</span>':''}</label>`:''}${children}`;}).join('');
+  document.getElementById('positionOrgOptions').innerHTML=render(null,0)||'<div style="padding:28px;text-align:center;color:var(--t3);font-size:12.5px;">暂无可关联组织</div>';lucide.createIcons();
+}
+
+function savePositionOrgs(){
+  if(!currentPositionForOrg)return;const ids=[...document.querySelectorAll('.position-org-option:checked:not(:disabled)')].map(x=>Number(x.value));if(!ids.length){alert('请至少选择一个组织。');return;}
+  orgsData.filter(o=>ids.includes(o.id)).forEach(o=>{if(!currentPositionForOrg.orgs.includes(o.name))currentPositionForOrg.orgs.push(o.name);});
+  const positionId=currentPositionForOrg.id;closeModal('positionOrgModal');selectPosition(positionId,null);renderPositionList();showOperationToast('组织关联成功');
+}
+
+const POSITION_MEMBER_PAGE_SIZE = 8;
+let positionMemberPage = 1;
+let positionMemberOrg = '';
+let positionMemberKeyword = '';
+
+function selectPosition(id, el) {
+  positionMemberPage=1;positionMemberOrg='';positionMemberKeyword='';
+  selectedPositionId = id;
+  document.querySelectorAll('#positionList .li').forEach(x=>x.classList.remove('on')); if (el) el.classList.add('on');
+  const orgKeyword=document.getElementById('positionSideOrgKeyword');if(orgKeyword)orgKeyword.value='';
+  const p = positionsData.find(x=>x.id===id); if (!p) return;
+  const members = positionMembers(p.name);
+  document.getElementById('positionDetailEmpty').style.display = 'none';
+  const c = document.getElementById('positionDetailContent'); c.classList.add('on');
+  c.innerHTML = `<div class="dsec"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px;"><div><div style="font-size:16px;font-weight:700;">${p.name}</div><div style="font-size:13px;color:var(--t2);margin-top:8px;">${p.desc||'暂无岗位描述'}</div><div style="font-size:12px;color:var(--t3);margin-top:8px;display:flex;gap:16px;"><span>更新人：${p.updater||'-'}</span><span>更新时间：${p.updateTime}</span></div></div><div style="display:flex;gap:6px;"><button class="btn btn-sec" onclick="editPosition(${p.id})"><i data-lucide="edit-3" style="width:13px;"></i> 编辑</button><button class="btn btn-sec" style="color:#EF4444;border-color:#FCA5A5;" onclick="deletePosition(${p.id})"><i data-lucide="trash-2" style="width:13px;"></i> 删除</button></div></div></div>
+  <div class="dsec"><div class="dsec-hd"><span class="dsec-tt">岗位成员（${members.length}）</span><div style="display:flex;gap:6px;"><button id="positionAddMemberBtn" class="btn btn-sec" style="font-size:12px;padding:5px 10px;" disabled title="请先从关联组织中选择成员要加入的组织"><i data-lucide="plus" style="width:13px;"></i> 添加成员</button><button id="batchPositionPageRemoveBtn" class="btn btn-sec" style="font-size:12px;padding:5px 10px;color:#EF4444;border-color:#FCA5A5;" onclick="batchRemovePositionPageMembers(${p.id})"><i data-lucide="user-minus" style="width:13px;"></i> 从所有组织批量移除</button></div></div><div style="margin-bottom:8px;"><input class="frm-inp" placeholder="搜索账号或昵称..." style="width:100%;font-size:12.5px;"></div><div class="tbl-wrap" style="overflow-x:auto;border-radius:10px;"><table class="member-list-compact has-select" style="min-width:700px;table-layout:auto;"><thead><tr><th style="width:36px;text-align:center;"><input type="checkbox" onclick="togglePositionPageMemberAll(this)"></th><th>账号</th><th>昵称</th><th>邮箱</th><th>手机号</th><th>组织岗位</th><th>角色</th><th>状态</th><th style="width:50px;">操作</th></tr></thead><tbody>${members.map(u=>`<tr class="position-member-row" data-orgs="${(userOrgPositions[u.id]||[]).filter(x=>x.position===p.name).map(x=>x.org).join('|')}"><td style="text-align:center;"><input type="checkbox" class="position-page-member-checkbox" value="${u.id}"></td><td style="font-weight:500;">${u.account}</td><td>${u.name}</td><td>${u.email}</td><td>${u.phone}</td><td><div style="display:flex;flex-wrap:wrap;gap:2px;">${renderOrgPositionTags(u)}</div></td><td>${u.roles.map(r=>`<span class="tag ${r==='租户管理员'||r==='次级管理员'?'tag-gray':'tag-blue'}">${r}</span>`).join('')}</td><td><span class="badge ${u.status==='active'?'badge-on':'badge-off'}"><span class="badge-dot ${u.status==='active'?'badge-dot-on':'badge-dot-off'}"></span>${u.status==='active'?'已启用':'已禁用'}</span></td><td><button class="btn btn-gh position-page-remove-one" style="color:#EF4444;padding:2px 4px;" title="从所有组织移除该岗位" onclick="removePositionPageMember(${p.id},${u.id})"><i data-lucide="x" style="width:14px;height:14px;"></i></button></td></tr>`).join('')||'<tr><td colspan="9" style="height:180px;text-align:center;color:var(--t3);">该岗位暂无成员</td></tr>'}</tbody></table></div></div>`;
+  const positionMemberSection=c.querySelectorAll('.dsec')[1],positionMemberTable=positionMemberSection?.querySelector('.tbl-wrap');
+  if(positionMemberTable){positionMemberTable.insertAdjacentHTML('afterend','<div class="pg" id="positionMemberPagination"></div>');const search=positionMemberSection.querySelector('input.frm-inp');if(search)search.oninput=e=>filterPositionMemberKeyword(e.target.value);}
+  renderPositionSideOrgs(id);
+  updatePositionMemberPagination();
+  lucide.createIcons();
+}
+
+function renderPositionSideOrgs(positionId){
+  const p=positionsData.find(x=>x.id===positionId),container=document.getElementById('positionSideOrgList');if(!container)return;
+  if(!p){container.innerHTML='<div style="height:100%;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--t3);font-size:12px;padding:20px;">请先选择岗位</div>';return;}
+  const keyword=(document.getElementById('positionSideOrgKeyword')?.value||'').trim().toLowerCase();
+  const orgs=p.orgs.map(name=>orgsData.find(o=>o.name===name)).filter(Boolean).filter(o=>!keyword||o.name.toLowerCase().includes(keyword));
+  container.innerHTML=orgs.map(o=>`<div class="tree-item ${positionMemberOrg===o.name?'on':''}" style="padding:9px 10px;" onclick="selectPositionSideOrg(${o.id},this)"><i data-lucide="building-2" style="width:15px;color:var(--t3);"></i><span style="min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${o.name}</span><i data-lucide="chevron-right" style="width:13px;color:var(--t3);"></i></div>`).join('')||'<div style="padding:28px 12px;text-align:center;color:var(--t3);font-size:12px;">未找到匹配组织</div>';
+  lucide.createIcons();
+}
+
+function selectPositionSideOrg(orgId,el){
+  const o=orgsData.find(x=>x.id===orgId),isSelected=positionMemberOrg===o?.name;positionMemberOrg=isSelected?'':(o?.name||'');positionMemberPage=1;
+  document.querySelectorAll('#positionSideOrgList .tree-item').forEach(x=>x.classList.remove('on'));if(el&&!isSelected)el.classList.add('on');
+  updatePositionRemoveUi();
+  updatePositionMemberPagination();
+}
+
+function updatePositionRemoveUi(){
+  const batch=document.getElementById('batchPositionPageRemoveBtn'),label=positionMemberOrg?`从 ${positionMemberOrg} 批量移除`:'从所有组织批量移除';if(batch)batch.innerHTML=`<i data-lucide="user-minus" style="width:13px;"></i> ${label}`;
+  const add=document.getElementById('positionAddMemberBtn'),p=positionsData.find(x=>x.id===selectedPositionId),o=orgsData.find(x=>x.name===positionMemberOrg);
+  if(add){add.disabled=!o;add.title=o?`添加成员到 ${o.name}（${p?.name||''}）`:'请先从关联组织中选择成员要加入的组织';add.onclick=o?()=>openAddMemberToOrgPosition(o.id,selectedPositionId):null;}
+  document.querySelectorAll('.position-page-remove-one').forEach(btn=>btn.title=positionMemberOrg?`从 ${positionMemberOrg} 移除该岗位`:'从所有组织移除该岗位');lucide.createIcons();
+}
+
+function togglePositionPageMemberAll(source){
+  document.querySelectorAll('.position-page-member-checkbox').forEach(cb=>{if(cb.closest('tr').style.display!=='none')cb.checked=source.checked;});
+}
+
+function removePositionPageMember(positionId,userId){
+  const p=positionsData.find(x=>x.id===positionId),u=users.find(x=>x.id===userId);if(!p||!u)return;
+  const scope=positionMemberOrg?`组织“${positionMemberOrg}”下`:'所有组织下';if(!confirm(`确定要移除 ${u.name} 在${scope}的“${p.name}”岗位吗？\n此操作不会移除成员的组织归属。`))return;
+  userOrgPositions[userId]=(userOrgPositions[userId]||[]).filter(x=>x.position!==p.name||(positionMemberOrg&&x.org!==positionMemberOrg));
+  refreshPositionPageDetail(positionId);showOperationToast(`已移除 ${u.name} 的岗位任职`);
+}
+
+function batchRemovePositionPageMembers(positionId){
+  const ids=[...document.querySelectorAll('.position-page-member-checkbox:checked')].map(cb=>Number(cb.value));if(!ids.length){alert('请先选择要移除的成员。');return;}
+  const p=positionsData.find(x=>x.id===positionId);if(!p)return;
+  const scope=positionMemberOrg?`组织“${positionMemberOrg}”下`:'所有组织下';if(!confirm(`确定要批量移除选中 ${ids.length} 名成员在${scope}的“${p.name}”岗位吗？\n此操作不会移除成员的组织归属。`))return;
+  ids.forEach(userId=>{userOrgPositions[userId]=(userOrgPositions[userId]||[]).filter(x=>x.position!==p.name||(positionMemberOrg&&x.org!==positionMemberOrg));});
+  refreshPositionPageDetail(positionId);showOperationToast(`已批量移除 ${ids.length} 名成员`);
+}
+
+function refreshPositionPageDetail(positionId){
+  const selectedOrg=positionMemberOrg;selectPosition(positionId,null);positionMemberOrg=selectedOrg;renderPositionSideOrgs(positionId);updatePositionRemoveUi();updatePositionMemberPagination();renderPositionList();
+}
+
+function filterPositionMembers(orgName){
+  positionMemberOrg=orgName;positionMemberPage=1;updatePositionMemberPagination();
+}
+
+function filterPositionMemberKeyword(keyword){positionMemberKeyword=keyword.trim().toLowerCase();positionMemberPage=1;updatePositionMemberPagination();}
+
+function goPositionMemberPage(page){positionMemberPage=page;updatePositionMemberPagination();}
+
+function updatePositionMemberPagination(){
+  const rows=[...document.querySelectorAll('.position-member-row')],filtered=rows.filter(row=>{const orgMatch=!positionMemberOrg||row.dataset.orgs.split('|').includes(positionMemberOrg),cells=row.children,searchText=`${cells[1]?.textContent||''} ${cells[2]?.textContent||''}`.toLowerCase();return orgMatch&&(!positionMemberKeyword||searchText.includes(positionMemberKeyword));});
+  const total=filtered.length,totalPages=Math.max(1,Math.ceil(total/POSITION_MEMBER_PAGE_SIZE));positionMemberPage=Math.min(positionMemberPage,totalPages);rows.forEach(row=>row.style.display='none');const start=(positionMemberPage-1)*POSITION_MEMBER_PAGE_SIZE;filtered.slice(start,start+POSITION_MEMBER_PAGE_SIZE).forEach(row=>row.style.display='');
+  const pager=document.getElementById('positionMemberPagination');if(!pager)return;let buttons=`<button class="pg-btn" ${positionMemberPage===1?'disabled':''} onclick="goPositionMemberPage(${positionMemberPage-1})"><i data-lucide="chevron-left" style="width:16px;"></i></button>`;for(let i=1;i<=totalPages;i++)buttons+=`<button class="pg-btn ${i===positionMemberPage?'on':''}" onclick="goPositionMemberPage(${i})">${i}</button>`;buttons+=`<button class="pg-btn" ${positionMemberPage===totalPages?'disabled':''} onclick="goPositionMemberPage(${positionMemberPage+1})"><i data-lucide="chevron-right" style="width:16px;"></i></button>`;pager.innerHTML=`<span class="pg-info">共 ${total} 条，每页 ${POSITION_MEMBER_PAGE_SIZE} 条</span><div class="pg-btns">${buttons}</div>`;lucide.createIcons();
+}
+
+function renderPositionCreateOrgOptions(selected=[]){
+  const container=document.getElementById('positionCreateOrgOptions');if(!container)return;
+  const render=(parent,level)=>orgsData.filter(o=>o.parent===parent).map(o=>`<label style="display:flex;align-items:center;gap:8px;padding:7px 8px 7px ${8+level*20}px;cursor:pointer;font-size:12.5px;"><input type="checkbox" class="position-create-org-checkbox" value="${o.id}" ${selected.includes(o.name)?'checked':''} onchange="updateMultiSelectLabel('.position-create-org-checkbox','positionCreateOrgLabel','请选择组织')"><i data-lucide="building-2" style="width:13px;color:var(--t3);"></i><span>${o.name}</span></label>${render(o.id,level+1)}`).join('');
+  container.innerHTML=render(null,0)||'<div style="padding:18px;text-align:center;color:var(--t3);font-size:12px;">暂无组织</div>';updateMultiSelectLabel('.position-create-org-checkbox','positionCreateOrgLabel','请选择组织');lucide.createIcons();
+}
+function showCreatePositionModal(){ quickCreateForOrg=false;editingPositionId=null;document.getElementById('positionModalTitle').textContent='新增岗位';['posName','posDesc'].forEach(id=>document.getElementById(id).value='');document.getElementById('positionEditImpact').style.display='none';renderPositionCreateOrgOptions();showModal('positionModal'); }
+function editPosition(id){const p=positionsData.find(x=>x.id===id);if(!p)return;editingPositionId=id;document.getElementById('positionModalTitle').textContent='编辑岗位 - '+p.name;document.getElementById('posName').value=p.name;document.getElementById('posDesc').value=p.desc||'';document.getElementById('positionEditImpact').style.display=(p.orgs.length||positionMembers(p.name).length)?'flex':'none';renderPositionCreateOrgOptions(p.orgs);showModal('positionModal');}
+function savePosition(){
+  const name=document.getElementById('posName').value.trim(),desc=document.getElementById('posDesc').value.trim();
+  const selectedOrgs=[...document.querySelectorAll('.position-create-org-checkbox:checked')].map(cb=>orgsData.find(o=>o.id===Number(cb.value))?.name).filter(Boolean);
+  if(!name){alert('请填写岗位名称。');return;}
+  if(positionsData.some(p=>p.id!==editingPositionId&&p.name.toLowerCase()===name.toLowerCase())){alert('岗位名称在当前租户内已存在，请更换后重试。');return;}
+  const returnToOrgPicker=quickCreateForOrg&&currentOrgForPosition&&!editingPositionId;
+  if(editingPositionId){
+    const p=positionsData.find(x=>x.id===editingPositionId),old=p.name;
+    Object.assign(p,{name,desc,orgs:selectedOrgs,updater:'管理员（admin）',updateTime:'2026-08-24 16:30'});
+    Object.values(userOrgPositions).flat().forEach(x=>{if(x.position===old)x.position=name;});
+  }else{
+    positionsData.push({id:Math.max(0,...positionsData.map(p=>p.id))+1,name,desc,orgs:selectedOrgs,updater:'管理员（admin）',updateTime:'2026-08-24 16:30'});
+  }
+  closeModal('positionModal');renderPositionList();
+  if(editingPositionId)selectPosition(editingPositionId);
+  quickCreateForOrg=false;
+  if(returnToOrgPicker){
+    showOperationToast('岗位创建成功，请在岗位列表中选择后点击“确定”。');
+    openOrgPositionModal(currentOrgForPosition.id);
+  }else{
+    alert('岗位保存成功！');
+  }
+}
+function deletePosition(id){
+  const p=positionsData.find(x=>x.id===id); if(!p)return;
+  const mc=positionMembers(p.name).length;
+  document.getElementById('confirmDeleteTitle').textContent = (p.orgs.length||mc) ? '岗位存在引用，确认删除？' : '确认删除岗位';
+  document.getElementById('confirmDeleteMsg').innerHTML = `确定要删除岗位 <span style="font-weight:600;color:var(--t1);">${p.name}</span> 吗？${(p.orgs.length||mc)?`<br><span style="display:inline-block;margin-top:10px;padding:8px 12px;background:#FFF7ED;border:1px solid #FED7AA;border-radius:8px;color:#9A3412;">当前关联 ${p.orgs.length} 个组织、${mc} 名成员</span>`:''}`;
+  document.getElementById('confirmDeleteSub').textContent = (p.orgs.length||mc) ? '确认后将解除全部组织岗位关系，成员的对应岗位将被清空，但成员组织归属保持不变。此操作无法撤销。' : '岗位删除后不可恢复，此操作无法撤销。';
+  document.getElementById('confirmDeleteAction').onclick = function(){
+    Object.keys(userOrgPositions).forEach(uid=>{ userOrgPositions[uid]=userOrgPositions[uid].filter(x=>x.position!==p.name); });
+    positionsData=positionsData.filter(x=>x.id!==id);
+    closeModal('confirmDeleteItemModal');
+    renderPositionList();
+    document.getElementById('positionDetailEmpty').style.display='flex';
+    document.getElementById('positionDetailContent').classList.remove('on');
+    alert((p.orgs.length||mc)?'岗位已删除，相关组织岗位关系已解除，成员岗位已清空。':'岗位已删除。');
+  };
+  showModal('confirmDeleteItemModal');
+}
+
 // ========== ORGS ==========
 function renderOrgTree() {
   function build(parentId, level) {
     return orgsData.filter(o => o.parent === parentId).map(o => `
       <div class="tree-item" style="padding-left:${level*16+12}px;" onclick="selOrg(event,${o.id})" id="org-item-${o.id}">
-        <i data-lucide="${orgsData.some(c=>c.parent===o.id)?'building-2':'users'}" style="width:15px;height:15px;flex-shrink:0;"></i>
+        <i data-lucide="building-2" style="width:15px;height:15px;flex-shrink:0;"></i>
         <span>${o.name}</span>
         <div class="dd" style="margin-left:auto;flex-shrink:0;" id="odd-${o.id}">
           <button class="btn btn-gh" style="padding:2px 4px;" onclick="event.stopPropagation();toggleDD('odd-${o.id}')"><i data-lucide="more-horizontal" style="width:14px;height:14px;"></i></button>
@@ -1659,21 +2187,57 @@ function openAddSubOrgModal(parentId) {
   document.getElementById('asoDesc').value = '';
   document.getElementById('asoParent').value = parent.name;
   document.getElementById('asoParent').dataset.parentId = parentId;
+  document.getElementById('asoPositionOptions').innerHTML=positionsData.map(p=>`<label style="display:flex;align-items:center;gap:8px;padding:7px 8px;cursor:pointer;font-size:12.5px;"><input type="checkbox" class="aso-position-checkbox" value="${p.id}" onchange="updateMultiSelectLabel('.aso-position-checkbox','asoPositionLabel','请选择岗位')"><i data-lucide="briefcase-business" style="width:13px;color:var(--t3);"></i><span>${p.name}</span></label>`).join('')||'<div style="padding:18px;text-align:center;color:var(--t3);font-size:12px;">暂无岗位</div>';
+  updateMultiSelectLabel('.aso-position-checkbox','asoPositionLabel','请选择岗位');
   document.getElementById('asoPassToChildren').classList.remove('on');
   document.getElementById('asoInheritParent').classList.remove('on');
   document.getElementById('addSubOrgModal').classList.add('show');
+  lucide.createIcons();
 }
 
+function openOrgPositionModal(orgId) {
+  currentOrgForPosition = orgsData.find(x=>x.id===orgId); if(!currentOrgForPosition)return;
+  document.getElementById('orgPositionTitle').textContent='添加岗位 - '+currentOrgForPosition.name;
+  document.getElementById('orgPositionKw').value='';
+  renderOrgPositionOptions();showModal('orgPositionModal');
+}
+
+function openQuickCreatePosition(){quickCreateForOrg=true;editingPositionId=null;closeModal('orgPositionModal');document.getElementById('positionModalTitle').textContent='新增岗位';document.getElementById('posName').value='';document.getElementById('posDesc').value='';document.getElementById('positionEditImpact').style.display='none';showModal('positionModal');}
+
+function renderOrgPositionOptions(){if(!currentOrgForPosition)return;const kw=(document.getElementById('orgPositionKw')?.value||'').trim().toLowerCase();const data=positionsData.filter(p=>!p.orgs.includes(currentOrgForPosition.name)&&(!kw||p.name.toLowerCase().includes(kw)));document.getElementById('orgPositionOptions').innerHTML=data.length?data.map(p=>`<label style="display:flex;align-items:center;gap:10px;padding:11px 12px;border-bottom:1px solid var(--bd-lt);cursor:pointer;"><input type="checkbox" class="org-position-option" value="${p.id}" style="accent-color:var(--pri);"><div style="flex:1;"><div style="font-size:13px;font-weight:600;">${p.name}</div><div style="font-size:11.5px;color:var(--t3);margin-top:2px;">已关联 ${p.orgs.length} 个组织</div></div></label>`).join(''):'<div style="padding:28px;text-align:center;color:var(--t3);font-size:12.5px;">暂无可添加岗位</div>';}
+
+function saveOrgPositions(){if(!currentOrgForPosition)return;const ids=[...document.querySelectorAll('.org-position-option:checked')].map(x=>Number(x.value));if(!ids.length){alert('请至少选择一个岗位。');return;}positionsData.filter(p=>ids.includes(p.id)).forEach(p=>{if(!p.orgs.includes(currentOrgForPosition.name))p.orgs.push(currentOrgForPosition.name);});const orgId=currentOrgForPosition.id;closeModal('orgPositionModal');renderOrgTree();const orgNode=document.getElementById(`org-item-${orgId}`);if(orgNode)selOrg({stopPropagation:()=>{},currentTarget:orgNode},orgId);showOperationToast('岗位已添加到 '+currentOrgForPosition.name);}
+
 function openCreateOrgModal() {
+  document.getElementById('orgCreateName').value='';document.getElementById('orgCreateCode').value='';
+  document.getElementById('orgCreateParent').innerHTML='<option value="">无（根组织）</option>'+orgsData.map(o=>`<option value="${o.id}">${o.name}</option>`).join('');
+  document.getElementById('orgCreatePositionOptions').innerHTML=positionsData.map(p=>`<label style="display:flex;align-items:center;gap:8px;padding:7px 8px;cursor:pointer;font-size:12.5px;"><input type="checkbox" class="org-create-position-checkbox" value="${p.id}" onchange="updateMultiSelectLabel('.org-create-position-checkbox','orgCreatePositionLabel','请选择岗位')"><i data-lucide="briefcase-business" style="width:13px;color:var(--t3);"></i><span>${p.name}</span></label>`).join('')||'<div style="padding:18px;text-align:center;color:var(--t3);font-size:12px;">暂无岗位</div>';
+  updateMultiSelectLabel('.org-create-position-checkbox','orgCreatePositionLabel','请选择岗位');
   document.getElementById('orgPassToChildren').classList.remove('on');
   document.getElementById('orgInheritParent').classList.remove('on');
   showModal('orgModal');
 }
 
+function saveCreatedOrg(){
+  const name=document.getElementById('orgCreateName').value.trim(),code=document.getElementById('orgCreateCode').value.trim();if(!name||!code){alert('请填写组织名称和组织编码。');return;}
+  if(orgsData.some(o=>o.name===name)){alert('组织名称已存在。');return;}
+  const parentValue=document.getElementById('orgCreateParent').value,id=Math.max(0,...orgsData.map(o=>o.id))+1;
+  orgsData.push({id,name,code,parent:parentValue?Number(parentValue):null,members:0,children:0,ctime:'2026-08-26',status:'启用',updater:'管理员（admin）',updateTime:'2026-08-26 16:30',roles:[],inheritParent:document.getElementById('orgInheritParent').classList.contains('on'),passToChildren:document.getElementById('orgPassToChildren').classList.contains('on')});
+  const positionIds=[...document.querySelectorAll('.org-create-position-checkbox:checked')].map(cb=>Number(cb.value));positionsData.filter(p=>positionIds.includes(p.id)).forEach(p=>{if(!p.orgs.includes(name))p.orgs.push(name);});
+  closeModal('orgModal');renderOrgTree();showOperationToast('组织创建成功');
+}
+
 function saveSubOrg() {
-  closeModal('addSubOrgModal');
-  alert('子组织添加成功！');
-  renderOrgTree();
+  const name=document.getElementById('asoName').value.trim(),code=document.getElementById('asoCode').value.trim(),parentId=Number(document.getElementById('asoParent').dataset.parentId);
+  if(!name||!code){alert('请填写组织名称和组织编码。');return;}
+  if(orgsData.some(o=>o.name===name)){alert('组织名称已存在。');return;}
+  if(orgsData.some(o=>o.code===code)){alert('组织编码已存在。');return;}
+  const id=Math.max(0,...orgsData.map(o=>o.id))+1,positionIds=[...document.querySelectorAll('.aso-position-checkbox:checked')].map(cb=>Number(cb.value));
+  orgsData.push({id,name,code,parent:parentId,members:0,children:0,ctime:'2026-08-27',status:'启用',updater:'管理员（admin）',updateTime:'2026-08-27 16:30',roles:[],desc:document.getElementById('asoDesc').value.trim(),inheritParent:document.getElementById('asoInheritParent').classList.contains('on'),passToChildren:document.getElementById('asoPassToChildren').classList.contains('on')});
+  positionsData.filter(p=>positionIds.includes(p.id)).forEach(p=>{if(!p.orgs.includes(name))p.orgs.push(name);});
+  closeModal('addSubOrgModal');renderOrgTree();
+  const node=document.getElementById(`org-item-${id}`);if(node)selOrg({stopPropagation:()=>{},currentTarget:node},id);
+  showOperationToast('子组织创建成功');
 }
 
 let currentEditOrgId = null;
@@ -1689,12 +2253,20 @@ function openEditOrgModal(id) {
   document.getElementById('eoInheritParent').classList.toggle('on', !!o.inheritParent);
   const sel = document.getElementById('eoParent');
   sel.innerHTML = '<option value="">无（根组织）</option>' + orgsData.filter(x => x.id !== id).map(x => `<option value="${x.id}" ${x.id===o.parent?'selected':''}>${x.name}</option>`).join('');
+  document.getElementById('editOrgPositionOptions').innerHTML=positionsData.map(p=>`<label style="display:flex;align-items:center;gap:8px;padding:7px 8px;cursor:pointer;font-size:12.5px;"><input type="checkbox" class="edit-org-position-checkbox" value="${p.id}" ${p.orgs.includes(o.name)?'checked':''} onchange="updateMultiSelectLabel('.edit-org-position-checkbox','editOrgPositionLabel','请选择岗位')"><i data-lucide="briefcase-business" style="width:13px;color:var(--t3);"></i><span>${p.name}</span></label>`).join('')||'<div style="padding:18px;text-align:center;color:var(--t3);font-size:12px;">暂无岗位</div>';
+  updateMultiSelectLabel('.edit-org-position-checkbox','editOrgPositionLabel','请选择岗位');
   document.getElementById('editOrgModal').classList.add('show');
+  lucide.createIcons();
 }
 
 function saveEditOrg() {
   const o = orgsData.find(x => x.id === currentEditOrgId);
   if (o) {
+    const oldName=o.name,newName=document.getElementById('eoName').value.trim(),selectedPositionIds=[...document.querySelectorAll('.edit-org-position-checkbox:checked')].map(cb=>Number(cb.value));
+    if(!newName){alert('请填写组织名称。');return;}
+    o.name=newName;o.code=document.getElementById('eoCode').value.trim();o.parent=document.getElementById('eoParent').value?Number(document.getElementById('eoParent').value):null;o.desc=document.getElementById('eoDesc').value.trim();
+    positionsData.forEach(p=>{const shouldLink=selectedPositionIds.includes(p.id),hadLink=p.orgs.includes(oldName);p.orgs=p.orgs.filter(name=>name!==oldName&&name!==newName);if(shouldLink)p.orgs.push(newName);if(hadLink&&!shouldLink)Object.keys(userOrgPositions).forEach(uid=>{userOrgPositions[uid]=userOrgPositions[uid].filter(x=>!(x.org===oldName&&x.position===p.name));});});
+    users.forEach(u=>{u.orgs=u.orgs.map(name=>name===oldName?newName:name);});Object.values(userOrgPositions).flat().forEach(x=>{if(x.org===oldName)x.org=newName;});
     o.passToChildren = document.getElementById('eoPassToChildren').classList.contains('on');
     o.inheritParent = document.getElementById('eoInheritParent').classList.contains('on');
   }
@@ -1709,11 +2281,109 @@ function saveEditOrg() {
 }
 
 let selectedOrgId = null;
+let selectedOrgSidePositionId = null;
+function selOrgPosition(e, orgId, positionId, forceSelect=false) {
+  e.stopPropagation();
+  if(!forceSelect&&selectedOrgId===orgId&&selectedOrgSidePositionId===positionId){
+    selectedOrgSidePositionId=null;
+    const orgNode=document.getElementById(`org-item-${orgId}`);
+    if(orgNode)selOrg({stopPropagation:()=>{},currentTarget:orgNode},orgId);
+    return;
+  }
+  selectedOrgId=orgId;
+  selectedOrgSidePositionId=positionId;
+  document.querySelectorAll('#orgSidePositionList .tree-item').forEach(t=>t.classList.remove('on'));
+  const orgNode=document.getElementById(`org-item-${orgId}`);if(orgNode)orgNode.classList.add('on');
+  e.currentTarget.classList.add('on');
+  const o=orgsData.find(x=>x.id===orgId),p=positionsData.find(x=>x.id===positionId); if(!o||!p)return;
+  const members=users.filter(u=>(userOrgPositions[u.id]||[]).some(x=>x.org===o.name&&x.position===p.name));
+  document.getElementById('orgDetailEmpty').style.display='none';
+  const c=document.getElementById('orgDetailContent');c.classList.add('on');
+  c.innerHTML=`<div class="dsec"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px;"><div style="min-width:0;"><div style="font-size:16px;font-weight:700;">${o.name}-${p.name}</div><div style="font-size:12px;color:var(--t3);margin-top:6px;">${p.desc||'暂无岗位描述'}</div></div></div></div>
+  <div class="dsec"><div class="dsec-hd"><span class="dsec-tt">岗位成员（${members.length}）</span><div style="display:flex;gap:6px;"><button class="btn btn-sec" style="font-size:12px;padding:5px 10px;" onclick="openAddMemberToOrgPosition(${orgId},${positionId})"><i data-lucide="plus" style="width:13px;"></i> 添加成员</button><div class="dd" id="batch-remove-${orgId}-${positionId}"><button class="btn btn-sec" style="font-size:12px;padding:5px 10px;" onclick="event.stopPropagation();toggleDD('batch-remove-${orgId}-${positionId}')"><i data-lucide="user-minus" style="width:13px;"></i> 批量移除 <i data-lucide="chevron-down" style="width:12px;"></i></button><div class="dd-m"><div onclick="batchRemoveMemberPosition(${orgId},${positionId})"><i data-lucide="briefcase-business" style="width:13px;"></i> 移除岗位</div><div class="sep"></div><div style="color:#EF4444;" onclick="batchRemoveMemberOrgPosition(${orgId},${positionId})"><i data-lucide="user-minus" style="width:13px;"></i> 移除组织岗位</div></div></div></div></div><div style="margin-bottom:8px;"><input class="frm-inp" style="font-size:12.5px;" placeholder="搜索账号或昵称..."></div><div class="tbl-wrap" style="overflow-x:auto;border-radius:10px;"><table class="member-list-compact has-select" style="min-width:700px;table-layout:auto;"><thead><tr><th style="width:36px;text-align:center;"><input type="checkbox" onclick="toggleOrgPositionMemberAll(this)"></th><th>账号</th><th>昵称</th><th>邮箱</th><th>手机号</th><th>组织岗位</th><th>角色</th><th>状态</th><th style="width:64px;">操作</th></tr></thead><tbody>${members.map(u=>`<tr><td style="text-align:center;"><input type="checkbox" class="org-position-member-checkbox" value="${u.id}"></td><td style="font-weight:500;">${u.account}</td><td>${u.name}</td><td>${u.email}</td><td>${u.phone}</td><td><span class="tag tag-blue">${o.name}（${p.name}）</span></td><td>${u.roles.map(r=>`<span class="tag ${r==='租户管理员'||r==='次级管理员'?'tag-gray':'tag-blue'}">${r}</span>`).join('')}</td><td><span class="badge ${u.status==='active'?'badge-on':'badge-off'}"><span class="badge-dot ${u.status==='active'?'badge-dot-on':'badge-dot-off'}"></span>${u.status==='active'?'已启用':'已禁用'}</span></td><td><div class="dd" id="opm-${orgId}-${positionId}-${u.id}"><button class="btn btn-gh" onclick="event.stopPropagation();toggleDD('opm-${orgId}-${positionId}-${u.id}')"><i data-lucide="more-horizontal" style="width:15px;"></i></button><div class="dd-m"><div onclick="removeMemberPosition(${u.id},${orgId},${positionId})"><i data-lucide="briefcase-business" style="width:13px;"></i> 移除岗位</div><div class="sep"></div><div style="color:#EF4444;" onclick="removeMemberOrgPosition(${u.id},${orgId},${positionId})"><i data-lucide="user-minus" style="width:13px;"></i> 移除组织岗位</div></div></div></td></tr>`).join('')||'<tr><td colspan="9" style="height:180px;text-align:center;color:var(--t3);">该组织岗位下暂无成员</td></tr>'}</tbody></table></div></div>`;
+  const batchRemoveControl=document.getElementById(`batch-remove-${orgId}-${positionId}`);
+  if(batchRemoveControl)batchRemoveControl.outerHTML=`<button class="btn btn-sec" style="font-size:12px;padding:5px 10px;" onclick="batchRemoveMemberPosition(${orgId},${positionId})"><i data-lucide="briefcase-business" style="width:13px;"></i> 批量移除当前岗位</button>`;
+  members.forEach(u=>{
+    const singleRemoveMenu=document.querySelector(`#opm-${orgId}-${positionId}-${u.id} .dd-m`);
+    if(singleRemoveMenu)singleRemoveMenu.innerHTML=`<div onclick="removeMemberPosition(${u.id},${orgId},${positionId})"><i data-lucide="briefcase-business" style="width:13px;"></i> 移除当前岗位</div>`;
+  });
+  lucide.createIcons();
+}
+
+function toggleOrgPositionMemberAll(source){document.querySelectorAll('.org-position-member-checkbox').forEach(cb=>cb.checked=source.checked);}
+function selectedOrgPositionMemberIds(){return [...document.querySelectorAll('.org-position-member-checkbox:checked')].map(cb=>Number(cb.value));}
+
+function batchRemoveMemberPosition(orgId,positionId){
+  const ids=selectedOrgPositionMemberIds();if(!ids.length){alert('请先选择要移除岗位的成员。');return;}
+  const o=orgsData.find(x=>x.id===orgId),p=positionsData.find(x=>x.id===positionId);if(!o||!p)return;
+  if(!confirm(`确定要批量移除选中 ${ids.length} 名成员在组织“${o.name}”下的“${p.name}”岗位吗？\n成员仍保留在该组织中。`))return;
+  ids.forEach(uid=>{userOrgPositions[uid]=(userOrgPositions[uid]||[]).filter(x=>!(x.org===o.name&&x.position===p.name));});
+  const node=document.getElementById(`org-position-card-${orgId}-${positionId}`)||document.getElementById(`org-item-${orgId}`);if(node)selOrgPosition({stopPropagation:()=>{},currentTarget:node},orgId,positionId,true);
+  showOperationToast(`已批量移除 ${ids.length} 名成员的岗位`);
+}
+
+let activeOrgPositionContext=null;
+let selectedOrgAddMemberFilters=[];
+let collapsedOrgAddMemberFilterOrgs=new Set();
+let orgAddMemberFilterKeyword='';
+
+function initOrgAddMemberPicker(){selectedOrgAddMemberFilters=[];collapsedOrgAddMemberFilterOrgs=new Set();orgAddMemberFilterKeyword='';const kw=document.getElementById('orgAddMemberKeyword');if(kw)kw.value='';renderOrgAddMemberFilter();renderOrgAddMemberRows();}
+function renderOrgAddMemberFilter(){
+  const menu=document.getElementById('orgAddMemberFilterMenu');if(!menu)return;
+  const renderOrg=(o,level)=>{const allPs=positionsData.filter(p=>p.orgs.includes(o.name)),children=orgsData.filter(x=>x.parent===o.id),orgMatched=!orgAddMemberFilterKeyword||o.name.toLowerCase().includes(orgAddMemberFilterKeyword),ps=orgMatched?allPs:allPs.filter(p=>p.name.toLowerCase().includes(orgAddMemberFilterKeyword)),childRows=children.map(child=>renderOrg(child,level+1)).join('');if(orgAddMemberFilterKeyword&&!orgMatched&&!ps.length&&!childRows)return '';const collapsed=!orgAddMemberFilterKeyword&&collapsedOrgAddMemberFilterOrgs.has(o.id),hasChildren=allPs.length||children.length,left=10+level*28,childLeft=10+(level+1)*28,orgValue=`org|${o.name}`;const orgRow=`<label style="display:flex;align-items:center;gap:7px;padding:8px 10px 8px ${left}px;cursor:pointer;font-size:13px;font-weight:600;" onclick="event.stopPropagation();"><button type="button" class="btn btn-gh" style="width:16px;height:16px;padding:0;visibility:${hasChildren?'visible':'hidden'};" onclick="event.preventDefault();event.stopPropagation();toggleOrgAddMemberFilterOrg(${o.id})"><i data-lucide="${collapsed?'chevron-right':'chevron-down'}" style="width:13px;"></i></button><input type="checkbox" ${selectedOrgAddMemberFilters.includes(orgValue)?'checked':''} onchange="toggleOrgAddMemberFilter('${orgValue}',this.checked)"><i data-lucide="building-2" style="width:14px;color:var(--t3);"></i><span>${o.name}</span></label>`;if(collapsed)return orgRow;const positionRows=ps.map(p=>{const value=`position|${o.name}|${p.name}`;return `<label style="display:flex;align-items:center;gap:7px;padding:7px 10px 7px ${childLeft}px;cursor:pointer;font-size:12.5px;color:var(--t2);" onclick="event.stopPropagation();"><span style="width:16px;flex-shrink:0;"></span><input type="checkbox" ${selectedOrgAddMemberFilters.includes(value)?'checked':''} onchange="toggleOrgAddMemberFilter('${value}',this.checked)"><i data-lucide="briefcase-business" style="width:13px;color:var(--t3);"></i><span>${p.name}</span></label>`;}).join('');return orgRow+positionRows+childRows;};
+  const treeHtml=orgsData.filter(o=>o.parent===null).map(o=>renderOrg(o,0)).join('');menu.innerHTML=`<div style="display:block;padding:8px 10px;border-bottom:1px solid var(--bd-lt);cursor:default;background:#fff;position:sticky;top:0;z-index:2;" onclick="event.stopPropagation();"><div style="position:relative;width:100%;"><i data-lucide="search" style="position:absolute;left:9px;top:9px;width:13px;color:var(--t3);pointer-events:none;"></i><input id="orgAddMemberFilterSearch" class="frm-inp" value="${orgAddMemberFilterKeyword}" placeholder="搜索组织或岗位" style="display:block;width:100%;height:32px;padding-left:29px;font-size:12px;" oninput="searchOrgAddMemberFilter(this.value)"></div><div style="display:flex;justify-content:space-between;align-items:center;width:100%;margin-top:6px;"><span style="font-size:11.5px;color:var(--t3);">可多选组织或岗位</span><button class="btn btn-gh" style="font-size:12px;padding:2px 5px;color:var(--pri);" onclick="event.stopPropagation();clearOrgAddMemberFilter()">清空</button></div></div>${treeHtml||'<div style="padding:28px;text-align:center;font-size:12px;color:var(--t3);">未找到匹配的组织或岗位</div>'}`;const label=document.querySelector('#orgAddMemberFilterBtn span');if(label)label.textContent=selectedOrgAddMemberFilters.length?`已选 ${selectedOrgAddMemberFilters.length} 项`:'所有组织岗位';lucide.createIcons();
+}
+function toggleOrgAddMemberFilterOrg(id){collapsedOrgAddMemberFilterOrgs.has(id)?collapsedOrgAddMemberFilterOrgs.delete(id):collapsedOrgAddMemberFilterOrgs.add(id);renderOrgAddMemberFilter();document.querySelector('#orgAddMemberFilterDD .dd-m').classList.add('show');}
+function toggleOrgAddMemberFilter(value,checked){selectedOrgAddMemberFilters=checked?[...new Set([...selectedOrgAddMemberFilters,value])]:selectedOrgAddMemberFilters.filter(x=>x!==value);renderOrgAddMemberFilter();renderOrgAddMemberRows();document.querySelector('#orgAddMemberFilterDD .dd-m').classList.add('show');}
+function clearOrgAddMemberFilter(){selectedOrgAddMemberFilters=[];renderOrgAddMemberFilter();renderOrgAddMemberRows();}
+function searchOrgAddMemberFilter(value){orgAddMemberFilterKeyword=value.trim().toLowerCase();renderOrgAddMemberFilter();document.querySelector('#orgAddMemberFilterDD .dd-m').classList.add('show');setTimeout(()=>{const input=document.getElementById('orgAddMemberFilterSearch');if(input){input.focus();input.setSelectionRange(input.value.length,input.value.length);}},0);}
+function renderOrgAddMemberRows(){const body=document.getElementById('orgAddMemberBody');if(!body)return;const kw=(document.getElementById('orgAddMemberKeyword')?.value||'').trim().toLowerCase(),ctx=activeOrgPositionContext;const data=users.filter(u=>(!kw||u.account.toLowerCase().includes(kw)||u.name.toLowerCase().includes(kw))&&(!selectedOrgAddMemberFilters.length||selectedOrgAddMemberFilters.some(value=>{const [type,org,position]=value.split('|');return type==='org'?u.orgs.includes(org):(userOrgPositions[u.id]||[]).some(x=>x.org===org&&x.position===position);})));body.innerHTML=data.map(u=>{const o=ctx?orgsData.find(x=>x.id===ctx.orgId):null,p=ctx?.positionId?positionsData.find(x=>x.id===ctx.positionId):null,checked=p?(o?(userOrgPositions[u.id]||[]).some(x=>x.org===o.name&&x.position===p.name):(userOrgPositions[u.id]||[]).some(x=>x.position===p.name)):o?u.orgs.includes(o.name):false,cell='padding:8px 6px;border-bottom:1px solid var(--bd-lt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';return `<tr><td style="${cell}text-align:left;"><input type="checkbox" class="org-add-member-checkbox" value="${u.id}" ${checked?'checked':''}></td><td style="${cell}font-weight:500;">${u.account}</td><td style="${cell}">${u.name}</td><td style="${cell}">${u.email}</td><td style="${cell}">${u.phone}</td><td style="${cell}"><div style="display:flex;gap:2px;overflow:hidden;">${renderOrgPositionTags(u)}</div></td><td style="${cell}">${u.roles.map(r=>`<span class="tag ${r==='租户管理员'||r==='次级管理员'?'tag-gray':'tag-blue'}">${r}</span>`).join('')}</td><td style="${cell}"><span class="badge ${u.status==='active'?'badge-on':'badge-off'}"><span class="badge-dot ${u.status==='active'?'badge-dot-on':'badge-dot-off'}"></span>${u.status==='active'?'已启用':'已禁用'}</span></td></tr>`;}).join('')||'<tr><td colspan="8" style="height:160px;text-align:center;color:var(--t3);">暂无匹配成员</td></tr>';lucide.createIcons();applyOverflowTitles(document.getElementById('addMemberModal'));}
+
+function openAddMemberToOrg(orgId){const o=orgsData.find(x=>x.id===orgId);if(!o)return;activeOrgPositionContext={orgId,positionId:null};document.getElementById('addMemberTitle').textContent=`添加成员 - ${o.name}`;initOrgAddMemberPicker();showModal('addMemberModal');}
+function openAddMemberToOrgPosition(orgId,positionId){
+  const o=orgsData.find(x=>x.id===orgId),p=positionsData.find(x=>x.id===positionId);if(!o||!p)return;
+  activeOrgPositionContext={orgId,positionId};
+  document.getElementById('addMemberTitle').textContent=`添加成员 - ${o.name}（${p.name}）`;
+  initOrgAddMemberPicker();
+  showModal('addMemberModal');
+}
+
+function openAddMemberToPosition(positionId){
+  const p=positionsData.find(x=>x.id===positionId),o=orgsData.find(x=>x.name===positionMemberOrg);if(!p)return;
+  if(!o){showOperationToast('请先选择成员要加入的关联组织');return;}
+  openAddMemberToOrgPosition(o.id,positionId);
+}
+
+function confirmAddMembers(){
+  if(!activeOrgPositionContext){closeModal('addMemberModal');showOperationToast('成员添加成功');return;}
+  const {orgId,positionId}=activeOrgPositionContext,o=orgsData.find(x=>x.id===orgId),p=positionId?positionsData.find(x=>x.id===positionId):null;if(!o&&!p)return;
+  document.querySelectorAll('.org-add-member-checkbox:checked').forEach(cb=>{
+    const u=users.find(x=>x.id===Number(cb.value));if(!u)return;
+    if(o&&!u.orgs.includes(o.name))u.orgs.push(o.name);
+    const targetOrgs=o?[o.name]:p.orgs.filter(orgName=>u.orgs.includes(orgName));
+    if(p)targetOrgs.forEach(orgName=>{if(!(userOrgPositions[u.id]||[]).some(x=>x.org===orgName&&x.position===p.name))userOrgPositions[u.id]=[...(userOrgPositions[u.id]||[]),{org:orgName,position:p.name}];});
+  });
+  closeModal('addMemberModal');activeOrgPositionContext=null;
+  if(p&&o){const node=document.getElementById(`org-position-card-${orgId}-${positionId}`)||document.getElementById(`org-item-${orgId}`);if(node)selOrgPosition({stopPropagation:()=>{},currentTarget:node},orgId,positionId,true);showOperationToast('岗位成员添加成功');}
+  else if(p){selectPosition(positionId,null);renderPositionList();showOperationToast('岗位成员添加成功');}
+  else{const node=document.getElementById(`org-item-${orgId}`);if(node)selOrg({stopPropagation:()=>{},currentTarget:node},orgId);showOperationToast('组织成员添加成功');}
+}
+
+function removeMemberPosition(userId, orgId, positionId) {
+  const u=users.find(x=>x.id===userId),o=orgsData.find(x=>x.id===orgId),p=positionsData.find(x=>x.id===positionId);if(!u||!o||!p)return;
+  if(!confirm(`确定要移除 ${u.name} 在组织“${o.name}”下的“${p.name}”岗位吗？\n成员仍保留在该组织中。`))return;
+  userOrgPositions[userId]=(userOrgPositions[userId]||[]).filter(x=>!(x.org===o.name&&x.position===p.name));
+  const node=document.getElementById(`org-position-card-${orgId}-${positionId}`)||document.getElementById(`org-item-${orgId}`);if(node)selOrgPosition({stopPropagation:()=>{},currentTarget:node},orgId,positionId,true);
+  showOperationToast(`已移除 ${u.name} 的岗位 ${p.name}`);
+}
+
 function selOrg(e, id) {
   e.stopPropagation();
   selectedOrgId = id;
+  selectedOrgSidePositionId = null;
   document.querySelectorAll('.tree-item').forEach(t => t.classList.remove('on'));
   e.currentTarget.classList.add('on');
+  const positionKeyword=document.getElementById('orgSidePositionKeyword');if(positionKeyword)positionKeyword.value='';
   const o = orgsData.find(x => x.id === id);
   if (!o) return;
   document.getElementById('orgDetailEmpty').style.display = 'none';
@@ -1749,34 +2419,31 @@ function selOrg(e, id) {
     </div>
   </div>
   <div class="dsec">
-    <div class="dtabs" style="margin-bottom:12px;">
-      <div class="dtab on">组织成员</div>
-    </div>
     <div id="org-members" class="panel on">
       <div class="dsec-hd"><span class="dsec-tt">组织成员 (${o.members})</span>
         <div style="display:flex;gap:6px;">
-          <button class="btn btn-sec" style="font-size:12px;padding:5px 10px;" onclick="showModal('addMemberModal');document.getElementById('addMemberTitle').textContent='添加成员 - ${o.name}'"><i data-lucide="plus" style="width:13px;height:13px;"></i> 添加成员</button>
-          <button class="btn btn-sec" style="font-size:12px;padding:5px 10px;color:#EF4444;border-color:#EF4444;" onclick="alert('已批量移除选中成员')"><i data-lucide="trash-2" style="width:13px;height:13px;"></i> 批量移除</button>
+          <button class="btn btn-sec" style="font-size:12px;padding:5px 10px;" onclick="openAddMemberToOrg(${o.id})"><i data-lucide="plus" style="width:13px;height:13px;"></i> 添加成员</button>
+          <button class="btn btn-sec" style="font-size:12px;padding:5px 10px;color:#EF4444;border-color:#EF4444;" onclick="batchRemoveMembersFromOrg(${o.id})"><i data-lucide="user-minus" style="width:13px;height:13px;"></i> 批量移出组织</button>
         </div>
       </div>
       <div style="margin-bottom:8px;"><input class="frm-inp" style="font-size:12.5px;" placeholder="搜索账号或昵称..."></div>
       <div class="tbl-wrap" style="overflow-x:auto;border-radius:10px;">
-        <table style="min-width:900px;table-layout:auto;">
+        <table class="member-list-compact has-select" style="min-width:700px;table-layout:auto;">
           <thead><tr>
-            <th style="width:36px;text-align:center;"><input type="checkbox"></th>
-            <th>账号</th><th>昵称</th><th>邮箱</th><th>手机号</th><th>所属组织</th><th>角色</th><th>状态</th><th style="width:50px;">操作</th>
+            <th style="width:36px;text-align:center;"><input type="checkbox" onclick="document.querySelectorAll('.org-page-member-checkbox').forEach(cb=>cb.checked=this.checked)"></th>
+            <th>账号</th><th>昵称</th><th>邮箱</th><th>手机号</th><th>组织岗位</th><th>角色</th><th>状态</th><th style="width:50px;">操作</th>
           </tr></thead>
           <tbody>
             ${members.map(u => `<tr>
-              <td style="text-align:center;"><input type="checkbox"></td>
+              <td style="text-align:center;"><input type="checkbox" class="org-page-member-checkbox" value="${u.id}"></td>
               <td style="font-weight:500;">${u.account}</td>
               <td>${u.name}</td>
               <td>${u.email}</td>
               <td>${u.phone}</td>
-              <td><div style="display:flex;flex-wrap:wrap;gap:2px;">${u.orgs.map(org => `<span class="tag tag-gray">${org}</span>`).join('')}</div></td>
+              <td><div style="display:flex;flex-wrap:wrap;gap:2px;">${renderOrgPositionTags(u)}</div></td>
               <td><div style="display:flex;flex-wrap:wrap;gap:2px;">${[...u.roles].sort((a,b) => { const priority = {'租户管理员':1,'次级管理员':2}; const pa = priority[a] || 99; const pb = priority[b] || 99; return pa - pb; }).map(r => `<span class="tag ${r==='租户管理员'||r==='次级管理员'?'tag-gray':'tag-blue'}">${r}</span>`).join('')||'<span style="font-size:12px;color:var(--t3);">-</span>'}</div></td>
               <td><span class="badge ${u.status==='active'?'badge-on':'badge-off'}"><span class="badge-dot ${u.status==='active'?'badge-dot-on':'badge-dot-off'}"></span>${u.status==='active'?'已启用':'已禁用'}</span></td>
-              <td><button class="btn btn-gh" style="color:var(--t3);padding:2px 4px;" title="移除"><i data-lucide="x" style="width:14px;height:14px;"></i></button></td>
+              <td><button class="btn btn-gh" style="color:#EF4444;padding:2px 4px;" title="移出组织" onclick="removeMemberFromOrg(${o.id},${u.id})"><i data-lucide="x" style="width:14px;height:14px;"></i></button></td>
             </tr>`).join('')}
           </tbody>
         </table>
@@ -1784,6 +2451,45 @@ function selOrg(e, id) {
       <div class="pg"><span class="pg-info">共 ${o.members} 条，每页 8 条</span><div><button class="pg-btn on">1</button></div></div>
     </div>
   </div>`;
+  renderOrgSidePositions(o.id);
+  lucide.createIcons();
+}
+
+function renderOrgSidePositions(orgId){
+  const o=orgsData.find(x=>x.id===orgId),container=document.getElementById('orgSidePositionList'),addBtn=document.getElementById('orgSideAddPositionBtn');if(!container)return;
+  if(addBtn)addBtn.style.display=o?'inline-flex':'none';
+  if(!o){container.innerHTML='<div style="height:100%;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--t3);font-size:12px;padding:20px;">请先选择组织</div>';return;}
+  const keyword=(document.getElementById('orgSidePositionKeyword')?.value||'').trim().toLowerCase();
+  const data=positionsData.filter(p=>p.orgs.includes(o.name)&&(!keyword||p.name.toLowerCase().includes(keyword)));
+  container.innerHTML=data.map(position=>`<div id="org-position-card-${o.id}-${position.id}" class="tree-item" style="padding:9px 10px;" onclick="selOrgPosition(event,${o.id},${position.id})"><i data-lucide="briefcase-business" style="width:15px;height:15px;flex-shrink:0;color:var(--t3);"></i><span style="min-width:0;flex:1;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${position.name}</span><i data-lucide="chevron-right" style="width:13px;color:var(--t3);"></i></div>`).join('')||'<div style="padding:28px 12px;text-align:center;color:var(--t3);font-size:12px;">未找到匹配岗位</div>';
+  lucide.createIcons();
+}
+
+function removeMemberFromOrg(orgId,userId){
+  const o=orgsData.find(x=>x.id===orgId),u=users.find(x=>x.id===userId);if(!o||!u)return;
+  if(!confirm(`确定要将 ${u.name} 移出组织“${o.name}”吗？\n该成员在此组织下的全部岗位任职也会同步解除，其他组织归属不受影响。`))return;
+  u.orgs=u.orgs.filter(name=>name!==o.name);userOrgPositions[userId]=(userOrgPositions[userId]||[]).filter(x=>x.org!==o.name);o.members=users.filter(member=>member.orgs.includes(o.name)).length;
+  refreshOrgMemberDetail(orgId);showOperationToast(`已将 ${u.name} 移出 ${o.name}`);
+}
+
+function batchRemoveMembersFromOrg(orgId){
+  const ids=[...document.querySelectorAll('.org-page-member-checkbox:checked')].map(cb=>Number(cb.value));if(!ids.length){alert('请先选择要移出组织的成员。');return;}
+  const o=orgsData.find(x=>x.id===orgId);if(!o)return;
+  if(!confirm(`确定要将选中的 ${ids.length} 名成员移出组织“${o.name}”吗？\n这些成员在此组织下的全部岗位任职也会同步解除，其他组织归属不受影响。`))return;
+  ids.forEach(userId=>{const u=users.find(x=>x.id===userId);if(u)u.orgs=u.orgs.filter(name=>name!==o.name);userOrgPositions[userId]=(userOrgPositions[userId]||[]).filter(x=>x.org!==o.name);});o.members=users.filter(member=>member.orgs.includes(o.name)).length;
+  refreshOrgMemberDetail(orgId);showOperationToast(`已将 ${ids.length} 名成员移出 ${o.name}`);
+}
+
+function refreshOrgMemberDetail(orgId){
+  const node=document.getElementById(`org-item-${orgId}`);if(node)selOrg({stopPropagation:()=>{},currentTarget:node},orgId);
+}
+
+function toggleMiddleColumn(columnId,buttonId,label){
+  const column=document.getElementById(columnId),button=document.getElementById(buttonId);if(!column||!button)return;
+  const isHidden=column.style.display==='none';
+  column.style.display=isHidden?'flex':'none';
+  button.title=`${isHidden?'隐藏':'显示'}${label}栏`;
+  button.innerHTML=`<i data-lucide="panel-right-${isHidden?'close':'open'}" style="width:14px;"></i>`;
   lucide.createIcons();
 }
 
@@ -1799,6 +2505,7 @@ document.getElementById('userDrawer').addEventListener('click', function(e) { if
 
 // ========== INIT ==========
 document.addEventListener('DOMContentLoaded', function() {
+  renderUserOrgFilter();
   goPage(1);
   lucide.createIcons();
 

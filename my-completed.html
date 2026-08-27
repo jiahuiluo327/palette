@@ -233,7 +233,7 @@
                         <div class="ml-6 mt-1 space-y-1">
                             <a href="my-applications.html" class="flex items-center gap-2 text-gray-600 text-sm py-2 px-3 rounded-lg cursor-pointer hover:bg-gray-100">
                                 <i data-lucide="file-text" class="w-4 h-4"></i>
-                                <span>申请列表</span>
+                                <span>流程列表</span>
                             </a>
                             <a href="my-pending.html" class="flex items-center gap-2 text-gray-600 text-sm py-2 px-3 rounded-lg cursor-pointer hover:bg-gray-100">
                                 <i data-lucide="clock" class="w-4 h-4"></i>
@@ -321,10 +321,10 @@
                     <div class="px-6 py-4 border-b border-gray-100">
                         <div class="flex items-center gap-3 flex-wrap">
                             <div class="w-48">
-                                <input type="text" placeholder="搜索申请单号或申请单名称" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                                <input type="text" placeholder="搜索流水号或流程名称" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
                             </div>
                             <select class="filter-select">
-                                <option>全部申请类型</option>
+                                <option>全部业务类型</option>
                                 <option>资源发布</option>
                                 <option>资源下架</option>
                                 <option>资源删除</option>
@@ -338,7 +338,7 @@
                                 <option>数据变更</option>
                             </select>
                             <select class="filter-select">
-                                <option>全部资源类型</option>
+                                <option>全部业务对象类型</option>
                                 <option>仪表板</option>
                                 <option>报表分析</option>
                                 <option>电子表格</option>
@@ -389,16 +389,17 @@
                         <table class="w-full">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="thead-sticky sticky-col-left col-id px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="left: 0;">申请单号</th>
-                                    <th class="thead-sticky col-name px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">申请单名称</th>
-                                    <th class="thead-sticky col-action-type px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">申请类型</th>
-                                    <th class="thead-sticky col-type px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">资源类型</th>
+                                    <th class="thead-sticky sticky-col-left col-id px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="left: 0;">流水号</th>
+                                    <th class="thead-sticky col-name px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">流程名称</th>
+                                    <th class="thead-sticky col-action-type px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">业务类型</th>
+                                    <th class="thead-sticky col-type px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">业务对象类型</th>
                                     <th class="thead-sticky col-priority px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">优先级</th>
                                     <th class="thead-sticky col-status px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">当前状态</th>
+                                    <th class="thead-sticky col-node px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">当前节点</th>
                                     <th class="thead-sticky col-handler px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">当前节点处理人</th>
                                     <th class="thead-sticky col-wait-time px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">当前节点等待时长</th>
-                                    <th class="thead-sticky col-applicant px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">申请人</th>
-                                    <th class="thead-sticky col-time px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">申请时间</th>
+                                    <th class="thead-sticky col-applicant px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">发起人</th>
+                                    <th class="thead-sticky col-time px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">发起时间</th>
                                     <th class="thead-sticky col-time px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">更新时间</th>
                                     <th class="thead-sticky col-action px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">处理结果</th>
                                     <th class="thead-sticky col-time px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">处理时间</th>
@@ -424,8 +425,9 @@
                                         <span class="priority-badge priority-high">高</span>
                                     </td>
                                     <td class="col-status px-4 py-3 whitespace-nowrap">
-                                        <span class="status-badge status-approved">已通过</span>
+                                        <span class="status-badge status-approved">已完成</span>
                                     </td>
+                                    <td class="col-node px-4 py-3 whitespace-nowrap text-sm text-gray-600">流程结束</td>
                                     <td class="col-handler px-4 py-3 whitespace-nowrap text-sm text-gray-600">
                                         李明远（limingyuan）
                                     </td>
@@ -471,8 +473,9 @@
                                         <span class="priority-badge priority-normal">普通</span>
                                     </td>
                                     <td class="col-status px-4 py-3 whitespace-nowrap">
-                                        <span class="status-badge status-rejected">已驳回</span>
+                                        <span class="status-badge status-rejected">已终止</span>
                                     </td>
+                                    <td class="col-node px-4 py-3 whitespace-nowrap text-sm text-gray-600">流程结束</td>
                                     <td class="col-handler px-4 py-3 whitespace-nowrap text-sm text-gray-600">
                                         王志强（wangzhiqiang）
                                     </td>
@@ -518,8 +521,9 @@
                                         <span class="priority-badge priority-urgent">紧急</span>
                                     </td>
                                     <td class="col-status px-4 py-3 whitespace-nowrap">
-                                        <span class="status-badge status-approved">已通过</span>
+                                        <span class="status-badge status-approved">已完成</span>
                                     </td>
+                                    <td class="col-node px-4 py-3 whitespace-nowrap text-sm text-gray-600">流程结束</td>
                                     <td class="col-handler px-4 py-3 whitespace-nowrap text-sm text-gray-600">
                                         张磊（zhanglei）
                                     </td>
@@ -565,8 +569,9 @@
                                         <span class="priority-badge priority-low">低</span>
                                     </td>
                                     <td class="col-status px-4 py-3 whitespace-nowrap">
-                                        <span class="status-badge status-approved">已通过</span>
+                                        <span class="status-badge status-approved">已完成</span>
                                     </td>
+                                    <td class="col-node px-4 py-3 whitespace-nowrap text-sm text-gray-600">流程结束</td>
                                     <td class="col-handler px-4 py-3 whitespace-nowrap text-sm text-gray-600">
                                         陈芳（chenfang）
                                     </td>
@@ -614,6 +619,7 @@
                                     <td class="col-status px-4 py-3 whitespace-nowrap">
                                         <span class="status-badge status-cancelled">已撤销</span>
                                     </td>
+                                    <td class="col-node px-4 py-3 whitespace-nowrap text-sm text-gray-600">流程结束</td>
                                     <td class="col-handler px-4 py-3 whitespace-nowrap text-sm text-gray-600">
                                         赵建国（zhaojianguo）
                                     </td>

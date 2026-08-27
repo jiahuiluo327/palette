@@ -151,7 +151,7 @@
                         <div class="ml-6 mt-1 space-y-1">
                             <a href="my-applications.html" class="flex items-center gap-2 text-gray-600 text-sm py-2 px-3 rounded-lg cursor-pointer hover:bg-gray-100">
                                 <i data-lucide="file-text" class="w-4 h-4"></i>
-                                <span>申请列表</span>
+                                <span>流程列表</span>
                             </a>
                             <a href="my-pending.html" class="flex items-center gap-2 text-gray-600 text-sm py-2 px-3 rounded-lg cursor-pointer hover:bg-gray-100">
                                 <i data-lucide="clock" class="w-4 h-4"></i>
@@ -248,7 +248,7 @@
                                 <input type="text" placeholder="搜索模板名称" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
                             </div>
                             <select class="filter-select">
-                                <option>全部申请类型</option>
+                                <option>全部业务类型</option>
                                 <option>资源发布</option>
                                 <option>资源下架</option>
                                 <option>资源删除</option>
@@ -262,7 +262,7 @@
                                 <option>数据变更</option>
                             </select>
                             <select class="filter-select">
-                                <option>全部资源类型</option>
+                                <option>全部业务对象类型</option>
                                 <option>仪表板</option>
                                 <option>报表分析</option>
                                 <option>电子表格</option>
@@ -318,8 +318,8 @@
                                         <input type="checkbox" id="selectAll" onchange="toggleSelectAll()" class="w-4 h-4 rounded border-gray-300">
                                     </th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">模板名称</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">申请类型</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">资源类型</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">业务类型</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">业务对象类型</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">状态</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">更新人</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">更新时间</th>
@@ -604,7 +604,7 @@
             updateBatchBar();
         }
 
-        // 模拟已启用模板占用的资源类型
+        // 模拟已启用模板占用的业务对象类型
         const activeTemplateResTypes = {
             '仪表板发布审批': ['仪表板', '报表分析'],
             '报表导出审批': ['报表分析'],
@@ -648,11 +648,11 @@
                 }
             });
 
-            // 检查资源类型冲突
+            // 检查业务对象类型冲突
             const allTemplateNames = checked.map(cb => cb.closest('.table-row').querySelector('.text-sm.font-medium').textContent);
             const conflicts = checkResourceTypeConflict(allTemplateNames);
             if (conflicts.length > 0) {
-                alert('以下资源类型存在冲突，多个模板不能共用同一资源类型：\n' + conflicts.map(c => `  ${c.type}：${c.t1} ↔ ${c.t2}`).join('\n'));
+                alert('以下业务对象类型存在冲突，多个模板不能共用同一业务对象类型：\n' + conflicts.map(c => `  ${c.type}：${c.t1} ↔ ${c.t2}`).join('\n'));
                 return;
             }
 
@@ -672,7 +672,7 @@
             }
 
             // 场景1：全部可启用
-            if (confirm(`确认批量启用选中的 ${toActivate.length} 个模板吗？启用后将根据资源类型+申请类型自动匹配审批申请。`)) {
+            if (confirm(`确认批量启用选中的 ${toActivate.length} 个模板吗？启用后将根据业务对象类型+业务类型自动匹配流程实例。`)) {
                 alert(`已批量启用 ${toActivate.length} 个模板`);
                 clearSelection();
             }
@@ -710,7 +710,7 @@
 
             // 场景1：全部可停用
             if (result.blocked.length === 0) {
-                if (confirm(`确认批量停用选中的 ${result.allowed.length} 个模板吗？停用后将不再匹配新的审批申请，已完成的审批实例不受影响。${skippedInfo}`)) {
+                if (confirm(`确认批量停用选中的 ${result.allowed.length} 个模板吗？停用后将不再匹配新的流程实例，已完成的审批实例不受影响。${skippedInfo}`)) {
                     alert(`已批量停用 ${result.allowed.length} 个模板`);
                     clearSelection();
                 }
@@ -719,7 +719,7 @@
 
             // 场景2：全部不可停用
             if (result.allowed.length === 0) {
-                alert(`选中的 ${activeCheckboxes.length} 个启用模板均存在进行中的流程实例，不允许停用：\n\n${result.blocked.map(i => '• ' + i.name + '（' + i.count + ' 个审批中实例，申请单号：' + i.ids.join('、') + '）').join('\n')}\n\n请等待以上实例完结后再停用模板。${skippedInfo}`);
+                alert(`选中的 ${activeCheckboxes.length} 个启用模板均存在进行中的流程实例，不允许停用：\n\n${result.blocked.map(i => '• ' + i.name + '（' + i.count + ' 个审批中实例，流水号：' + i.ids.join('、') + '）').join('\n')}\n\n请等待以上实例完结后再停用模板。${skippedInfo}`);
                 return;
             }
 
@@ -804,10 +804,10 @@
 
         // 启用模板
         function activateTemplate(name) {
-            // 检查资源类型冲突
+            // 检查业务对象类型冲突
             const conflicts = checkResourceTypeConflict([name]);
             if (conflicts.length > 0) {
-                alert('以下资源类型冲突，无法启用：\n' + conflicts.map(c => `  ${c.type}：与其他已启用模板冲突`).join('\n'));
+                alert('以下业务对象类型冲突，无法启用：\n' + conflicts.map(c => `  ${c.type}：与其他已启用模板冲突`).join('\n'));
                 return;
             }
             if (confirm(`确认启用模板「${name}」吗？`)) {
@@ -829,7 +829,7 @@
                 return;
             }
 
-            if (confirm(`确认停用模板「${name}」吗？停用后将不再匹配新的审批申请，已完成的审批实例不受影响。`)) {
+            if (confirm(`确认停用模板「${name}」吗？停用后将不再匹配新的流程实例，已完成的审批实例不受影响。`)) {
                 alert(`模板「${name}」已停用`);
             }
         }

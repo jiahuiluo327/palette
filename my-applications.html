@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>申请列表 - 流程中心</title>
+    <title>流程列表 - 流程中心</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/lucide@1.23.0/dist/umd/lucide.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -198,16 +198,32 @@
             min-width: 100px;
         }
         .col-action-type {
-            width: 100px;
-            min-width: 80px;
+            width: 150px;
+            min-width: 150px;
         }
         .col-priority {
             width: 100px;
             min-width: 80px;
         }
         .col-status {
-            width: 100px;
-            min-width: 80px;
+            width: 110px;
+            min-width: 110px;
+        }
+        .col-node {
+            width: 150px;
+            min-width: 150px;
+        }
+        .applications-table {
+            min-width: 1960px;
+            table-layout: fixed;
+        }
+        .applications-table th,
+        .applications-table td {
+            vertical-align: middle;
+        }
+        .applications-table .col-action-type,
+        .applications-table .col-status {
+            white-space: nowrap;
         }
         .col-handler {
             width: 140px;
@@ -386,7 +402,7 @@
                         <div class="ml-6 mt-1 space-y-1">
                             <a href="my-applications.html" class="nav-item active flex items-center gap-2 text-sm py-2 px-3 rounded-lg cursor-pointer">
                                 <i data-lucide="file-text" class="w-4 h-4"></i>
-                                <span>申请列表</span>
+                                <span>流程列表</span>
                             </a>
                             <a href="my-pending.html" class="flex items-center gap-2 text-gray-600 text-sm py-2 px-3 rounded-lg cursor-pointer hover:bg-gray-100">
                                 <i data-lucide="clock" class="w-4 h-4"></i>
@@ -451,12 +467,12 @@
                     <div class="flex items-center gap-2 text-sm">
                         <a href="#" class="text-gray-500 hover:text-gray-700">流程中心</a>
                         <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-                        <span class="text-gray-800 font-medium">申请列表</span>
+                        <span class="text-gray-800 font-medium">流程列表</span>
                     </div>
                     <div class="flex items-center gap-3">
                         <a href="application-create.html" class="btn-primary flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium">
                             <i data-lucide="plus" class="w-4 h-4"></i>
-                            <span>发起申请</span>
+                            <span>发起流程</span>
                         </a>
                     </div>
                 </div>
@@ -475,13 +491,13 @@
                                 草稿 <span class="ml-1">(2)</span>
                             </button>
                             <button class="tab-item px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition" data-tab="processing">
-                                审批中 <span class="ml-1">(2)</span>
+                                进行中 <span class="ml-1">(2)</span>
                             </button>
                             <button class="tab-item px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition" data-tab="approved">
-                                已通过 <span class="ml-1">(1)</span>
+                                已完成 <span class="ml-1">(1)</span>
                             </button>
                             <button class="tab-item px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition" data-tab="rejected">
-                                已驳回 <span class="ml-1">(1)</span>
+                                已终止 <span class="ml-1">(1)</span>
                             </button>
                             <button class="tab-item px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition" data-tab="cancelled">
                                 已撤销 <span class="ml-1">(1)</span>
@@ -511,10 +527,10 @@
                     <div class="px-6 py-4 border-b border-gray-100">
                         <div class="flex items-center gap-3 flex-wrap">
                             <div class="w-48">
-                                <input type="text" placeholder="搜索申请单号或申请单名称" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                                <input type="text" placeholder="搜索流水号或流程名称" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
                             </div>
                             <select class="filter-select">
-                                <option>全部申请类型</option>
+                                <option>全部业务类型</option>
                                 <option>资源发布</option>
                                 <option>资源下架</option>
                                 <option>资源删除</option>
@@ -528,7 +544,7 @@
                                 <option>数据变更</option>
                             </select>
                             <select class="filter-select">
-                                <option>全部资源类型</option>
+                                <option>全部业务对象类型</option>
                                 <option>仪表板</option>
                                 <option>报表分析</option>
                                 <option>电子表格</option>
@@ -576,27 +592,28 @@
 
                     <!-- 数据表格 -->
                     <div class="overflow-x-auto">
-                        <table class="w-full">
+                        <table class="w-full applications-table">
                             <thead class="bg-gray-50">
                                 <tr>
                                     <th class="thead-sticky sticky-col-left col-checkbox px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="left: 0;">
                                         <input type="checkbox" id="selectAll" onchange="toggleSelectAll()" class="w-4 h-4 rounded border-gray-300">
                                     </th>
-                                    <th class="thead-sticky sticky-col-left col-id px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="left: 50px;">申请单号</th>
-                                    <th class="thead-sticky col-name px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">申请单名称</th>
-                                    <th class="thead-sticky col-action-type px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">申请类型</th>
-                                    <th class="thead-sticky col-type px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">资源类型</th>
+                                    <th class="thead-sticky sticky-col-left col-id px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="left: 50px;">流水号</th>
+                                    <th class="thead-sticky col-name px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">流程名称</th>
+                                    <th class="thead-sticky col-action-type px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">业务类型</th>
+                                    <th class="thead-sticky col-type px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">业务对象类型</th>
                                     <th class="thead-sticky col-priority px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">优先级</th>
                                     <th class="thead-sticky col-status px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">当前状态</th>
+                                    <th class="thead-sticky col-node px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">当前节点</th>
                                     <th class="thead-sticky col-handler px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">当前节点处理人</th>
                                     <th class="thead-sticky col-wait-time px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">当前节点等待时长</th>
-                                    <th class="thead-sticky col-applicant px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">申请人</th>
-                                    <th class="thead-sticky col-time px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">申请时间</th>
+                                    <th class="thead-sticky col-applicant px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">发起人</th>
+                                    <th class="thead-sticky col-time px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">发起时间</th>
                                     <th class="thead-sticky col-time px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">更新时间</th>
                                     <th class="thead-sticky sticky-col-right col-action px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-100">
+                            <tbody id="applicationTableBody" class="divide-y divide-gray-100">
                                 <!-- 草稿状态1 -->
                                 <tr class="table-row transition" data-status="draft" data-can-check="true">
                                     <td class="sticky-col-left col-checkbox px-4 py-3" style="left: 0;">
@@ -620,6 +637,7 @@
                                     <td class="col-status px-4 py-3 whitespace-nowrap">
                                         <span class="status-badge status-draft">草稿</span>
                                     </td>
+                                    <td class="col-node px-4 py-3 whitespace-nowrap text-sm text-gray-600">-</td>
                                     <td class="col-handler px-4 py-3 whitespace-nowrap text-sm text-gray-400">
                                         -
                                     </td>
@@ -664,6 +682,7 @@
                                     <td class="col-status px-4 py-3 whitespace-nowrap">
                                         <span class="status-badge status-draft">草稿</span>
                                     </td>
+                                    <td class="col-node px-4 py-3 whitespace-nowrap text-sm text-gray-600">-</td>
                                     <td class="col-handler px-4 py-3 whitespace-nowrap text-sm text-gray-400">
                                         -
                                     </td>
@@ -685,7 +704,7 @@
                                         <button class="ml-3 text-red-600 hover:text-red-800 text-sm font-medium">删除</button>
                                     </td>
                                 </tr>
-                                <!-- 审批中1 - 超时 -->
+                                <!-- 进行中1 - 超时 -->
                                 <tr class="table-row transition" data-status="processing">
                                     <td class="sticky-col-left col-checkbox px-4 py-3" style="left: 0;"></td>
                                     <td class="sticky-col-left col-id px-4 py-3" style="left: 50px;">
@@ -704,8 +723,9 @@
                                         <span class="priority-badge priority-high">高</span>
                                     </td>
                                     <td class="col-status px-4 py-3 whitespace-nowrap">
-                                        <span class="status-badge status-processing">审批中</span>
+                                        <span class="status-badge status-processing">进行中</span>
                                     </td>
+                                    <td class="col-node px-4 py-3 whitespace-nowrap text-sm text-gray-600">部门负责人审批</td>
                                     <td class="col-handler px-4 py-3 whitespace-nowrap text-sm text-gray-600">
                                         李四海（lisihai）
                                     </td>
@@ -726,7 +746,7 @@
                                         <button class="ml-3 text-orange-600 hover:text-orange-800 text-sm font-medium">撤销</button>
                                     </td>
                                 </tr>
-                                <!-- 审批中2 -->
+                                <!-- 进行中2 -->
                                 <tr class="table-row transition" data-status="processing">
                                     <td class="sticky-col-left col-checkbox px-4 py-3" style="left: 0;"></td>
                                     <td class="sticky-col-left col-id px-4 py-3" style="left: 50px;">
@@ -745,8 +765,9 @@
                                         <span class="priority-badge priority-urgent">紧急</span>
                                     </td>
                                     <td class="col-status px-4 py-3 whitespace-nowrap">
-                                        <span class="status-badge status-processing">审批中</span>
+                                        <span class="status-badge status-processing">进行中</span>
                                     </td>
+                                    <td class="col-node px-4 py-3 whitespace-nowrap text-sm text-gray-600">数据治理审批</td>
                                     <td class="col-handler px-4 py-3 whitespace-nowrap text-sm text-gray-600">
                                         王建国（wangjianguo）
                                     </td>
@@ -767,7 +788,7 @@
                                         <button class="ml-3 text-orange-600 hover:text-orange-800 text-sm font-medium">撤销</button>
                                     </td>
                                 </tr>
-                                <!-- 已通过 -->
+                                <!-- 已完成 -->
                                 <tr class="table-row transition" data-status="approved">
                                     <td class="sticky-col-left col-checkbox px-4 py-3" style="left: 0;"></td>
                                     <td class="sticky-col-left col-id px-4 py-3" style="left: 50px;">
@@ -786,8 +807,9 @@
                                         <span class="priority-badge priority-normal">普通</span>
                                     </td>
                                     <td class="col-status px-4 py-3 whitespace-nowrap">
-                                        <span class="status-badge status-approved">已通过</span>
+                                        <span class="status-badge status-approved">已完成</span>
                                     </td>
+                                    <td class="col-node px-4 py-3 whitespace-nowrap text-sm text-gray-600">流程结束</td>
                                     <td class="col-handler px-4 py-3 whitespace-nowrap text-sm text-gray-400">
                                         -
                                     </td>
@@ -807,7 +829,7 @@
                                         <a href="detail.html?id=REQ-2026002" class="text-blue-600 hover:text-blue-800 text-sm font-medium">详情</a>
                                     </td>
                                 </tr>
-                                <!-- 已驳回 -->
+                                <!-- 已终止 -->
                                 <tr class="table-row transition" data-status="rejected" data-can-check="true">
                                     <td class="sticky-col-left col-checkbox px-4 py-3" style="left: 0;">
                                         <input type="checkbox" class="row-checkbox w-4 h-4 rounded border-gray-300" onchange="updateBatchBar()">
@@ -828,8 +850,9 @@
                                         <span class="priority-badge priority-low">低</span>
                                     </td>
                                     <td class="col-status px-4 py-3 whitespace-nowrap">
-                                        <span class="status-badge status-rejected">已驳回</span>
+                                        <span class="status-badge status-rejected">已终止</span>
                                     </td>
+                                    <td class="col-node px-4 py-3 whitespace-nowrap text-sm text-gray-600">流程结束</td>
                                     <td class="col-handler px-4 py-3 whitespace-nowrap text-sm text-gray-400">
                                         -
                                     </td>
@@ -874,6 +897,7 @@
                                     <td class="col-status px-4 py-3 whitespace-nowrap">
                                         <span class="status-badge status-cancelled">已撤销</span>
                                     </td>
+                                    <td class="col-node px-4 py-3 whitespace-nowrap text-sm text-gray-600">流程结束</td>
                                     <td class="col-handler px-4 py-3 whitespace-nowrap text-sm text-gray-400">
                                         -
                                     </td>
@@ -1060,7 +1084,7 @@
                         id: item.id,
                         resName: '仪表板B',
                         resPath: '/数据分析/销售部/2026年Q2/',
-                        reason: `该资源已提交了${item.approvalType}权限申请（申请单号：REQ-2026001），请等待原申请完成后再提交`
+                        reason: `该资源已提交了${item.approvalType}权限申请（流水号：REQ-2026001），请等待原申请完成后再提交`
                     });
                 } else {
                     successItems.push(item);
@@ -1154,8 +1178,8 @@
             if (thead) {
                 thead.innerHTML = `
                     <tr>
-                        <th style="width: 130px;">申请单号</th>
-                        <th style="width: 140px;">资源名称</th>
+                        <th style="width: 130px;">流水号</th>
+                        <th style="width: 140px;">业务对象名称</th>
                         <th style="width: 160px;">所属目录路径</th>
                         <th>校验不通过原因</th>
                     </tr>
@@ -1257,7 +1281,7 @@
             if (btn.textContent === '撤销') {
                 btn.addEventListener('click', function() {
                     if (confirm('确认撤销此申请吗？')) {
-                        alert('申请已撤销');
+                        alert('流程已撤销');
                         // 这里应该调用API并刷新列表
                     }
                 });
@@ -1268,7 +1292,7 @@
         document.querySelectorAll('button').forEach(btn => {
             if (btn.textContent === '重新申请') {
                 btn.addEventListener('click', function() {
-                    if (confirm('确认重新申请吗？将创建新的申请单。')) {
+                    if (confirm('确认重新申请吗？将创建新的流程实例。')) {
                         alert('已创建新申请');
                         // 这里应该调用API创建新申请并跳转
                     }
@@ -1314,7 +1338,7 @@
 
         // 重新提交（单条校验）
         function resubmit(id) {
-            if (!confirm('确认重新提交申请 ' + id + ' 吗？将创建新的申请单。')) return;
+            if (!confirm('确认重新发起流程 ' + id + ' 吗？将创建新的流程实例。')) return;
 
             // 收集该申请单下包含的资源列表（模拟数据）
             const resources = getDraftResources(id);
@@ -1333,7 +1357,7 @@
                 } else if (id === 'REQ-2026003' && res.name === '仪表板B') {
                     failureItems.push({
                         ...res,
-                        reason: `该资源已提交了${getApprovalTypeById(id)}权限申请（申请单号：REQ-2026001），请等待原申请完成后再提交`
+                        reason: `该资源已提交了${getApprovalTypeById(id)}权限申请（流水号：REQ-2026001），请等待原申请完成后再提交`
                     });
                 } else {
                     successItems.push(res);
@@ -1371,7 +1395,7 @@
             return resourceMap[id] || [{ name: '未知资源', path: '/' }];
         }
 
-        // 获取申请单对应的申请类型
+        // 获取申请单对应的业务类型
         function getApprovalTypeById(id) {
             const row = document.querySelector(`.table-row td:nth-child(2) span`);
             const rows = document.querySelectorAll('.table-row');
@@ -1409,7 +1433,7 @@
             if (thead) {
                 thead.innerHTML = `
                     <tr>
-                        <th style="width: 160px;">资源名称</th>
+                        <th style="width: 160px;">业务对象名称</th>
                         <th style="width: 180px;">所属目录路径</th>
                         <th>校验不通过原因</th>
                     </tr>
@@ -1487,7 +1511,7 @@
                         <table class="failure-table">
                             <thead id="failureTableHead">
                                 <tr>
-                                    <th style="width: 140px;">申请单号</th>
+                                    <th style="width: 140px;">流水号</th>
                                     <th>失败原因</th>
                                 </tr>
                             </thead>
@@ -1510,5 +1534,49 @@
         </div>
     </div>
 
+    <script>
+        // BR-701 演示数据：每一种业务类型至少一条，可从“详情”进入差异化关联业务对象。
+        const br701Applications = [
+            ['REQ-2026101','销售域资源访问授权','资源权限申请','数据集'],
+            ['REQ-2026102','运营工作台菜单授权','功能权限申请','功能菜单'],
+            ['REQ-2026103','经营驾驶舱发布','资源发布','仪表板'],
+            ['REQ-2026104','历史销售报表下架','资源下架','报表分析'],
+            ['REQ-2026105','测试数据集删除','资源删除','数据集'],
+            ['REQ-2026106','财务分析模型导出','资源导出','语义模型'],
+            ['REQ-2026107','营销看板资源导入','资源导入','仪表板'],
+            ['REQ-2026108','门店经营数据入库','数据入库','数据填报'],
+            ['REQ-2026109','客户回访数据导出','数据导出','数据填报'],
+            ['REQ-2026110','预算明细数据导入','数据导入','数据填报'],
+            ['REQ-2026111','无效客户记录删除','数据变更-删除','数据填报'],
+            ['REQ-2026112','客户联系人信息修正','数据变更-编辑','数据填报']
+        ];
+
+        function renderBr701Applications() {
+            const tbody = document.getElementById('applicationTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = br701Applications.map((item, index) => {
+                const [id, name, type, resourceType] = item;
+                const priority = index % 4 === 0 ? ['priority-high','高'] : ['priority-normal','普通'];
+                return `<tr class="table-row transition" data-status="processing" data-can-check="true">
+                    <td class="sticky-col-left col-checkbox px-4 py-3" style="left:0"><input type="checkbox" class="row-checkbox w-4 h-4 rounded border-gray-300 accent-blue-600 cursor-pointer" aria-label="选择申请 ${id}" onchange="updateBatchBar()"></td>
+                    <td class="sticky-col-left col-id px-4 py-3" style="left:50px"><span class="text-sm font-medium text-blue-600">${id}</span></td>
+                    <td class="col-name px-4 py-3"><div class="text-sm text-gray-900">${name}</div></td>
+                    <td class="col-action-type px-4 py-3 whitespace-nowrap text-sm text-gray-600">${type}</td>
+                    <td class="col-type px-4 py-3 whitespace-nowrap text-sm text-gray-600">${resourceType}</td>
+                    <td class="col-priority px-4 py-3"><span class="priority-badge ${priority[0]}">${priority[1]}</span></td>
+                    <td class="col-status px-4 py-3 whitespace-nowrap"><span class="status-badge status-processing inline-flex items-center">进行中</span></td>
+                    <td class="col-node px-4 py-3 whitespace-nowrap text-sm text-gray-600">部门负责人审批</td>
+                    <td class="col-handler px-4 py-3 whitespace-nowrap text-sm text-gray-600">李四海（lisihai）</td>
+                    <td class="col-wait-time px-4 py-3 whitespace-nowrap text-sm text-gray-600">${index + 1}小时20分</td>
+                    <td class="col-applicant px-4 py-3 whitespace-nowrap text-sm text-gray-600">张三（zhangsan）</td>
+                    <td class="col-time px-4 py-3 whitespace-nowrap text-sm text-gray-500">2026-08-${String(18-index).padStart(2,'0')} 09:30</td>
+                    <td class="col-time px-4 py-3 whitespace-nowrap text-sm text-gray-500">2026-08-18 10:20</td>
+                    <td class="sticky-col-right col-action px-4 py-3 whitespace-nowrap text-right"><a href="detail.html?id=${id}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">详情</a><button class="ml-3 text-orange-600 hover:text-orange-800 text-sm font-medium">撤销</button></td>
+                </tr>`;
+            }).join('');
+            lucide.createIcons();
+        }
+        renderBr701Applications();
+    </script>
 </body>
 </html>

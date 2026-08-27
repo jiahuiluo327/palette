@@ -720,7 +720,7 @@
                         <div class="ml-6 mt-1 space-y-1">
                             <a href="my-applications.html" class="flex items-center gap-2 text-gray-600 text-sm py-2 px-3 rounded-lg cursor-pointer hover:bg-gray-100">
                                 <i data-lucide="file-text" class="w-4 h-4"></i>
-                                <span>申请列表</span>
+                                <span>流程列表</span>
                             </a>
                             <a href="my-pending.html" class="flex items-center gap-2 text-gray-600 text-sm py-2 px-3 rounded-lg cursor-pointer hover:bg-gray-100">
                                 <i data-lucide="clock" class="w-4 h-4"></i>
@@ -820,7 +820,7 @@
                                     <input type="text" id="templateName" class="form-input" placeholder="请输入模板名称" value="仪表板发布审批" disabled>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">申请类型 <span class="text-red-500">*</span></label>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">业务类型 <span class="text-red-500">*</span></label>
                                     <select class="form-select" id="approvalType" disabled>
                                         <option value="publish" selected>资源发布</option>
                                         <option value="offline">资源下架</option>
@@ -836,10 +836,10 @@
                                     </select>
                                 </div>
                                 <div id="resourceTypeContainer">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">资源类型 <span class="text-red-500">*</span></label>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">业务对象类型 <span class="text-red-500">*</span></label>
                                     <div class="relative" id="resourceTypeDropdown">
                                         <div class="form-input flex items-center justify-between cursor-pointer" onclick="toggleResourceTypeDropdown()" id="resourceTypeTrigger">
-                                            <span class="text-sm text-gray-400" id="resourceTypeText">请选择资源类型</span>
+                                            <span class="text-sm text-gray-400" id="resourceTypeText">请选择业务对象类型</span>
                                             <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
                                         </div>
                                         <div class="absolute z-20 w-full bg-white border border-gray-200 rounded-lg shadow-lg mt-1 hidden max-h-60 overflow-y-auto" id="resourceTypeMenu">
@@ -1255,22 +1255,22 @@
                             <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
                                 <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0">
                                 <div class="flex-1 min-w-0">
-                                    <div class="text-sm font-medium text-gray-800">申请人所属组织管理员</div>
-                                    <div class="text-xs text-gray-500 mt-0.5">取申请人所有组织的次级管理员</div>
+                                    <div class="text-sm font-medium text-gray-800">发起人所属组织管理员</div>
+                                    <div class="text-xs text-gray-500 mt-0.5">取发起人所有组织的次级管理员</div>
                                 </div>
                             </label>
                             <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
                                 <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0">
                                 <div class="flex-1 min-w-0">
-                                    <div class="text-sm font-medium text-gray-800">申请人上级组织管理员</div>
-                                    <div class="text-xs text-gray-500 mt-0.5">取申请人所有组织的上级组织中最高级的次级管理员</div>
+                                    <div class="text-sm font-medium text-gray-800">发起人上级组织管理员</div>
+                                    <div class="text-xs text-gray-500 mt-0.5">取发起人所有组织的上级组织中最高级的次级管理员</div>
                                 </div>
                             </label>
                             <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
                                 <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0">
                                 <div class="flex-1 min-w-0">
-                                    <div class="text-sm font-medium text-gray-800">申请人上上级组织管理员</div>
-                                    <div class="text-xs text-gray-500 mt-0.5">取申请人所有组织的上上级组织中最高级的次级管理员</div>
+                                    <div class="text-sm font-medium text-gray-800">发起人上上级组织管理员</div>
+                                    <div class="text-xs text-gray-500 mt-0.5">取发起人所有组织的上上级组织中最高级的次级管理员</div>
                                 </div>
                             </label>
 <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
@@ -1299,7 +1299,7 @@
         // 初始化图标
         lucide.createIcons();
 
-        // 申请类型切换时控制资源类型显示
+        // 业务类型切换时控制业务对象类型显示
         function toggleResourceType() {
             const approvalType = document.getElementById('approvalType');
             const resourceContainer = document.getElementById('resourceTypeContainer');
@@ -1308,7 +1308,7 @@
             }
         }
 
-        // 资源类型多选下拉
+        // 业务对象类型多选下拉
         function toggleResourceTypeDropdown() {
             const menu = document.getElementById('resourceTypeMenu');
             menu.classList.toggle('hidden');
@@ -1322,7 +1322,7 @@
                 textEl.textContent = names.join('、');
                 textEl.className = 'text-sm text-gray-800';
             } else {
-                textEl.textContent = '请选择资源类型';
+                textEl.textContent = '请选择业务对象类型';
                 textEl.className = 'text-sm text-gray-400';
             }
         }
@@ -1634,11 +1634,11 @@
         let zoomScale = 1;
         let nodeCount = 5;
         const nodes = {
-            'start': { name: '开始', type: 'start', desc: '系统自动触发，申请人提交申请后进入流程' },
+            'start': { name: '开始', type: 'start', desc: '系统自动触发，发起人发起流程后进入流程' },
             'end': { name: '结束', type: 'end', desc: '流程结束，触发回调：执行资源发布操作' },
             '1': {
                 name: '直接主管审批',
-                approvers: [{ type: 'dynamic', value: '申请人直接主管' }],
+                approvers: [{ type: 'dynamic', value: '发起人直接主管' }],
                 approvalMethod: 'parallel',
                 timeout: { enabled: false, time: 24, unit: 'hour', action: 'autoApprove' },
                 fallback: 'reject'
@@ -2153,12 +2153,12 @@
 
         // 条件字段配置
         const conditionFieldConfig = {
-            'applicant_role': { label: '申请人角色', operators: ['equals','notEquals','in','notIn'], inputType: 'roleSelect' },
-            'applicant_org': { label: '申请人所属组织', operators: ['equals','notEquals','in','notIn'], inputType: 'orgTreeSelect' },
-            'applicant': { label: '申请人', operators: ['equals','notEquals','in','notIn'], inputType: 'userSelect' },
+            'applicant_role': { label: '发起人角色', operators: ['equals','notEquals','in','notIn'], inputType: 'roleSelect' },
+            'applicant_org': { label: '发起人所属组织', operators: ['equals','notEquals','in','notIn'], inputType: 'orgTreeSelect' },
+            'applicant': { label: '发起人', operators: ['equals','notEquals','in','notIn'], inputType: 'userSelect' },
             'priority': { label: '优先级', operators: ['equals','notEquals','in','notIn'], inputType: 'select', options: ['紧急','高','普通','低'] },
             'impact_scope': { label: '影响范围', operators: ['equals','notEquals','in','notIn'], inputType: 'select', options: ['部门级','公司级','对外公开'] },
-            'create_time': { label: '申请时间', operators: ['gt','lt','equals','notEquals','gte','lte','between'], inputType: 'datetime' },
+            'create_time': { label: '发起时间', operators: ['gt','lt','equals','notEquals','gte','lte','between'], inputType: 'datetime' },
             'perm_type': { label: '申请权限类型', operators: ['equals','notEquals','in','notIn'], inputType: 'select', options: ['查看','管理','下载','分享'] },
             'data_volume': { label: '数据量', operators: ['gt','gte','lt','lte','equals','notEquals','between'], inputType: 'number' },
             'data_change_type': { label: '数据变更类型', operators: ['equals','notEquals','in','notIn'], inputType: 'select', options: ['编辑数据','删除数据','批量删除','清空数据'] }
@@ -2340,7 +2340,7 @@
                         </div>
                         <div class="form-row">
                             <label class="form-label">节点说明</label>
-                            <div class="text-sm text-gray-600">${isStart ? '系统自动触发，申请人提交申请后进入流程' : '流程结束，触发回调：执行资源发布操作'}</div>
+                            <div class="text-sm text-gray-600">${isStart ? '系统自动触发，发起人发起流程后进入流程' : '流程结束，触发回调：执行资源发布操作'}</div>
                         </div>
                         <div class="form-row">
                             <label class="form-label">节点类型</label>
@@ -2405,7 +2405,7 @@
 
             const nodeData = nodes[nodeId] || {
                 name: '任务节点',
-                approvers: [{ type: 'dynamic', value: '申请人直接主管' }],
+                approvers: [{ type: 'dynamic', value: '发起人直接主管' }],
                 approvalMethod: 'parallel',
                 timeout: { enabled: false, time: 24, unit: 'hour', action: 'autoApprove' },
                 fallback: 'reject'
@@ -2651,7 +2651,7 @@
             // 清空所有复选框
             modal.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
 
-            // 预填申请类型
+            // 预填业务类型
             const type = approver.type || 'dynamic';
             document.querySelector(`input[name="approverType"][value="${type}"]`).checked = true;
             updateApproverConfig();
@@ -2785,7 +2785,7 @@
             nw.style.top = type === 'start' ? '40px' : '760px';
 
             // 存储在 nodes 对象中标记类型
-            nodes[newNodeId] = { name: type === 'start' ? '开始' : '结束', type: type, desc: type === 'start' ? '系统自动触发，申请人提交申请后进入流程' : '流程结束，触发回调' };
+            nodes[newNodeId] = { name: type === 'start' ? '开始' : '结束', type: type, desc: type === 'start' ? '系统自动触发，发起人发起流程后进入流程' : '流程结束，触发回调' };
 
             nw.innerHTML = `<div class="flow-node flow-node-${type}" onclick="selectNode('${newNodeId}')">
                 <div class="node-icon"><i data-lucide="${type === 'start' ? 'play' : 'flag'}" class="w-5 h-5"></i></div>
@@ -2823,7 +2823,7 @@
             // 初始化节点数据
             nodes[nodeCount] = {
                 name: '任务节点',
-                approvers: [{ type: 'dynamic', value: '申请人直接主管' }],
+                approvers: [{ type: 'dynamic', value: '发起人直接主管' }],
                 approvalMethod: 'parallel',
                 timeout: { enabled: false, time: 24, unit: 'hour', action: 'autoApprove' },
                 fallback: 'reject'
@@ -3086,10 +3086,10 @@
             // 动态规则切换事件
             document.getElementById('dynamicRule')?.addEventListener('change', function() {
                 const descriptions = {
-                    'org_admin': '处理人将自动设置为申请人所属组织的管理员',
-                    'parent_org_admin': '处理人将自动设置为申请人上级组织的管理员',
-                    'parent_parent_org_admin': '处理人将自动设置为申请人上上级组织的管理员',
-                    'root_org_admin': '处理人将自动设置为申请人根组织的管理员',
+                    'org_admin': '处理人将自动设置为发起人所属组织的管理员',
+                    'parent_org_admin': '处理人将自动设置为发起人上级组织的管理员',
+                    'parent_parent_org_admin': '处理人将自动设置为发起人上上级组织的管理员',
+                    'root_org_admin': '处理人将自动设置为发起人根组织的管理员',
                     'resource_owner': '处理人将自动设置为资源的Owner',
                     'resource_creator': '处理人将自动设置为资源的创建者',
                     'resource_manager': '处理人将自动设置为资源的管理者'

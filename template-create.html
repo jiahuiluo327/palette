@@ -713,7 +713,7 @@
                         <div class="ml-6 mt-1 space-y-1">
                             <a href="my-applications.html" class="flex items-center gap-2 text-gray-600 text-sm py-2 px-3 rounded-lg cursor-pointer hover:bg-gray-100">
                                 <i data-lucide="file-text" class="w-4 h-4"></i>
-                                <span>申请列表</span>
+                                <span>流程列表</span>
                             </a>
                             <a href="my-pending.html" class="flex items-center gap-2 text-gray-600 text-sm py-2 px-3 rounded-lg cursor-pointer hover:bg-gray-100">
                                 <i data-lucide="clock" class="w-4 h-4"></i>
@@ -819,7 +819,7 @@
                                     <input type="text" id="templateName" class="form-input" placeholder="请输入模板名称" value="仪表板发布审批">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">申请类型 <span class="text-red-500">*</span></label>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">业务类型 <span class="text-red-500">*</span></label>
                                     <select class="form-select" id="approvalType" onchange="toggleResourceType()">
                                         <option value="publish" selected>资源发布</option>
                                         <option value="offline">资源下架</option>
@@ -835,10 +835,10 @@
                                     </select>
                                 </div>
                                 <div id="resourceTypeContainer">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">资源类型 <span class="text-red-500">*</span></label>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">业务对象类型 <span class="text-red-500">*</span></label>
                                     <div class="relative" id="resourceTypeDropdown">
                                         <div class="form-input flex items-center justify-between cursor-pointer" onclick="toggleResourceTypeDropdown()" id="resourceTypeTrigger">
-                                            <span class="text-sm text-gray-400" id="resourceTypeText">请选择资源类型</span>
+                                            <span class="text-sm text-gray-400" id="resourceTypeText">请选择业务对象类型</span>
                                             <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
                                         </div>
                                         <div class="absolute z-20 w-full bg-white border border-gray-200 rounded-lg shadow-lg mt-1 hidden max-h-60 overflow-y-auto" id="resourceTypeMenu">
@@ -1106,7 +1106,7 @@
 
     <!-- 处理人配置弹窗 -->
     <div id="approverModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-xl shadow-2xl w-[500px] max-h-[80vh] overflow-hidden">
+        <div class="bg-white rounded-xl shadow-2xl w-[720px] max-w-[92vw] max-h-[86vh] overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
                 <h3 class="text-lg font-semibold text-gray-800">添加处理人</h3>
                 <button onclick="closeApproverModal()" class="text-gray-400 hover:text-gray-600">
@@ -1125,6 +1125,10 @@
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="radio" name="approverType" value="member" class="w-4 h-4 text-blue-600">
                             <span class="text-sm text-gray-700">指定成员</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="approverType" value="org_position" class="w-4 h-4 text-blue-600">
+                            <span class="text-sm text-gray-700">指定组织岗位</span>
                         </label>
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="radio" name="approverType" value="dynamic" checked class="w-4 h-4 text-blue-600">
@@ -1229,6 +1233,47 @@
                     </div>
                 </div>
 
+                <!-- 指定组织岗位 -->
+                <div id="orgPositionConfig" class="mb-6 hidden">
+                    <div class="flex items-start justify-between gap-4 mb-2">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">选择组织岗位</label>
+                        </div>
+                    </div>
+                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                        <div class="p-3 border-b border-gray-100 bg-gray-50/70">
+                            <div class="relative">
+                                <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                                <input type="text" placeholder="搜索组织或岗位" class="form-input w-full text-sm pl-9">
+                            </div>
+                        </div>
+                        <div class="max-h-56 overflow-y-auto p-2 space-y-1">
+                            <div class="px-3 py-2 text-xs font-medium text-gray-500 flex items-center gap-2"><i data-lucide="building-2" class="w-4 h-4"></i> 总公司</div>
+                            <div class="ml-5 border-l border-gray-200 pl-2 space-y-1">
+                                <div class="px-3 py-2 text-xs font-medium text-gray-600 flex items-center gap-2"><i data-lucide="building-2" class="w-4 h-4"></i> 销售部</div>
+                                <label class="ml-5 flex items-center gap-3 cursor-pointer hover:bg-blue-50 p-2.5 rounded-lg transition">
+                                    <input type="checkbox" data-org-id="org-sales" data-position-id="pos-problem" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0">
+                                    <div class="flex-1 min-w-0"><div class="text-sm font-medium text-gray-800">问题处理岗</div></div>
+                                </label>
+                                <label class="ml-5 flex items-center gap-3 cursor-pointer hover:bg-blue-50 p-2.5 rounded-lg transition">
+                                    <input type="checkbox" data-org-id="org-sales" data-position-id="pos-review" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0">
+                                    <div class="flex-1 min-w-0"><div class="text-sm font-medium text-gray-800">审核岗</div></div>
+                                </label>
+                                <div class="px-3 py-2 text-xs font-medium text-gray-600 flex items-center gap-2"><i data-lucide="building-2" class="w-4 h-4"></i> 技术部</div>
+                                <label class="ml-5 flex items-center gap-3 cursor-pointer hover:bg-blue-50 p-2.5 rounded-lg transition">
+                                    <input type="checkbox" data-org-id="org-tech" data-position-id="pos-owner" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0">
+                                    <div class="flex-1 min-w-0"><div class="text-sm font-medium text-gray-800">系统负责人岗</div></div>
+                                </label>
+                                <div class="px-3 py-2 text-xs font-medium text-gray-600 flex items-center gap-2"><i data-lucide="building-2" class="w-4 h-4"></i> 财务部</div>
+                                <label class="ml-5 flex items-center gap-3 cursor-pointer hover:bg-blue-50 p-2.5 rounded-lg transition">
+                                    <input type="checkbox" data-org-id="org-finance" data-position-id="pos-finance-review" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0">
+                                    <div class="flex-1 min-w-0"><div class="text-sm font-medium text-gray-800">财务审核岗</div></div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- 动态计算 -->
                 <div id="dynamicConfig" class="mb-6">
                     <label class="block text-sm font-medium text-gray-700 mb-2">选择动态规则</label>
@@ -1236,7 +1281,66 @@
                         <div class="flex items-center gap-2 mb-2 pb-2 border-b border-gray-100">
                             <input type="text" placeholder="搜索规则" class="form-input flex-1 text-sm">
                         </div>
-                        <div class="space-y-1 max-h-48 overflow-y-auto">
+                        <div class="space-y-1 max-h-72 overflow-y-auto">
+                            <div class="mx-1 mb-1 rounded-lg border border-gray-200 overflow-hidden">
+                                <div class="flex items-center gap-3 hover:bg-gray-50 p-3 transition">
+                                    <input id="flowOrgPositionRule" type="checkbox" onchange="toggleFlowOrgPositionRule(this.checked)" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0">
+                                    <label for="flowOrgPositionRule" class="flex-1 min-w-0 cursor-pointer">
+                                        <div class="text-sm font-medium text-gray-800">流程所属组织的指定岗位</div>
+                                        <div id="flowOrgPositionSummary" class="text-xs text-gray-500 mt-0.5 truncate">选择流程所属组织中的岗位成员</div>
+                                    </label>
+                                </div>
+                                <div id="flowOrgPositionPicker" class="hidden px-3 pb-3 bg-white border-t border-gray-100">
+                                    <button type="button" onclick="toggleFlowOrgPositionPicker()" class="mt-3 w-full min-h-10 px-3 py-2 border border-gray-300 rounded-lg bg-white hover:border-blue-400 flex items-center justify-between gap-3 text-left transition">
+                                        <span id="flowOrgPositionTriggerText" class="flex-1 min-w-0 truncate text-sm text-gray-400">请选择岗位</span>
+                                        <i id="flowOrgPositionChevron" data-lucide="chevron-down" class="w-4 h-4 text-gray-400 flex-shrink-0"></i>
+                                    </button>
+                                    <div id="flowOrgPositionDropdown" class="hidden mt-1 border border-gray-200 rounded-lg shadow-lg overflow-hidden">
+                                    <div class="p-3 border-b border-gray-100">
+                                        <div class="relative">
+                                            <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                                            <input id="dynamicPositionSearch" type="text" oninput="filterDynamicPositions(this.value)" placeholder="输入岗位名称搜索，支持千级岗位数据" class="form-input w-full text-sm pl-9 pr-20">
+                                            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">共 1,286 个</span>
+                                        </div>
+                                    </div>
+                                    <div id="selectedDynamicPositions" class="hidden px-3 py-2.5 border-b border-gray-100 bg-blue-50/40">
+                                        <div class="flex items-center justify-between mb-2"><span class="text-xs font-medium text-gray-600">已选岗位</span><span id="selectedDynamicPositionCount" class="text-xs text-blue-600">0 个</span></div>
+                                        <div id="selectedDynamicPositionChips" class="flex flex-wrap gap-1.5"></div>
+                                    </div>
+                                    <div id="dynamicPositionResults" class="max-h-52 overflow-y-auto divide-y divide-gray-100">
+                                        <label data-position-name="问题处理岗" class="dynamic-position-option flex items-center gap-3 cursor-pointer hover:bg-blue-50 px-3 py-2.5 transition">
+                                            <input type="checkbox" onchange="updateDynamicPositionSelection()" data-rule-code="flow_org_position" data-position-id="pos-problem" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0">
+                                            <i data-lucide="briefcase-business" class="w-4 h-4 text-gray-400"></i><div class="flex-1 min-w-0"><div class="text-sm font-medium text-gray-800">问题处理岗</div><div class="text-xs text-gray-500 mt-0.5">用于问题核查、整改跟进等场景</div></div>
+                                        </label>
+                                        <label data-position-name="审核岗" class="dynamic-position-option flex items-center gap-3 cursor-pointer hover:bg-blue-50 px-3 py-2.5 transition">
+                                            <input type="checkbox" onchange="updateDynamicPositionSelection()" data-rule-code="flow_org_position" data-position-id="pos-review" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0">
+                                            <i data-lucide="briefcase-business" class="w-4 h-4 text-gray-400"></i><div class="flex-1 min-w-0"><div class="text-sm font-medium text-gray-800">审核岗</div><div class="text-xs text-gray-500 mt-0.5">用于业务审核与结果确认</div></div>
+                                        </label>
+                                        <label data-position-name="系统负责人岗" class="dynamic-position-option flex items-center gap-3 cursor-pointer hover:bg-blue-50 px-3 py-2.5 transition">
+                                            <input type="checkbox" onchange="updateDynamicPositionSelection()" data-rule-code="flow_org_position" data-position-id="pos-owner" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0">
+                                            <i data-lucide="briefcase-business" class="w-4 h-4 text-gray-400"></i><div class="flex-1 min-w-0"><div class="text-sm font-medium text-gray-800">系统负责人岗</div><div class="text-xs text-gray-500 mt-0.5">用于系统及资源负责人确认</div></div>
+                                        </label>
+                                        <label data-position-name="财务审核岗" class="dynamic-position-option flex items-center gap-3 cursor-pointer hover:bg-blue-50 px-3 py-2.5 transition">
+                                            <input type="checkbox" onchange="updateDynamicPositionSelection()" data-rule-code="flow_org_position" data-position-id="pos-finance-review" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0">
+                                            <i data-lucide="briefcase-business" class="w-4 h-4 text-gray-400"></i><div class="flex-1 min-w-0"><div class="text-sm font-medium text-gray-800">财务审核岗</div><div class="text-xs text-gray-500 mt-0.5">用于财务数据与资金业务审核</div></div>
+                                        </label>
+                                        <label data-position-name="整改责任岗" class="dynamic-position-option flex items-center gap-3 cursor-pointer hover:bg-blue-50 px-3 py-2.5 transition">
+                                            <input type="checkbox" onchange="updateDynamicPositionSelection()" data-rule-code="flow_org_position" data-position-id="pos-rectification" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0">
+                                            <i data-lucide="briefcase-business" class="w-4 h-4 text-gray-400"></i><div class="flex-1 min-w-0"><div class="text-sm font-medium text-gray-800">整改责任岗</div><div class="text-xs text-gray-500 mt-0.5">用于整改任务处理与反馈</div></div>
+                                        </label>
+                                        <label data-position-name="归口管理岗" class="dynamic-position-option flex items-center gap-3 cursor-pointer hover:bg-blue-50 px-3 py-2.5 transition">
+                                            <input type="checkbox" onchange="updateDynamicPositionSelection()" data-rule-code="flow_org_position" data-position-id="pos-centralized" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0">
+                                            <i data-lucide="briefcase-business" class="w-4 h-4 text-gray-400"></i><div class="flex-1 min-w-0"><div class="text-sm font-medium text-gray-800">归口管理岗</div><div class="text-xs text-gray-500 mt-0.5">用于问题归口和任务分派</div></div>
+                                        </label>
+                                        <div id="dynamicPositionEmpty" class="hidden py-8 text-center text-sm text-gray-400">未找到匹配岗位</div>
+                                    </div>
+                                    <div class="px-3 py-2 border-t border-gray-100 flex items-center justify-between bg-gray-50/60">
+                                        <span class="text-xs text-gray-500">每页 20 条</span>
+                                        <div class="flex items-center gap-1"><button type="button" class="w-7 h-7 border border-gray-200 rounded text-gray-300 cursor-not-allowed">‹</button><button type="button" class="w-7 h-7 rounded bg-blue-600 text-white text-xs">1</button><button type="button" class="w-7 h-7 border border-gray-200 rounded text-gray-600 text-xs hover:bg-white">2</button><button type="button" class="w-7 h-7 border border-gray-200 rounded text-gray-600 text-xs hover:bg-white">3</button><span class="text-xs text-gray-400 px-1">…</span><button type="button" class="w-7 h-7 border border-gray-200 rounded text-gray-600 hover:bg-white">›</button></div>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
                             <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
                                 <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0">
                                 <div class="flex-1 min-w-0">
@@ -1254,22 +1358,22 @@
                             <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
                                 <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0">
                                 <div class="flex-1 min-w-0">
-                                    <div class="text-sm font-medium text-gray-800">申请人所属组织管理员</div>
-                                    <div class="text-xs text-gray-500 mt-0.5">取申请人所有组织的次级管理员</div>
+                                    <div class="text-sm font-medium text-gray-800">发起人所属组织管理员</div>
+                                    <div class="text-xs text-gray-500 mt-0.5">取发起人所有组织的次级管理员</div>
                                 </div>
                             </label>
                             <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
                                 <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0">
                                 <div class="flex-1 min-w-0">
-                                    <div class="text-sm font-medium text-gray-800">申请人上级组织管理员</div>
-                                    <div class="text-xs text-gray-500 mt-0.5">取申请人所有组织的上级组织中最高级的次级管理员</div>
+                                    <div class="text-sm font-medium text-gray-800">发起人上级组织管理员</div>
+                                    <div class="text-xs text-gray-500 mt-0.5">取发起人所有组织的上级组织中最高级的次级管理员</div>
                                 </div>
                             </label>
                             <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
                                 <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0">
                                 <div class="flex-1 min-w-0">
-                                    <div class="text-sm font-medium text-gray-800">申请人上上级组织管理员</div>
-                                    <div class="text-xs text-gray-500 mt-0.5">取申请人所有组织的上上级组织中最高级的次级管理员</div>
+                                    <div class="text-sm font-medium text-gray-800">发起人上上级组织管理员</div>
+                                    <div class="text-xs text-gray-500 mt-0.5">取发起人所有组织的上上级组织中最高级的次级管理员</div>
                                 </div>
                             </label>
 <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
@@ -1298,7 +1402,7 @@
         // 初始化图标
         lucide.createIcons();
 
-        // 申请类型切换时控制资源类型显示
+        // 业务类型切换时控制业务对象类型显示
         function toggleResourceType() {
             const approvalType = document.getElementById('approvalType');
             const resourceContainer = document.getElementById('resourceTypeContainer');
@@ -1307,7 +1411,7 @@
             }
         }
 
-        // 资源类型多选下拉
+        // 业务对象类型多选下拉
         function toggleResourceTypeDropdown() {
             const menu = document.getElementById('resourceTypeMenu');
             menu.classList.toggle('hidden');
@@ -1321,7 +1425,7 @@
                 textEl.textContent = names.join('、');
                 textEl.className = 'text-sm text-gray-800';
             } else {
-                textEl.textContent = '请选择资源类型';
+                textEl.textContent = '请选择业务对象类型';
                 textEl.className = 'text-sm text-gray-400';
             }
         }
@@ -1633,11 +1737,11 @@
         let zoomScale = 1;
         let nodeCount = 5;
         const nodes = {
-            'start': { name: '开始', type: 'start', desc: '系统自动触发，申请人提交申请后进入流程' },
+            'start': { name: '开始', type: 'start', desc: '系统自动触发，发起人发起流程后进入流程' },
             'end': { name: '结束', type: 'end', desc: '流程结束，触发回调：执行资源发布操作' },
             '1': {
                 name: '直接主管审批',
-                approvers: [{ type: 'dynamic', value: '申请人直接主管' }],
+                approvers: [{ type: 'dynamic', value: '发起人直接主管' }],
                 approvalMethod: 'parallel',
                 timeout: { enabled: false, time: 24, unit: 'hour', action: 'autoApprove' },
                 fallback: 'reject'
@@ -2157,12 +2261,12 @@
 
         // 条件字段配置
         const conditionFieldConfig = {
-            'applicant_role': { label: '申请人角色', operators: ['equals','notEquals','in','notIn'], inputType: 'roleSelect' },
-            'applicant_org': { label: '申请人所属组织', operators: ['equals','notEquals','in','notIn'], inputType: 'orgTreeSelect' },
-            'applicant': { label: '申请人', operators: ['equals','notEquals','in','notIn'], inputType: 'userSelect' },
+            'applicant_role': { label: '发起人角色', operators: ['equals','notEquals','in','notIn'], inputType: 'roleSelect' },
+            'applicant_org': { label: '发起人所属组织', operators: ['equals','notEquals','in','notIn'], inputType: 'orgTreeSelect' },
+            'applicant': { label: '发起人', operators: ['equals','notEquals','in','notIn'], inputType: 'userSelect' },
             'priority': { label: '优先级', operators: ['equals','notEquals','in','notIn'], inputType: 'select', options: ['紧急','高','普通','低'] },
             'impact_scope': { label: '影响范围', operators: ['equals','notEquals','in','notIn'], inputType: 'select', options: ['部门级','公司级','对外公开'] },
-            'create_time': { label: '申请时间', operators: ['gt','lt','equals','notEquals','gte','lte','between'], inputType: 'datetime' },
+            'create_time': { label: '发起时间', operators: ['gt','lt','equals','notEquals','gte','lte','between'], inputType: 'datetime' },
             'perm_type': { label: '申请权限类型', operators: ['equals','notEquals','in','notIn'], inputType: 'select', options: ['查看','管理','下载','分享'] },
             'data_volume': { label: '数据量', operators: ['gt','gte','lt','lte','equals','notEquals','between'], inputType: 'number' },
             'data_change_type': { label: '数据变更类型', operators: ['equals','notEquals','in','notIn'], inputType: 'select', options: ['编辑数据','删除数据','批量删除','清空数据'] }
@@ -2344,7 +2448,7 @@
                         </div>
                         <div class="form-row">
                             <label class="form-label">节点说明</label>
-                            <div class="text-sm text-gray-600">${isStart ? '系统自动触发，申请人提交申请后进入流程' : '流程结束，触发回调：执行资源发布操作'}</div>
+                            <div class="text-sm text-gray-600">${isStart ? '系统自动触发，发起人发起流程后进入流程' : '流程结束，触发回调：执行资源发布操作'}</div>
                         </div>
                         <div class="form-row">
                             <label class="form-label">节点类型</label>
@@ -2409,7 +2513,7 @@
 
             const nodeData = nodes[nodeId] || {
                 name: '任务节点',
-                approvers: [{ type: 'dynamic', value: '申请人直接主管' }],
+                approvers: [{ type: 'dynamic', value: '发起人直接主管' }],
                 approvalMethod: 'parallel',
                 timeout: { enabled: false, time: 24, unit: 'hour', action: 'autoApprove' },
                 fallback: 'reject'
@@ -2450,6 +2554,8 @@
                                     <div class="approver-info">
                                         <div class="approver-type">${getApproverTypeText(app.type)}</div>
                                         <div class="approver-value">${app.value}</div>
+                                        ${app.type === 'org_position' ? '<div class="text-xs text-gray-400 mt-1">固定组织ID＋岗位ID</div>' : ''}
+                                        ${app.type === 'dynamic' && app.ruleCode === 'flow_org_position' ? '<div class="text-xs text-blue-600 mt-1">运行时按流程所属组织ID＋岗位ID计算</div>' : ''}
                                     </div>
                                     <div class="flex items-center gap-1">
                                         <div class="approver-action approver-edit" onclick="editApprover('${nodeId}', ${index})" title="编辑">
@@ -2552,6 +2658,7 @@
             const types = {
                 'role': '指定角色',
                 'member': '指定成员',
+                'org_position': '指定组织岗位',
                 'dynamic': '动态计算'
             };
             return types[type] || '未知类型';
@@ -2574,6 +2681,12 @@
             // 显示弹窗
             document.getElementById('approverModal').classList.add('show');
             updateApproverConfig();
+            updateDynamicPositionSelection();
+            document.getElementById('flowOrgPositionPicker')?.classList.add('hidden');
+            document.getElementById('dynamicRuleRightPanel')?.classList.add('hidden');
+            const dynamicGrid = document.getElementById('dynamicRuleCascadeGrid');
+            dynamicGrid?.classList.remove('grid-cols-[270px_minmax(0,1fr)]');
+            dynamicGrid?.classList.add('grid-cols-1');
             lucide.createIcons();
         }
 
@@ -2589,6 +2702,7 @@
             // 隐藏所有配置区域
             document.getElementById('roleConfig').classList.add('hidden');
             document.getElementById('memberConfig').classList.add('hidden');
+            document.getElementById('orgPositionConfig').classList.add('hidden');
             document.getElementById('dynamicConfig').classList.remove('hidden');
 
             // 根据类型显示对应配置
@@ -2598,28 +2712,202 @@
             } else if (type === 'member') {
                 document.getElementById('memberConfig').classList.remove('hidden');
                 document.getElementById('dynamicConfig').classList.add('hidden');
+            } else if (type === 'org_position') {
+                document.getElementById('orgPositionConfig').classList.remove('hidden');
+                document.getElementById('dynamicConfig').classList.add('hidden');
             }
+        }
+
+        // 动态规则级联多选下拉
+        function renderDynamicRuleCascader() {
+            const root = document.getElementById('dynamicConfig');
+            if (!root) return;
+            const rules = [
+                ['资源负责人', '取被申请资源的负责人'],
+                ['资源管理者', '取拥有资源管理权限的用户'],
+                ['发起人所属组织管理员', '取发起人所属组织的次级管理员'],
+                ['发起人上级组织管理员', '取发起人上级组织的次级管理员'],
+                ['发起人上上级组织管理员', '取发起人上上级组织的次级管理员'],
+                ['租户管理员', '取当前租户的租户管理员']
+            ];
+            const positions = [
+                ['pos-problem','问题处理岗','用于问题核查、整改跟进等场景'],
+                ['pos-review','审核岗','用于业务审核与结果确认'],
+                ['pos-owner','系统负责人岗','用于系统及资源负责人确认'],
+                ['pos-finance-review','财务审核岗','用于财务数据与资金业务审核'],
+                ['pos-rectification','整改责任岗','用于整改任务处理与反馈'],
+                ['pos-centralized','归口管理岗','用于问题归口和任务分派']
+            ];
+            root.innerHTML = `
+                <label class="block text-sm font-medium text-gray-700 mb-2">选择动态规则</label>
+                <button type="button" onclick="toggleDynamicRuleCascader()" class="w-full min-h-10 px-3 py-2 border border-gray-300 rounded-lg bg-white hover:border-blue-400 flex items-center justify-between gap-3 text-left transition">
+                    <span id="dynamicRuleTriggerText" class="flex-1 min-w-0 truncate text-sm text-gray-400">请选择动态规则</span>
+                    <i id="dynamicRuleTriggerChevron" data-lucide="chevron-down" class="w-4 h-4 text-gray-400 flex-shrink-0"></i>
+                </button>
+                <div id="dynamicRuleCascader" class="hidden mt-1 border border-gray-200 rounded-lg shadow-xl overflow-hidden bg-white">
+                    <div id="dynamicRuleCascadeGrid" class="grid grid-cols-1 min-h-[350px] max-h-[430px]">
+                        <div class="border-r border-gray-200 flex flex-col min-w-0">
+                            <div class="p-3 border-b border-gray-100">
+                                <div class="relative"><i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"></i><input type="text" oninput="filterDynamicRules(this.value)" placeholder="搜索动态规则" class="form-input w-full text-sm pl-9"></div>
+                            </div>
+                            <div id="dynamicRuleOptions" class="p-2 overflow-y-auto space-y-1">
+                                <label data-rule-name="流程所属组织的指定岗位" onmouseenter="showFlowOrgPositionPanel()" onmouseleave="scheduleHideFlowOrgPositionPanel()" class="dynamic-rule-row flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition">
+                                    <input id="flowOrgPositionRule" type="checkbox" onchange="toggleFlowOrgPositionRule(this.checked)" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0">
+                                    <div class="flex-1 min-w-0"><div class="text-sm font-medium text-gray-800">流程所属组织的指定岗位</div><div id="flowOrgPositionSummary" class="text-xs text-gray-500 mt-0.5 truncate">请选择岗位</div></div>
+                                    <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+                                </label>
+                                ${rules.map(rule => `<label data-rule-name="${rule[0]}" class="dynamic-rule-row flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition"><input type="checkbox" onchange="updateDynamicRuleSelection()" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0"><div class="flex-1 min-w-0"><div class="text-sm font-medium text-gray-800">${rule[0]}</div><div class="text-xs text-gray-500 mt-0.5">${rule[1]}</div></div></label>`).join('')}
+                                <div id="dynamicRuleEmpty" class="hidden py-10 text-center text-sm text-gray-400">未找到匹配规则</div>
+                            </div>
+                        </div>
+                        <div id="dynamicRuleRightPanel" class="hidden relative min-w-0 bg-gray-50/40">
+                            <div id="flowOrgPositionPicker" onmouseenter="showFlowOrgPositionPanel()" onmouseleave="scheduleHideFlowOrgPositionPanel()" class="hidden h-full flex flex-col bg-white">
+                                <div class="px-4 py-3 border-b border-gray-100"><div class="text-sm font-medium text-gray-800">选择岗位</div></div>
+                                <div class="p-3 border-b border-gray-100"><div class="relative"><i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"></i><input id="dynamicPositionSearch" type="text" oninput="filterDynamicPositions(this.value)" placeholder="输入岗位名称搜索" class="form-input w-full text-sm pl-9 pr-20"><span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">共 1,286 个</span></div></div>
+                                <div id="dynamicPositionResults" class="flex-1 min-h-0 overflow-y-auto divide-y divide-gray-100">
+                                    ${positions.map(position => `<label data-position-name="${position[1]}" class="dynamic-position-option flex items-center gap-3 cursor-pointer hover:bg-blue-50 px-3 py-2.5 transition"><input type="checkbox" onchange="updateDynamicPositionSelection()" data-rule-code="flow_org_position" data-position-id="${position[0]}" class="w-4 h-4 rounded border-gray-300 text-blue-600 flex-shrink-0"><i data-lucide="briefcase-business" class="w-4 h-4 text-gray-400"></i><div class="flex-1 min-w-0"><div class="text-sm font-medium text-gray-800">${position[1]}</div><div class="text-xs text-gray-500 mt-0.5">${position[2]}</div></div></label>`).join('')}
+                                    <div id="dynamicPositionEmpty" class="hidden py-8 text-center text-sm text-gray-400">未找到匹配岗位</div>
+                                </div>
+                                <div class="px-3 py-2 border-t border-gray-100 flex items-center justify-between bg-gray-50/60"><span class="text-xs text-gray-500">每页 20 条</span><div class="flex items-center gap-1"><button type="button" class="w-7 h-7 border border-gray-200 rounded text-gray-300">‹</button><button type="button" class="w-7 h-7 rounded bg-blue-600 text-white text-xs">1</button><button type="button" class="w-7 h-7 border border-gray-200 rounded text-gray-600 text-xs">2</button><button type="button" class="w-7 h-7 border border-gray-200 rounded text-gray-600 text-xs">3</button><span class="text-xs text-gray-400 px-1">…</span><button type="button" class="w-7 h-7 border border-gray-200 rounded text-gray-600">›</button></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            lucide.createIcons();
+        }
+
+        function toggleDynamicRuleCascader(force) {
+            const panel = document.getElementById('dynamicRuleCascader');
+            if (!panel) return;
+            const show = typeof force === 'boolean' ? force : panel.classList.contains('hidden');
+            panel.classList.toggle('hidden', !show);
+            if (!show) hideFlowOrgPositionPanel();
+            document.getElementById('dynamicRuleTriggerChevron')?.setAttribute('data-lucide', show ? 'chevron-up' : 'chevron-down');
+            lucide.createIcons();
+        }
+
+        function filterDynamicRules(keyword) {
+            const value = (keyword || '').trim().toLowerCase();
+            let visible = 0;
+            document.querySelectorAll('.dynamic-rule-row').forEach(row => { const matched = !value || (row.dataset.ruleName || '').toLowerCase().includes(value); row.classList.toggle('hidden', !matched); if (matched) visible += 1; });
+            document.getElementById('dynamicRuleEmpty')?.classList.toggle('hidden', visible > 0);
+        }
+
+        function updateDynamicRuleSelection() {
+            const selectedRules = [...document.querySelectorAll('.dynamic-rule-row input[type="checkbox"]:checked')];
+            const labels = selectedRules.map(cb => {
+                if (cb.id === 'flowOrgPositionRule') {
+                    const count = document.querySelectorAll('.dynamic-position-option input[type="checkbox"]:checked').length;
+                    return `流程所属组织的指定岗位${count ? `（${count}）` : ''}`;
+                }
+                return cb.closest('label')?.dataset.ruleName || '';
+            }).filter(Boolean);
+            const trigger = document.getElementById('dynamicRuleTriggerText');
+            if (trigger) { trigger.textContent = labels.length ? labels.join('、') : '请选择动态规则'; trigger.title = labels.join('、'); trigger.classList.toggle('text-gray-800', labels.length > 0); trigger.classList.toggle('text-gray-400', labels.length === 0); }
+        }
+
+        let flowOrgPositionHideTimer = null;
+
+        function showFlowOrgPositionPanel() {
+            if (flowOrgPositionHideTimer) clearTimeout(flowOrgPositionHideTimer);
+            const grid = document.getElementById('dynamicRuleCascadeGrid');
+            grid?.classList.remove('grid-cols-1');
+            grid?.classList.add('grid-cols-[270px_minmax(0,1fr)]');
+            document.getElementById('dynamicRuleRightPanel')?.classList.remove('hidden');
+            document.getElementById('flowOrgPositionPicker')?.classList.remove('hidden');
+        }
+
+        function hideFlowOrgPositionPanel() {
+            if (flowOrgPositionHideTimer) clearTimeout(flowOrgPositionHideTimer);
+            document.getElementById('flowOrgPositionPicker')?.classList.add('hidden');
+            document.getElementById('dynamicRuleRightPanel')?.classList.add('hidden');
+            const grid = document.getElementById('dynamicRuleCascadeGrid');
+            grid?.classList.remove('grid-cols-[270px_minmax(0,1fr)]');
+            grid?.classList.add('grid-cols-1');
+        }
+
+        function scheduleHideFlowOrgPositionPanel() {
+            if (flowOrgPositionHideTimer) clearTimeout(flowOrgPositionHideTimer);
+            flowOrgPositionHideTimer = setTimeout(() => {
+                hideFlowOrgPositionPanel();
+            }, 180);
+        }
+
+        // 动态组织岗位：面向大数据量的搜索与已选项管理
+        function toggleFlowOrgPositionRule(enabled) {
+            if (!enabled) {
+                document.querySelectorAll('.dynamic-position-option input[type="checkbox"]').forEach(cb => cb.checked = false);
+                const search = document.getElementById('dynamicPositionSearch');
+                if (search) search.value = '';
+                filterDynamicPositions('');
+            }
+            updateDynamicPositionSelection();
+            updateDynamicRuleSelection();
+        }
+
+        function filterDynamicPositions(keyword) {
+            const normalized = (keyword || '').trim().toLowerCase();
+            const options = [...document.querySelectorAll('.dynamic-position-option')];
+            let visibleCount = 0;
+            options.forEach(option => {
+                const matched = !normalized || (option.dataset.positionName || '').toLowerCase().includes(normalized);
+                option.classList.toggle('hidden', !matched);
+                if (matched) visibleCount += 1;
+            });
+            document.getElementById('dynamicPositionEmpty')?.classList.toggle('hidden', visibleCount > 0);
+        }
+
+        function updateDynamicPositionSelection() {
+            const selected = [...document.querySelectorAll('.dynamic-position-option input[type="checkbox"]:checked')];
+            const ruleToggle = document.getElementById('flowOrgPositionRule');
+            if (selected.length > 0 && ruleToggle) ruleToggle.checked = true;
+            const selectedNames = selected.map(cb => cb.closest('label')?.dataset.positionName || '').filter(Boolean);
+            const summary = document.getElementById('flowOrgPositionSummary');
+            if (summary) {
+                summary.textContent = selectedNames.length ? `已选 ${selectedNames.length} 个：${selectedNames.join('、')}` : '选择流程所属组织中的岗位成员';
+                summary.title = selectedNames.join('、');
+                summary.classList.toggle('text-blue-600', selectedNames.length > 0);
+                summary.classList.toggle('text-gray-500', selectedNames.length === 0);
+            }
+            updateDynamicRuleSelection();
+            lucide.createIcons();
+        }
+
+        function removeDynamicPosition(positionId) {
+            const checkbox = document.querySelector(`.dynamic-position-option input[data-position-id="${positionId}"]`);
+            if (checkbox) checkbox.checked = false;
+            updateDynamicPositionSelection();
         }
 
         // 保存处理人
         function saveApprover() {
             const nodeId = document.getElementById('approverModal').dataset.currentNodeId;
             const type = document.querySelector('input[name="approverType"]:checked').value;
-            const configDivs = { role: 'roleConfig', member: 'memberConfig', dynamic: 'dynamicConfig' };
+            const configDivs = { role: 'roleConfig', member: 'memberConfig', org_position: 'orgPositionConfig', dynamic: 'dynamicConfig' };
             const divId = configDivs[type];
             if (!divId) return;
 
             // 收集选中的复选框
-            const checkboxes = document.querySelectorAll(`#${divId} input[type="checkbox"]:checked`);
+            const checkedInputs = Array.from(document.querySelectorAll(`#${divId} input[type="checkbox"]:checked`));
+            const flowOrgRuleEnabled = type === 'dynamic' && document.getElementById('flowOrgPositionRule')?.checked;
+            const dynamicPositions = checkedInputs.filter(cb => cb.classList.contains('dynamic-position-option') || cb.closest('.dynamic-position-option'));
+            if (flowOrgRuleEnabled && dynamicPositions.length === 0) {
+                alert('请为“流程所属组织的指定岗位”至少选择一个岗位');
+                return;
+            }
+            const checkboxes = checkedInputs.filter(cb => cb.id !== 'flowOrgPositionRule');
             if (checkboxes.length === 0) {
                 alert('请至少选择一项');
                 return;
             }
-            const selected = Array.from(checkboxes).map(cb => {
+            const selected = checkboxes.map(cb => {
                 const label = cb.closest('label');
                 return {
                     name: label.querySelector('.font-medium')?.textContent || '',
-                    desc: label.querySelector('.text-xs')?.textContent || ''
+                    desc: label.querySelector('.text-xs')?.textContent || '',
+                    orgId: cb.dataset.orgId || '',
+                    positionId: cb.dataset.positionId || '',
+                    ruleCode: cb.dataset.ruleCode || ''
                 };
             });
 
@@ -2629,7 +2917,15 @@
             // 更新节点数据
             if (nodes[nodeId] && nodes[nodeId].approvers) {
                 const editIndex = parseInt(document.getElementById('approverModal').dataset.editIndex);
-                const newApprover = { type, value: displayName, ruleValue: value, selected };
+                const newApprover = {
+                    type,
+                    value: displayName,
+                    ruleValue: value,
+                    selected,
+                    orgIds: [...new Set(selected.map(item => item.orgId).filter(Boolean))],
+                    positionIds: [...new Set(selected.map(item => item.positionId).filter(Boolean))],
+                    ruleCode: selected.every(item => item.ruleCode === 'flow_org_position') ? 'flow_org_position' : ''
+                };
 
                 if (!isNaN(editIndex)) {
                     nodes[nodeId].approvers[editIndex] = newApprover;
@@ -2655,14 +2951,14 @@
             // 清空所有复选框
             modal.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
 
-            // 预填申请类型
+            // 预填业务类型
             const type = approver.type || 'dynamic';
             document.querySelector(`input[name="approverType"][value="${type}"]`).checked = true;
             updateApproverConfig();
 
             // 预选复选框（根据之前保存的值）
             const names = (approver.ruleValue || '').split(',').map(s => s.trim());
-            const configDivs = { role: 'roleConfig', member: 'memberConfig', dynamic: 'dynamicConfig' };
+            const configDivs = { role: 'roleConfig', member: 'memberConfig', org_position: 'orgPositionConfig', dynamic: 'dynamicConfig' };
             const divId = configDivs[type];
             if (divId) {
                 document.querySelectorAll(`#${divId} input[type="checkbox"]`).forEach(cb => {
@@ -2673,6 +2969,13 @@
                     }
                 });
             }
+
+            updateDynamicPositionSelection();
+            document.getElementById('flowOrgPositionPicker')?.classList.add('hidden');
+            document.getElementById('dynamicRuleRightPanel')?.classList.add('hidden');
+            const dynamicGrid = document.getElementById('dynamicRuleCascadeGrid');
+            dynamicGrid?.classList.remove('grid-cols-[270px_minmax(0,1fr)]');
+            dynamicGrid?.classList.add('grid-cols-1');
 
             modal.classList.add('show');
             lucide.createIcons();
@@ -2789,7 +3092,7 @@
             nw.style.top = type === 'start' ? '40px' : '760px';
 
             // 存储在 nodes 对象中标记类型
-            nodes[newNodeId] = { name: type === 'start' ? '开始' : '结束', type: type, desc: type === 'start' ? '系统自动触发，申请人提交申请后进入流程' : '流程结束，触发回调' };
+            nodes[newNodeId] = { name: type === 'start' ? '开始' : '结束', type: type, desc: type === 'start' ? '系统自动触发，发起人发起流程后进入流程' : '流程结束，触发回调' };
 
             nw.innerHTML = `<div class="flow-node flow-node-${type}" onclick="selectNode('${newNodeId}')">
                 <div class="node-icon"><i data-lucide="${type === 'start' ? 'play' : 'flag'}" class="w-5 h-5"></i></div>
@@ -2828,7 +3131,7 @@
             // 初始化节点数据
             nodes[nodeCount] = {
                 name: '任务节点',
-                approvers: [{ type: 'dynamic', value: '申请人直接主管' }],
+                approvers: [{ type: 'dynamic', value: '发起人直接主管' }],
                 approvalMethod: 'parallel',
                 timeout: { enabled: false, time: 24, unit: 'hour', action: 'autoApprove' },
                 fallback: 'reject'
@@ -3061,6 +3364,7 @@
 
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
+            renderDynamicRuleCascader();
             // 初始化预置连接线数据
             ['start-1', '1-2', '3-end', '4-end'].forEach(id => {
                 connections[id] = { type: 'default', conditions: [], logicOperator: 'and' };
@@ -3091,10 +3395,10 @@
             // 动态规则切换事件
             document.getElementById('dynamicRule')?.addEventListener('change', function() {
                 const descriptions = {
-                    'org_admin': '处理人将自动设置为申请人所属组织的管理员',
-                    'parent_org_admin': '处理人将自动设置为申请人上级组织的管理员',
-                    'parent_parent_org_admin': '处理人将自动设置为申请人上上级组织的管理员',
-                    'root_org_admin': '处理人将自动设置为申请人根组织的管理员',
+                    'org_admin': '处理人将自动设置为发起人所属组织的管理员',
+                    'parent_org_admin': '处理人将自动设置为发起人上级组织的管理员',
+                    'parent_parent_org_admin': '处理人将自动设置为发起人上上级组织的管理员',
+                    'root_org_admin': '处理人将自动设置为发起人根组织的管理员',
                     'resource_owner': '处理人将自动设置为资源的Owner',
                     'resource_creator': '处理人将自动设置为资源的创建者',
                     'resource_manager': '处理人将自动设置为资源的管理者'

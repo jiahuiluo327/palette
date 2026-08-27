@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>编辑申请 - 流程中心</title>
+    <title>编辑流程 - 流程中心</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/lucide@1.23.0/dist/umd/lucide.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -159,7 +159,7 @@
                         <div class="ml-6 mt-1 space-y-1">
                             <a href="my-applications.html" class="nav-item active flex items-center gap-2 text-sm py-2 px-3 rounded-lg cursor-pointer">
                                 <i data-lucide="file-text" class="w-4 h-4"></i>
-                                <span>申请列表</span>
+                                <span>流程列表</span>
                             </a>
                             <a href="my-pending.html" class="flex items-center gap-2 text-gray-600 text-sm py-2 px-3 rounded-lg cursor-pointer hover:bg-gray-100">
                                 <i data-lucide="clock" class="w-4 h-4"></i>
@@ -222,9 +222,9 @@
             <header class="bg-white border-b border-gray-200 px-6 py-4 flex-shrink-0">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2 text-sm">
-                        <a href="my-applications.html" class="text-gray-500 hover:text-gray-700">申请列表</a>
+                        <a href="my-applications.html" class="text-gray-500 hover:text-gray-700">流程列表</a>
                         <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-                        <span class="text-gray-800 font-medium">编辑申请</span>
+                        <span class="text-gray-800 font-medium">编辑流程</span>
                     </div>
                     <div class="flex items-center gap-3">
                         <a href="my-applications.html" class="btn-secondary px-4 py-2 rounded-lg text-sm font-medium">
@@ -248,32 +248,39 @@
                     <div class="p-6">
                         <form id="applicationForm">
                             <!-- 申请单基本信息 -->
-                            <div class="form-section-title">申请单信息</div>
+                            <div class="form-section-title">流程信息</div>
 
                             <div class="grid grid-cols-2 gap-6 mb-6">
                                 <div>
-                                    <label class="form-label">申请单号</label>
+                                    <label class="form-label">流水号</label>
                                     <input type="text" class="form-input" value="REQ-2026007" disabled>
                                 </div>
                                 <div>
-                                    <label class="form-label form-label-required">申请单名称</label>
-                                    <input type="text" class="form-input" placeholder="请输入申请单名称" value="财务分析仪表板及相关报表权限申请" required>
+                                    <label class="form-label form-label-required">流程名称</label>
+                                    <input type="text" class="form-input" placeholder="请输入流程名称" value="财务分析仪表板及相关报表权限申请" required>
                                 </div>
                             </div>
 
                             <div class="grid grid-cols-2 gap-6 mb-6">
                                 <div>
-                                    <label class="form-label form-label-required">申请类型</label>
+                                    <label class="form-label">当前节点</label>
+                                    <input type="text" class="form-input" value="未发起" disabled>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <label class="form-label form-label-required">业务类型</label>
                                     <select class="form-select" id="approvalType" required onchange="togglePermissionConfig()">
-                                        <option value="">请选择申请类型</option>
+                                        <option value="">请选择业务类型</option>
                                         <option selected>资源权限申请</option>
                                         <option>功能权限申请</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="form-label form-label-required">资源类型</label>
+                                    <label class="form-label form-label-required">业务对象类型</label>
                                     <select class="form-select" id="resourceTypeSelect" required onchange="onResourceTypeChange()">
-                                        <option value="">请选择资源类型</option>
+                                        <option value="">请选择业务对象类型</option>
                                         <option selected>仪表板</option>
                                         <option>报表分析</option>
                                         <option>电子表格</option>
@@ -324,11 +331,11 @@
                             <div class="mb-6">
                                 <label class="form-label form-label-required">模板名称</label>
                                 <input type="text" class="form-input" value="权限申请审批模板-默认匹配" disabled>
-                                <div class="text-xs text-gray-500 mt-1">根据资源类型和申请类型自动匹配</div>
+                                <div class="text-xs text-gray-500 mt-1">根据业务对象类型和业务类型自动匹配</div>
                             </div>
 
                             <div class="mb-6">
-                                <label class="form-label form-label-required">申请说明</label>
+                                <label class="form-label form-label-required">说明</label>
                                 <textarea class="form-input" rows="4" placeholder="请详细描述申请原因、背景、预期效果等信息" required>需要申请财务分析仪表板及相关报表资源的查看和管理权限，用于Q3季度业务分析工作。</textarea>
                             </div>
 
@@ -343,14 +350,14 @@
                                 </div>
                             </div>
 
-                            <!-- 申请内容 -->
-                            <div class="form-section-title mt-8">申请内容</div>
+                            <!-- 关联业务对象 -->
+                            <div class="form-section-title mt-8">关联业务对象</div>
 
                             <!-- 资源权限模式 -->
                             <div id="resourcePermSection">
                                 <div class="mb-4 relative">
                                     <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-                                    <input type="text" id="resourcePermSearch" placeholder="搜索资源名称" oninput="filterResourcePermTree()" class="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                                    <input type="text" id="resourcePermSearch" placeholder="搜索业务对象名称" oninput="filterResourcePermTree()" class="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
                                 </div>
                                 <div class="border border-gray-200 rounded-lg overflow-hidden mb-4">
                                     <table class="w-full">
@@ -419,7 +426,7 @@
         // ========== 资源选择弹窗数据 ==========
         let resourceCounter = 1;
 
-        // 资源类型 -> 目录路径 映射
+        // 业务对象类型 -> 目录路径 映射
         const resourceTypeDirMap = {
             '仪表板': ['/财务分析/', '/财务分析/贷款业务/', '/财务分析/存款业务/', '/客户关系分析/', '/经营分析/'],
             '报表分析': ['/财务报表/', '/财务报表/月度报表/', '/运营报表/', '/监管报送/'],
@@ -453,7 +460,7 @@
             { name: 'Q3产品需求文档', path: '/产品需求/', icon: 'file-text', type: '需求管理' }
         ];
 
-        let currentResourceType = '';       // 当前弹窗的资源类型
+        let currentResourceType = '';       // 当前弹窗的业务对象类型
         let expandedDirs = new Set();       // 已展开的目录节点 key
         let currentTreeSearchTerm = '';     // 搜索关键词
 
@@ -759,8 +766,8 @@
             renderTreeTable(currentResourceType, currentTreeSearchTerm);
         }
 
-        // ========== 锁定资源类型 ==========
-        // 切换资源类型时自动重新渲染权限树
+        // ========== 锁定业务对象类型 ==========
+        // 切换业务对象类型时自动重新渲染权限树
         function onResourceTypeChange() {
             const typeSelect = document.getElementById('resourceTypeSelect');
             const approvalType = document.getElementById('approvalType').value;
@@ -775,7 +782,7 @@
             const selectedType = typeSelect ? typeSelect.value : '';
 
             if (!selectedType) {
-                alert('请先选择资源类型');
+                alert('请先选择业务对象类型');
                 return;
             }
 
@@ -794,7 +801,7 @@
                 });
             });
 
-            // 设置资源类型标签
+            // 设置业务对象类型标签
             document.getElementById('modalResourceTypeTag').textContent = selectedType;
 
             // 渲染树状表格
@@ -919,7 +926,7 @@
             const selectedType = typeSelect ? typeSelect.value : '';
 
             if (!selectedType) {
-                tbody.innerHTML = `<tr><td colspan="2" class="px-4 py-8 text-center text-sm text-gray-400">请先选择资源类型</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="2" class="px-4 py-8 text-center text-sm text-gray-400">请先选择业务对象类型</td></tr>`;
                 document.getElementById('resourceTotal').textContent = '0';
                 return;
             }
@@ -1232,7 +1239,7 @@
             { name: '指标', icon: 'trending-up', children: [] },
             { name: '系统管理', icon: 'settings', children: [] },
             { name: '流程中心', icon: 'clipboard-list', children: [
-                { name: '申请列表', icon: 'file-text' },
+                { name: '流程列表', icon: 'file-text' },
                 { name: '待办列表', icon: 'clock' },
                 { name: '已办列表', icon: 'check-circle' },
                 { name: '模板管理', icon: 'layout-template' }
@@ -1465,7 +1472,7 @@
             // 这里应该调用API保存草稿
         }
 
-        // 提交申请
+        // 发起流程
         function submitApplication() {
             const form = document.getElementById('applicationForm');
             if (!form.checkValidity()) {
@@ -1487,7 +1494,7 @@
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
                 <div class="flex items-center gap-3">
                     <h3 class="text-lg font-semibold text-gray-900">选择资源</h3>
-                    <!-- 资源类型标签 -->
+                    <!-- 业务对象类型标签 -->
                     <span id="modalResourceTypeTag" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">仪表板</span>
                     <span class="text-sm text-gray-500" id="modalSelectedCount">(0)</span>
                 </div>
@@ -1500,7 +1507,7 @@
             <div class="px-4 py-3 border-b border-gray-200 bg-white">
                 <div class="relative">
                     <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-                    <input type="text" placeholder="搜索目录或资源名称" oninput="filterTreeTable()" class="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" id="treeTableSearchInput">
+                    <input type="text" placeholder="搜索目录或业务对象名称" oninput="filterTreeTable()" class="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" id="treeTableSearchInput">
                 </div>
             </div>
 
@@ -1581,7 +1588,7 @@
             border-radius: 2px;
         }
 
-        /* 资源类型标签 */
+        /* 业务对象类型标签 */
         #modalResourceTypeTag {
             line-height: 1.4;
         }
