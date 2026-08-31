@@ -114,7 +114,6 @@
   </div>
 </div><div class="h-[66px] border-t flex items-center justify-end px-6 bg-white"><div class="flex gap-2"><button id="cancelDrawer" class="btn">取消</button><button id="submitApply" class="btn btn-primary"><i data-lucide="send" class="w-4"></i>提交申请</button></div></div></aside>
 
-<div id="submitConfirm" class="modal-mask hidden" style="z-index:80"><div class="modal w-[420px] p-6"><div class="flex gap-3"><div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-blue-600"><i data-lucide="send" class="w-5"></i></div><div><h3 class="font-semibold text-base">确认提交权限申请？</h3><p class="text-slate-500 text-[13px] mt-2 leading-6">提交后将启动“数据操作权限申请审批模板”，可在流程中心跟踪审批进度。</p></div></div><div class="flex justify-end gap-2 mt-6"><button id="backToEdit" class="btn">返回修改</button><button id="confirmSubmit" class="btn btn-primary">确认提交</button></div></div></div>
 <div id="toast" class="toast"><i data-lucide="circle-check" class="w-5 text-green-600"></i><span id="toastText">操作成功</span></div>
 
 <script>
@@ -181,8 +180,7 @@
   document.getElementById('applyBtn').onclick=openDrawer;document.getElementById('closeDrawer').onclick=closeDrawer;document.getElementById('cancelDrawer').onclick=closeDrawer;document.getElementById('drawerMask').onclick=closeDrawer;
   document.querySelectorAll('.drawer-perm').forEach(c=>c.onchange=()=>{const ps=[...document.querySelectorAll('.drawer-perm')],p=+c.dataset.perm;if(p===0)ps.forEach(x=>x.checked=c.checked);else if(p>1&&c.checked)ps[1].checked=true;else if(p===1&&!c.checked)ps.forEach(x=>x.checked=false);ps[0].checked=ps.slice(1).every(x=>x.checked)});
   document.getElementById('applyReason').oninput=e=>document.getElementById('reasonCount').textContent=e.target.value.length;
-  document.getElementById('submitApply').onclick=()=>{if(!document.getElementById('applyReason').value.trim()){document.getElementById('applyReason').focus();toast('请先填写申请说明');return}show('submitConfirm')};
-  document.getElementById('backToEdit').onclick=()=>hide('submitConfirm');document.getElementById('confirmSubmit').onclick=()=>{hide('submitConfirm');closeDrawer();document.getElementById('reportPage').classList.add('hidden');document.getElementById('flowPage').classList.remove('hidden');toast('申请提交成功，已进入流程中心')};
+  document.getElementById('submitApply').onclick=()=>{if(!document.getElementById('applyReason').value.trim()){document.getElementById('applyReason').focus();toast('请先填写申请说明');return}closeDrawer();document.getElementById('flowPage').classList.add('hidden');document.getElementById('reportPage').classList.remove('hidden');toast('提交成功')};
   document.getElementById('flowNav').onclick=()=>{document.getElementById('reportPage').classList.add('hidden');document.getElementById('flowPage').classList.remove('hidden')};
   function toast(msg){const t=document.getElementById('toast');document.getElementById('toastText').textContent=msg;t.classList.add('show');clearTimeout(window.tt);window.tt=setTimeout(()=>t.classList.remove('show'),2200)}
   lucide.createIcons();
