@@ -3,382 +3,432 @@
 
 <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gien BI 原型中心</title>
-
     <style>
+        :root {
+            --primary: #1677ff;
+            --primary-light: #eaf3ff;
+            --text: #1f2937;
+            --muted: #667085;
+            --line: #e7ebf0;
+            --background: #f5f7fb;
+            --panel: #ffffff;
+        }
+
         * {
-            margin: 0;
-            padding: 0;
             box-sizing: border-box;
         }
 
         body {
+            min-width: 320px;
+            margin: 0;
+            color: var(--text);
+            background: var(--background);
             font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
-            background: #f5f7fb;
-            color: #333;
         }
 
-        header {
-            background: linear-gradient(135deg, #1677ff, #4096ff);
-            color: white;
-            padding: 40px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, .12);
+        .hero {
+            padding: 42px 24px 72px;
+            color: #fff;
+            background: linear-gradient(135deg, #0958d9, #1677ff 55%, #69b1ff);
         }
 
-        header h1 {
-            font-size: 34px;
+        .hero-inner,
+        .container {
+            width: min(1080px, calc(100% - 40px));
+            margin: 0 auto;
         }
 
-        header p {
-            margin-top: 10px;
-            opacity: .9;
+        .hero h1 {
+            margin: 0;
+            font-size: clamp(28px, 4vw, 38px);
+            letter-spacing: -0.02em;
+        }
+
+        .hero p {
+            margin: 12px 0 0;
+            color: rgba(255, 255, 255, 0.82);
+            font-size: 15px;
         }
 
         .container {
-            width: 1200px;
-            margin: 40px auto;
+            margin-top: -36px;
+        }
+
+        .search-panel {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 18px;
+            border: 1px solid rgba(22, 119, 255, 0.12);
+            border-radius: 14px;
+            background: var(--panel);
+            box-shadow: 0 14px 40px rgba(30, 64, 175, 0.12);
+        }
+
+        .search-icon {
+            color: #98a2b3;
+            font-size: 20px;
         }
 
         #search {
-            width: 100%;
-            padding: 14px 18px;
+            flex: 1;
+            min-width: 0;
+            padding: 5px 0;
+            border: 0;
+            outline: 0;
+            color: var(--text);
+            background: transparent;
+            font: inherit;
             font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            margin-bottom: 35px;
-            outline: none;
         }
 
-        #search:focus {
-            border-color: #1677ff;
+        #search::placeholder {
+            color: #98a2b3;
+        }
+
+        .result-count {
+            flex: 0 0 auto;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        #navigation {
+            display: grid;
+            gap: 24px;
+            margin-top: 28px;
         }
 
         .module {
-            margin-bottom: 35px;
+            overflow: hidden;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: var(--panel);
         }
 
         .module-title {
-            font-size: 22px;
-            margin-bottom: 18px;
-            color: #1677ff;
-            border-left: 5px solid #1677ff;
-            padding-left: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0;
+            padding: 18px 22px;
+            border-bottom: 1px solid var(--line);
+            font-size: 18px;
         }
 
-        .module-subtitle {
-            font-size: 18px;
+        .module-title-icon {
+            display: grid;
+            width: 32px;
+            height: 32px;
+            place-items: center;
+            border-radius: 9px;
+            background: var(--primary-light);
+            font-size: 17px;
+        }
+
+        .page-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .page-item + .page-item {
+            border-top: 1px solid #f0f2f5;
+        }
+
+        .page-link {
+            display: grid;
+            grid-template-columns: 42px minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 14px;
+            min-height: 78px;
+            padding: 14px 22px;
+            color: inherit;
+            text-decoration: none;
+            transition: background 0.18s ease;
+        }
+
+        .page-link:hover,
+        .page-link:focus-visible {
+            background: #f6faff;
+            outline: none;
+        }
+
+        .page-icon {
+            display: grid;
+            width: 42px;
+            height: 42px;
+            place-items: center;
+            border-radius: 10px;
+            background: #f2f4f7;
+            font-size: 20px;
+        }
+
+        .page-copy {
+            min-width: 0;
+        }
+
+        .page-title {
+            display: block;
             font-weight: 600;
             line-height: 1.5;
-            margin: 28px 0 16px;
-            color: #4096ff;
         }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
+        .page-description {
+            display: block;
+            margin-top: 3px;
+            overflow: hidden;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.5;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 22px;
-            text-decoration: none;
-            color: #333;
-            transition: .25s;
-            border: 1px solid #eee;
+        .page-action {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--primary);
+            font-size: 13px;
         }
 
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(22,119,255,.15);
-            border-color: #1677ff;
+        .page-action span {
+            transition: transform 0.18s ease;
         }
 
-        .icon {
-            font-size: 34px;
+        .page-link:hover .page-action span {
+            transform: translateX(3px);
         }
 
-        .title {
-            margin-top: 15px;
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        .desc {
-            margin-top: 8px;
-            color: #888;
-            font-size: 14px;
-            line-height: 1.6;
+        .empty-state {
+            display: none;
+            padding: 64px 20px;
+            color: var(--muted);
+            text-align: center;
         }
 
         footer {
+            margin: 48px 0 36px;
+            color: #98a2b3;
             text-align: center;
-            color: #999;
-            margin: 60px 0;
+            font-size: 13px;
         }
 
-        @media(max-width:1000px){
-            .container{
-                width:95%;
+        @media (max-width: 640px) {
+            .hero {
+                padding: 32px 12px 62px;
             }
 
-            .grid{
-                grid-template-columns:repeat(2,1fr);
+            .hero-inner,
+            .container {
+                width: min(100% - 24px, 1080px);
+            }
+
+            .search-panel {
+                padding: 11px 14px;
+            }
+
+            .result-count,
+            .page-action strong {
+                display: none;
+            }
+
+            .module-title {
+                padding: 15px 16px;
+            }
+
+            .page-link {
+                grid-template-columns: 38px minmax(0, 1fr) auto;
+                gap: 11px;
+                padding: 13px 16px;
+            }
+
+            .page-icon {
+                width: 38px;
+                height: 38px;
+                font-size: 18px;
             }
         }
-
-        @media(max-width:700px){
-
-            .grid{
-                grid-template-columns:1fr;
-            }
-
-        }
-
     </style>
-
 </head>
 
 <body>
-
-<header>
-
-    <h1>🚀 Gien BI 原型中心</h1>
-
-    <p>产品原型导航 · GitHub Pages</p>
-
-</header>
-
-<div class="container">
-
-    <input id="search"
-           placeholder="🔍 搜索页面，例如：权限、模板、流程..." />
-
-    <!-- 流程中心 -->
-
-    <div class="module">
-
-        <div class="module-title">
-            📱 流程中心
+    <header class="hero">
+        <div class="hero-inner">
+            <h1>🚀 Gien BI 原型中心</h1>
+            <p>产品原型导航 · GitHub Pages</p>
         </div>
-
-        <div class="grid">
-
-            <a class="card" href="application-create.html">
-                <div class="icon">➕</div>
-                <div class="title">发起申请</div>
-                <div class="desc"></div>
-            </a>
-
-            <a class="card" href="application-edit.html">
-                <div class="icon">✏️</div>
-                <div class="title">编辑申请</div>
-                <div class="desc"></div>
-            </a>
-
-            <a class="card" href="my-applications.html">
-                <div class="icon">📋</div>
-                <div class="title">申请列表</div>
-                <div class="desc"></div>
-            </a>
-
-            <a class="card" href="my-pending.html">
-                <div class="icon">⏳</div>
-                <div class="title">待办列表</div>
-                <div class="desc"></div>
-            </a>
-
-            <a class="card" href="my-completed.html">
-                <div class="icon">✅</div>
-                <div class="title">已办列表</div>
-                <div class="desc"></div>
-            </a>
-
-            <a class="card" href="detail.html">
-                <div class="icon">📄</div>
-                <div class="title">申请详情</div>
-                <div class="desc"></div>
-            </a>
-
-        </div>
-
-         <div class="module-subtitle">
-
-            不同申请类型的申请详情补充
-
-        </div>
-
-         <div class="grid">
-
-             <a class="card" href="不同申请类型的申请详情补充/my-applications2.html">
-                <div class="icon">📋</div>
-                <div class="title">申请列表2</div>
-                <div class="desc"></div>
-            </a>
-
-            <a class="card" href="不同申请类型的申请详情补充/detail2.html">
-                <div class="icon">📄</div>
-                <div class="title">申请详情2</div>
-                <div class="desc"></div>
-            </a>
-
-         </div>
-
-    </div>
-
-    <!-- 模板 -->
-
-    <div class="module">
-
-        <div class="module-title">
-            📚 模板管理
-        </div>
-
-        <div class="grid">
-
-            <a class="card" href="template-create.html">
-                <div class="icon">📝</div>
-                <div class="title">模板创建</div>
-            </a>
-
-            <a class="card" href="template-management.html">
-                <div class="icon">📂</div>
-                <div class="title">模板管理</div>
-            </a>
-
-            <a class="card" href="template-view.html">
-                <div class="icon">👀</div>
-                <div class="title">模板查看</div>
-            </a>
-
-        </div>
-
-    </div>
-
-    <!-- 权限 -->
-
-    <div class="module">
-
-        <div class="module-title">
-            🔐 用户与权限
-        </div>
-
-        <div class="grid">
-
-            <a class="card" href="用户管理-原型.html">
-                <div class="icon">👤</div>
-                <div class="title">用户管理</div>
-            </a>
-
-            <a class="card" href="权限管理-原型.html">
-                <div class="icon">🔑</div>
-                <div class="title">权限管理</div>
-            </a>
-
-            <a class="card" href="资源目录-原型.html">
-                <div class="icon">📁</div>
-                <div class="title">资源目录</div>
-            </a>
-
-        </div>
-
-    </div>
-
-    <!-- 数据填报 -->
-
-    <div class="module">
-
-        <div class="module-title">
-            📝 数据填报
-        </div>
-
-        <div class="grid">
-
-            <a class="card" href="数据填报-权限设计原型.html">
-                <div class="icon">🔐</div>
-                <div class="title">权限设置</div>
-                <div class="desc">数据填报权限配置原型</div>
-            </a>
-
-        </div>
-
-    </div>
-
-    <!-- 指标 -->
-
-    <div class="module">
-
-        <div class="module-title">
-            📈 指标平台
-        </div>
-
-        <div class="grid">
-
-            <a class="card" href="日均月均派生指标创建.html">
-                <div class="icon">📊</div>
-                <div class="title">日均/月均派生指标</div>
-                <div class="desc">指标配置原型</div>
-            </a>
-
-        </div>
-
-    </div>
-
-    <!-- 智能问数 -->
-
-    <div class="module">
-
-        <div class="module-title">
-            📈 智能问数
-        </div>
-
-        <div class="grid">
-
-            <a class="card" href="智能问数置信度展示原型.html">
-                <div class="icon">📊</div>
-                <div class="title">置信度展示</div>
-                <div class="desc">回答中追加每个查询问句的置信度</div>
-            </a>
-            
-            <a class="card" href="会话管理交互原型.html">
-                <div class="icon">📊</div>
-                <div class="title">会话管理</div>
-                <div class="desc">记录会话和日志</div>
-            </a>
-            
-        </div>
-        
-    </div>
-
-</div>
-
-<footer>
-
-    Gien BI Prototype Center © 2026
-
-</footer>
-
-<script>
-
-const search=document.getElementById("search");
-
-search.onkeyup=function(){
-
-let keyword=this.value.toLowerCase();
-
-document.querySelectorAll(".card").forEach(card=>{
-
-let text=card.innerText.toLowerCase();
-
-card.style.display=text.includes(keyword)?"block":"none";
-
-});
-
-}
-
-</script>
-
+    </header>
+
+    <main class="container">
+        <label class="search-panel" for="search">
+            <span class="search-icon" aria-hidden="true">⌕</span>
+            <input id="search" type="search" placeholder="搜索页面，例如：权限、模板、流程…" autocomplete="off" />
+            <span id="resultCount" class="result-count"></span>
+        </label>
+
+        <div id="navigation"></div>
+        <div id="emptyState" class="empty-state">没有找到匹配的原型页面</div>
+    </main>
+
+    <footer>Gien BI Prototype Center © 2026</footer>
+
+    <script>
+        // 新增原型时，只需在对应 section 的 items 数组中添加一条配置。
+        const sections = [
+            {
+                title: "流程中心",
+                icon: "📱",
+                items: [
+                    { title: "发起申请", href: "application-create.html", icon: "➕", description: "创建并提交新的流程申请" },
+                    { title: "编辑申请", href: "application-edit.html", icon: "✏️", description: "编辑申请内容与相关配置" },
+                    { title: "申请列表", href: "my-applications.html", icon: "📋", description: "查看我发起的全部申请" },
+                    { title: "待办列表", href: "my-pending.html", icon: "⏳", description: "处理当前待审批的流程任务" },
+                    { title: "已办列表", href: "my-completed.html", icon: "✅", description: "查看已经处理完成的流程任务" },
+                    { title: "申请详情", href: "detail.html", icon: "📄", description: "查看通用申请详情页面" },
+                    { title: "申请列表 2", href: "不同申请类型的申请详情补充/my-applications2.html", icon: "📋", description: "不同申请类型的列表补充方案" },
+                    { title: "申请详情 2", href: "不同申请类型的申请详情补充/detail2.html", icon: "📄", description: "不同申请类型的详情补充方案" },
+                ],
+            },
+            {
+                title: "模板管理",
+                icon: "📚",
+                items: [
+                    { title: "模板创建", href: "template-create.html", icon: "📝", description: "创建新的申请模板" },
+                    { title: "模板管理", href: "template-management.html", icon: "📂", description: "统一管理已有模板" },
+                    { title: "模板查看", href: "template-view.html", icon: "👀", description: "查看模板详情与配置" },
+                ],
+            },
+            {
+                title: "用户与权限",
+                icon: "🔐",
+                items: [
+                    { title: "用户管理", href: "用户管理-原型.html", icon: "👤", description: "管理平台用户及基本信息" },
+                    { title: "权限管理", href: "权限管理-原型.html", icon: "🔑", description: "配置角色与功能权限" },
+                    { title: "资源目录", href: "资源目录-原型.html", icon: "📁", description: "浏览与管理平台资源目录" },
+                ],
+            },
+            {
+                title: "数据填报",
+                icon: "📝",
+                items: [
+                    { title: "权限设置", href: "数据填报-权限设计原型.html", icon: "🔐", description: "数据填报权限配置原型" },
+                ],
+            },
+            {
+                title: "指标平台",
+                icon: "📈",
+                items: [
+                    { title: "日均/月均派生指标", href: "日均月均派生指标创建.html", icon: "📊", description: "日均与月均派生指标配置原型" },
+                ],
+            },
+            {
+                title: "智能问数",
+                icon: "🤖",
+                items: [
+                    { title: "置信度展示", href: "智能问数置信度展示原型.html", icon: "📊", description: "展示每个查询问句的回答置信度" },
+                    { title: "会话管理", href: "会话管理交互原型.html", icon: "💬", description: "记录并管理智能问数会话与日志" },
+                ],
+            },
+            {
+                title: "通用能力",
+                icon: "🧩",
+                items: [
+                    { title: "导出功能", href: "导出功能.html", icon: "📤", description: "仪表板智能导出与下载中心交互原型" },
+                    { title: "公告管理、TXT 文件", href: "公告管理、txt文件-交互原型.html", icon: "📢", description: "公告发布、附件管理与 TXT 文件交互原型" },
+                ],
+            },
+        ];
+
+        const navigation = document.getElementById("navigation");
+        const search = document.getElementById("search");
+        const resultCount = document.getElementById("resultCount");
+        const emptyState = document.getElementById("emptyState");
+
+        function createPageItem(item, sectionTitle) {
+            const listItem = document.createElement("li");
+            listItem.className = "page-item";
+            listItem.dataset.search = `${item.title} ${item.description} ${sectionTitle} ${item.href}`.toLowerCase();
+
+            const link = document.createElement("a");
+            link.className = "page-link";
+            link.setAttribute("href", item.href);
+
+            const icon = document.createElement("span");
+            icon.className = "page-icon";
+            icon.setAttribute("aria-hidden", "true");
+            icon.textContent = item.icon;
+
+            const copy = document.createElement("span");
+            copy.className = "page-copy";
+
+            const title = document.createElement("span");
+            title.className = "page-title";
+            title.textContent = item.title;
+
+            const description = document.createElement("span");
+            description.className = "page-description";
+            description.textContent = item.description;
+
+            const action = document.createElement("span");
+            action.className = "page-action";
+            action.innerHTML = "<strong>打开</strong><span aria-hidden=\"true\">→</span>";
+
+            copy.append(title, description);
+            link.append(icon, copy, action);
+            listItem.append(link);
+            return listItem;
+        }
+
+        function renderNavigation() {
+            const fragment = document.createDocumentFragment();
+
+            sections.forEach((section) => {
+                const module = document.createElement("section");
+                module.className = "module";
+
+                const heading = document.createElement("h2");
+                heading.className = "module-title";
+                heading.innerHTML = `<span class="module-title-icon" aria-hidden="true">${section.icon}</span>${section.title}`;
+
+                const list = document.createElement("ul");
+                list.className = "page-list";
+                section.items.forEach((item) => list.append(createPageItem(item, section.title)));
+
+                module.append(heading, list);
+                fragment.append(module);
+            });
+
+            navigation.append(fragment);
+        }
+
+        function filterNavigation(keyword) {
+            const query = keyword.trim().toLowerCase();
+            let visibleCount = 0;
+
+            document.querySelectorAll(".module").forEach((module) => {
+                let moduleCount = 0;
+
+                module.querySelectorAll(".page-item").forEach((item) => {
+                    const matches = !query || item.dataset.search.includes(query);
+                    item.hidden = !matches;
+                    moduleCount += Number(matches);
+                });
+
+                module.hidden = moduleCount === 0;
+                visibleCount += moduleCount;
+            });
+
+            resultCount.textContent = `${visibleCount} 个页面`;
+            emptyState.style.display = visibleCount ? "none" : "block";
+        }
+
+        renderNavigation();
+        filterNavigation("");
+        search.addEventListener("input", (event) => filterNavigation(event.target.value));
+    </script>
 </body>
 
 </html>
