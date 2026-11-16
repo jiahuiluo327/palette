@@ -4206,7 +4206,7 @@ function analysisDrawer(){
  const disposalSection=warningDisposalSectionHTML(x);
  let actions='';
  const available=warningAvailableActions(x);
- if(available.includes('close'))actions+='<button class="tw-btn" data-tw="action" data-value="close">关闭</button>';
+ if(available.includes('close'))actions+='<button class="tw-btn primary" data-tw="action" data-value="close">关闭</button>';
  if(available.includes('transfer'))actions+='<button class="tw-btn primary" data-tw="action" data-value="transfer">转线索</button>';
  return `<div class="tw-mask" data-tw="close-all"></div><aside class="tw-drawer analysis tw-warning-analysis" role="dialog" aria-label="预警详情抽屉">${head(x)}<div class="tw-drawer-body"><div class="tw-detail-stack">${disposalSection}${basicSection}${dataSection}${orgSection}${historySection}</div></div>${actions?`<div class="tw-drawer-foot">${actions}</div>`:''}</aside>`;
 }
